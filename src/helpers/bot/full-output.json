@@ -1,0 +1,1604 @@
+{
+  "categories": [
+    {
+      "name": {
+        "en": "Bestsellers 🔥",
+        "ar": "🔥 الأكثر مبيعًا"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Shawarma Sarukh",
+            "ar": "بيتزا وسط"
+          },
+          "description": {
+            "en": "Tender pieces of marinated shawarma roasted and stuffed into bread",
+            "ar": "بيتزا خضار وسط"
+          },
+          "price": "17.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/a94092c6ddb4a3f8cd897daf0646c2e4?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarmaa",
+            "ar": "فطيرة جبنة عكاوي"
+          },
+          "description": {
+            "en": "Sandwich stuffed with marinated shawarma pieces",
+            "ar": "فطيرة محشية بالجبن العكاوي"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89979?width=222"
+        },
+        {
+          "name": {
+            "en": "Pizza",
+            "ar": "عش البلبل - وسط"
+          },
+          "description": {
+            "en": "Medium vegetable pizza",
+            "ar": "عجينة مغطاة بالجبن واللبنة والعسل"
+          },
+          "price": "17.0",
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Akawi Cheese Pie",
+            "ar": "فطيرة لبنة بالعسل"
+          },
+          "description": {
+            "en": "Pie stuffed with akkawi cheese",
+            "ar": "عجينة الفطائر اللذيذة بحشوة اللبنة الطازجة والعسل"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89987?width=222"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Shawarma",
+        "ar": "الشاورما"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Shawarmaa",
+            "ar": "سندوتش شاورما"
+          },
+          "description": {
+            "en": "Sandwich stuffed with marinated shawarma pieces",
+            "ar": "ساندويتش محشو بقطع الشاورما المتبلة"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1812342?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarma Sarukh",
+            "ar": "صاروخ شاورما"
+          },
+          "description": {
+            "en": "Tender pieces of marinated shawarma roasted and stuffed into bread",
+            "ar": "قطع طرية من الشاورما المتبل المحمص ومحشو في الخبز"
+          },
+          "price": "13.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812343?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarmaaa",
+            "ar": "شاورما  خبز فرنسي"
+          },
+          "description": {
+            "en": "A sandwich stuffed with marinated shawarma pieces in delicious french bread",
+            "ar": "ساندويتش محشو بقطع الشاورما المتبلة بخبز الفرنسي اللذيذ"
+          },
+          "price": "13.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812345?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarma",
+            "ar": "صحن شاورما ."
+          },
+          "description": {
+            "en": "Marinated shawarma pieces",
+            "ar": "قطع الشاورما المتبلة"
+          },
+          "price": "17.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812336?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarmaaaa",
+            "ar": "صحن شاورما .."
+          },
+          "description": {
+            "en": "Marinated shawarma pieces",
+            "ar": "قطع الشاورما المتبلة"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812337?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarmma",
+            "ar": "صحن شاورما"
+          },
+          "description": {
+            "en": "Marinated shawarma pieces",
+            "ar": "قطع الشاورما المتبلة"
+          },
+          "price": "35.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812338?width=222"
+        },
+        {
+          "name": {
+            "en": "Box Shwarma Arab",
+            "ar": "صحن شاورما عربي"
+          },
+          "description": {
+            "en": "Box shwarma arabi",
+            "ar": "صحن شاورما عربي  مقاس عائلي"
+          },
+          "price": "55.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/e80aef62e348b42a873b387a25b4dd95?width=222"
+        },
+        {
+          "name": {
+            "en": "Large Arabic Shawarma Meal",
+            "ar": "وجبة الشاورما العربي كبير"
+          },
+          "description": {
+            "en": "Sandwich stuffed with spiced shawarma pieces",
+            "ar": "ساندويتش محشو بقطع الشاورما المتبلة"
+          },
+          "price": "45.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812365?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarma",
+            "ar": "الوجبة الشاورما العربي"
+          },
+          "description": {
+            "en": "Tender pieces of marinated chicken roasted and stuffed in bread served with french fries, delicious sauces and pickles, large.",
+            "ar": "قطع طرية من الدجاج المتبل المحمص ومحشو في الخبز يقدم مع البطاطس المقلية و الصوصات اللذيذة و المخلل ، كبير"
+          },
+          "price": "35.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812341?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarma2",
+            "ar": "الوجبة الشاورما العربي.."
+          },
+          "description": {
+            "en": "Tender pieces of marinated chicken roasted and stuffed in bread served with french fries, delicious sauces and pickles, medium.",
+            "ar": "قطع طرية من الدجاج المتبل المحمص ومحشو في الخبز يقدم مع البطاطس المقلية و الصوصات اللذيذة و المخلل ، وسط"
+          },
+          "price": "26.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812340?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarma1",
+            "ar": "وجبة شاورما العربي"
+          },
+          "description": {
+            "en": "Sandwich stuffed with spiced shawarma pieces",
+            "ar": "ساندويتش محشو بقطع الشاورما المتبلة"
+          },
+          "price": "17.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812339?width=222"
+        },
+        {
+          "name": {
+            "en": "Shawarma Pie",
+            "ar": "فطيرة شاورما"
+          },
+          "description": {
+            "en": "Delicious pie dough stuffed with shawarma pieces",
+            "ar": "عجينة الفطائر الشهية محشوة بقطع  الشاورم"
+          },
+          "price": "15.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/9174a1fd2ce2706e10b3f3ec9b2ec0ea?width=222"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Pies",
+        "ar": "الفطائر"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Mix Pies Platter. - Medium",
+            "ar": "صحن فطائر مشكل. - وسط"
+          },
+          "description": {
+            "en": "A selection of carefully toasted pies with delicious filling",
+            "ar": "تشكيلة من الفطائر المحمصة بعناية بالحشوة الشهية"
+          },
+          "price": "45.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/product/image/905011?width=1920"
+        },
+        {
+          "name": {
+            "en": "Mix Pies Platter - Large",
+            "ar": "صحن فطائر مشكل - كبير"
+          },
+          "description": {
+            "en": "A selection of carefully toasted pies with delicious filling",
+            "ar": "تشكيلة من الفطائر المحمصة بعناية بالحشوة الشهية"
+          },
+          "price": "55.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/product/image/905012?width=1920"
+        },
+        {
+          "name": {
+            "en": "A Mix Plate Of Pies",
+            "ar": "فطائر مشكلة"
+          },
+          "description": {
+            "en": "A plate of pies family size",
+            "ar": "صحن فطائر حجم عائلي"
+          },
+          "price": "65.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/33503318?width=222"
+        },
+        {
+          "name": {
+            "en": "A Plate Of Pies",
+            "ar": "صحن فطائر"
+          },
+          "description": {
+            "en": "Flaky and delicious dough pies with different fillings",
+            "ar": "فطائر بعجينة هشة ولذيذة مع حشوات مختلفة"
+          },
+          "price": "35.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/29815240?width=222"
+        },
+        {
+          "name": {
+            "en": "Cheese Brides",
+            "ar": "عرائس جبن سائل"
+          },
+          "description": {
+            "en": "Dollops stuffed with liquid cheese and delicious mozzarella",
+            "ar": "عرائس محشوه بالجبن السائل والموزريلا الشهية"
+          },
+          "price": "10.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/8829e418debc45f8209c707dc65e2d07?width=222"
+        },
+        {
+          "name": {
+            "en": "Kudu Pie",
+            "ar": "فطيرة كودو"
+          },
+          "description": {
+            "en": "Pie stuffed with chicken hummus with delicious sauces and spices\\",
+            "ar": "فطيرة محشوه بحميس الدجاج مع الصوصات والبهارات اللذيذ"
+          },
+          "price": "13.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/4ee9508bf19a9f620a397ec3b27d1c85?width=222"
+        },
+        {
+          "name": {
+            "en": "Cream Cheese Pie",
+            "ar": "فطيرة جبنة سائلة"
+          },
+          "description": {
+            "en": "Pie stuffed with cream cheese",
+            "ar": "فطيرة محشية بالجبن السائل"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89973?width=222"
+        },
+        {
+          "name": {
+            "en": "Labneh Pie",
+            "ar": "فطيرة لبنة"
+          },
+          "description": {
+            "en": "Pie stuffed with fresh labneh",
+            "ar": "فطيرة محشية باللبنة الطازجة"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89975?width=222"
+        },
+        {
+          "name": {
+            "en": "Akawi Cheese Pie",
+            "ar": "فطيرة جبنة عكاوي"
+          },
+          "description": {
+            "en": "Pie stuffed with akkawi cheese",
+            "ar": "فطيرة محشية بالجبن العكاوي"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89979?width=222"
+        },
+        {
+          "name": {
+            "en": "Chicken Arays Pie.",
+            "ar": "فطيرة جبن محمرة"
+          },
+          "description": {
+            "en": "Pie stuffed with cheese",
+            "ar": "فطيرة محشية بالجبن"
+          },
+          "price": "7.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/478295?width=222"
+        },
+        {
+          "name": {
+            "en": "Chicken Arays Pie",
+            "ar": "فطيرة عرايس دجاج"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": "9.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89970?width=222"
+        },
+        {
+          "name": {
+            "en": "Meat Arays Pie",
+            "ar": "فطيرة عرايس لحم"
+          },
+          "description": {
+            "en": "Grilled bread stuffed with special stuffed",
+            "ar": "خبز مشوي محشي بحشوات خاصة"
+          },
+          "price": "9.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89971?width=222"
+        },
+        {
+          "name": {
+            "en": "Spinach Pie",
+            "ar": "فطيرة سبانخ"
+          },
+          "description": {
+            "en": "Pie stuffed with spinach",
+            "ar": "فطيرة بحشوة السبانخ الشهية"
+          },
+          "price": "6.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89972?width=222"
+        },
+        {
+          "name": {
+            "en": "Meat Pie",
+            "ar": "فطيرة لحم"
+          },
+          "description": {
+            "en": "pie stuffed with delicious meat",
+            "ar": "فطيرة محشية باللحم اللذيذ"
+          },
+          "price": "7.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89974?width=222"
+        },
+        {
+          "name": {
+            "en": "Eggs Pie",
+            "ar": "فطيرة بيض"
+          },
+          "description": {
+            "en": "Pie stuffed with delicious eggs",
+            "ar": "فطيرة محشية بالبيض اللذيذ"
+          },
+          "price": "5.99",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-731975?width=222"
+        },
+        {
+          "name": {
+            "en": "Chicken Pie",
+            "ar": "فطيرة دجاج"
+          },
+          "description": {
+            "en": "Pie stuffed with pieces of chicken",
+            "ar": "فطيرة محشية بقطع الدجاج"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89978?width=222"
+        },
+        {
+          "name": {
+            "en": "Potatoes Pie",
+            "ar": "فطيرة بطاطس"
+          },
+          "description": {
+            "en": "Delicious potato stuffed dough",
+            "ar": "عجينة بحشوة البطاطس اللذيذ"
+          },
+          "price": "6.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89980?width=222"
+        },
+        {
+          "name": {
+            "en": "French Fries Pie",
+            "ar": "فطيرة بطاطس محمرة"
+          },
+          "description": {
+            "en": "French fries with muhammara",
+            "ar": "بطاطس محمرة"
+          },
+          "price": "6.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89982?width=222"
+        },
+        {
+          "name": {
+            "en": "Falafel Pie",
+            "ar": "فطيرة فلافل"
+          },
+          "description": {
+            "en": "Fluffy pie dough prepared in our way with falafel filling, mixed vegetables and sauce",
+            "ar": "عجينة الفطائر الهشة المحضرة على طريقتنا بحشوة فلافل مشكل خضار وصوص"
+          },
+          "price": "9.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89983?width=222"
+        },
+        {
+          "name": {
+            "en": "Vegetables Pie",
+            "ar": "فطيرة خضروات"
+          },
+          "description": {
+            "en": "Vegetable stuffed dough with delicious spices",
+            "ar": "عجينة بحشوة الخضار مع البهارات اللذيذة"
+          },
+          "price": "6.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89984?width=222"
+        },
+        {
+          "name": {
+            "en": "Labneh With Cheese Pie",
+            "ar": "فطيرة جبن قشقوان"
+          },
+          "description": {
+            "en": "Cheese stuffed dough prepared in our own way",
+            "ar": "عجينة بحشوة الجبن محضرة على طريقتنا الخاصة"
+          },
+          "price": "8.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89985?width=222"
+        },
+        {
+          "name": {
+            "en": "Labneh With Thyme Pie",
+            "ar": "فطيرة لبنة بالزعتر"
+          },
+          "description": {
+            "en": "labneh thyme",
+            "ar": "لبنة مع الزعتر"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89986?width=222"
+        },
+        {
+          "name": {
+            "en": "Labneh With Honey Pie",
+            "ar": "فطيرة لبنة بالعسل"
+          },
+          "description": {
+            "en": "delicious pie dough filled with fresh labneh and honey",
+            "ar": "عجينة الفطائر اللذيذة بحشوة اللبنة الطازجة والعسل"
+          },
+          "price": "6.75",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89987?width=222"
+        },
+        {
+          "name": {
+            "en": "Cheese With Thyme Pie",
+            "ar": "فطيرة جبنة بالزعتر"
+          },
+          "description": {
+            "en": "Pie prepared in a special way with delicious filling",
+            "ar": "الفطيرة المحضرة على الطريقة الخاصة بالحشوة الشهية"
+          },
+          "price": "7.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89988?width=222"
+        },
+        {
+          "name": {
+            "en": "Cheese With Olives Pie",
+            "ar": "فطيرة جبنة بالزيتون"
+          },
+          "description": {
+            "en": "Pie stuffed with cheese and olives",
+            "ar": "فطيرة محشية بالجبنة مع الزيتون"
+          },
+          "price": "6.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image_url_ref/9280058a5549cb975c695e5a79ce4d88.jfif?width=222"
+        },
+        {
+          "name": {
+            "en": "Cheese With Spinach Pie",
+            "ar": "فطيرة جبنة بالسبانخ"
+          },
+          "description": {
+            "en": "Pie stuffed with spinach and cheese",
+            "ar": "فطيرة محشية بالسبانخ مع الجبنة"
+          },
+          "price": "7.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89991?width=222"
+        },
+        {
+          "name": {
+            "en": "Labneh With Spinach Pie",
+            "ar": "فطيرة لبنة بالسبانخ"
+          },
+          "description": {
+            "en": "Labneh with spinach",
+            "ar": "لبنة سبانخ"
+          },
+          "price": "6.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89993?width=222"
+        },
+        {
+          "name": {
+            "en": "Cheese With Mushroom Pie",
+            "ar": "فطيرة جبنة بالمشروم"
+          },
+          "description": {
+            "en": "Pie stuffed with cheese and mushroom",
+            "ar": "فطيرة محشية بالجبنة مع المشروم"
+          },
+          "price": "7.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89994?width=222"
+        },
+        {
+          "name": {
+            "en": "Cheese With Tomatoes Pie",
+            "ar": "فطيرة جبنة بالطماطم"
+          },
+          "description": {
+            "en": "Pie stuffed with cheese and fresh tomatoes",
+            "ar": "فطيرة محشية بالجبنة مع الطماطم الطازجة"
+          },
+          "price": "7.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89995?width=222"
+        },
+        {
+          "name": {
+            "en": "Meat With Cheese Pie",
+            "ar": "فطيرة لحم بالجبنة"
+          },
+          "description": {
+            "en": "meat with cheese",
+            "ar": "لحم بالجبن"
+          },
+          "price": "8.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89997?width=222"
+        },
+        {
+          "name": {
+            "en": "Chicken With Cheese Pie",
+            "ar": "فطيرة دجاج بالجبنة"
+          },
+          "description": {
+            "en": "Chicken with cheese",
+            "ar": "دجاج بالجبن"
+          },
+          "price": "8.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89998?width=222"
+        },
+        {
+          "name": {
+            "en": "Muhammara With Thyme Pie",
+            "ar": "فطيرة محمرة بالزعتر"
+          },
+          "description": {
+            "en": "Muhammara pie prepared in our own way",
+            "ar": "فطيرة المحمرة المحضرة على طريقتنا الخاصة"
+          },
+          "price": "6.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89999?width=222"
+        },
+        {
+          "name": {
+            "en": "Eggs With Round Cheese Pie",
+            "ar": "فطيرة بيض بالجبنة الدائرية"
+          },
+          "description": {
+            "en": "Eggs with cheese",
+            "ar": "بيض بالجبن"
+          },
+          "price": "6.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-11434482?width=222"
+        },
+        {
+          "name": {
+            "en": "Halloumi Cheese Pie",
+            "ar": "فطيرة جبنة حلوم"
+          },
+          "description": {
+            "en": "pie stuffed with halloumi cheese",
+            "ar": "فطيرة محشية بجبنة الحلوم"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/90002?width=222"
+        },
+        {
+          "name": {
+            "en": "Manoucheh With Thyme Pie",
+            "ar": "فطيرة مناقيش بالزعتر"
+          },
+          "description": {
+            "en": "Pie prepared in our own way",
+            "ar": "فطيرة محضرة على طريقتنا الخاصة"
+          },
+          "price": "6.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-90005?width=222"
+        },
+        {
+          "name": {
+            "en": "Manoucheh With Muhammara Pie",
+            "ar": "فطيرة محمرة"
+          },
+          "description": {
+            "en": "Delicious pancake dough covered with spicy sauce",
+            "ar": "عجينة الفطائر اللذيذة مغطاه بصوص السبايسي"
+          },
+          "price": "5.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/90006?width=222"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Pizza",
+        "ar": "البيتزا"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Pizza",
+            "ar": "بيتزا وسط"
+          },
+          "description": {
+            "en": "Medium vegetable pizza",
+            "ar": "بيتزا خضار وسط"
+          },
+          "price": "17.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/a94092c6ddb4a3f8cd897daf0646c2e4?width=222"
+        },
+        {
+          "name": {
+            "en": "Pizaa Big",
+            "ar": "بيتزا خضار كبير"
+          },
+          "description": {
+            "en": "Large vegetable pizza",
+            "ar": "بيتزا كبير خضار"
+          },
+          "price": "27.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/2e025a88c5f6031a3b694ed83c88c71a?width=222"
+        },
+        {
+          "name": {
+            "en": "Pizza Meat",
+            "ar": "بيتزا وسط لحم"
+          },
+          "description": {
+            "en": "Medium meat pizza",
+            "ar": "بيتزا لحم"
+          },
+          "price": "18.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/3f04b3ad1d40ee8ff395dc5a88c9f1b4?width=222"
+        },
+        {
+          "name": {
+            "en": "Large Meat Pizza",
+            "ar": "بيتزا كبير لحم"
+          },
+          "description": {
+            "en": "Large meat pizza",
+            "ar": "بيتزا كبير لحم ا"
+          },
+          "price": "30.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/30988b0f6f0b756de10911e9dfb887c2?width=222"
+        },
+        {
+          "name": {
+            "en": "Pizza Cheese",
+            "ar": "بيتزا وسط جبن"
+          },
+          "description": {
+            "en": "Medium pizza with margherita cheese",
+            "ar": "بيتزا وسط جبن مرغريتا"
+          },
+          "price": "17.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image_url_ref/87b3973dd0fb7abcdd0d12e49d679f1c.jpg?width=222"
+        },
+        {
+          "name": {
+            "en": "Pizza Cheese Big",
+            "ar": "بيتزا كبير جبن"
+          },
+          "description": {
+            "en": "Large margherita cheese pizza",
+            "ar": "بيتزا كبير جبن مرغريتا"
+          },
+          "price": "27.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image_url_ref/87b3973dd0fb7abcdd0d12e49d679f1c.jpg?width=222"
+        },
+        {
+          "name": {
+            "en": "Medium Ranch Pizza",
+            "ar": "بيتزا وسط رانش"
+          },
+          "description": {
+            "en": "Medium ranch pizza1",
+            "ar": "بيتزا وسط مع الدجاج وصلصلة الرانش"
+          },
+          "price": "24.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/0aea0e05f5247b6df8a009bfe739c057?width=222"
+        },
+        {
+          "name": {
+            "en": "Large Ranch Pizza",
+            "ar": "بيتزا كبير رانش"
+          },
+          "description": {
+            "en": "Large ranch pizzaa",
+            "ar": "بيتزا كبير دجاج مع صلصلة الرانش"
+          },
+          "price": "36.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/445ebf6bb8115724899029306d2dd3be?width=222"
+        },
+        {
+          "name": {
+            "en": "Medium Pepperoni Pizza",
+            "ar": "بيتزا وسط ببروني"
+          },
+          "description": {
+            "en": "Medium pepperoni pizzaa",
+            "ar": "بيتزا مقاس الوسط ببروني"
+          },
+          "price": "27.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/2da81dc3fe57ca03b943565b241a3a9f?width=222"
+        },
+        {
+          "name": {
+            "en": "Large Pepperoni Pizza",
+            "ar": "بيتزا كبير ببروني"
+          },
+          "description": {
+            "en": "Large pepperoni pizzaa",
+            "ar": "بيتزا مقاي الكبير ببروني"
+          },
+          "price": "37.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/dc685fb769578a1b5bbd2f46e64d465d?width=222"
+        },
+        {
+          "name": {
+            "en": "Hot Dog Pizza",
+            "ar": "بيتزا وسط نقانق"
+          },
+          "description": {
+            "en": "Hot dog pizzaa",
+            "ar": "بيتزا وسط النقانق"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/99623778bf209143f7124f8b57f32a08?width=222"
+        },
+        {
+          "name": {
+            "en": "Large Sausage Pizza",
+            "ar": "بيتزا كبير نقانق"
+          },
+          "description": {
+            "en": "Large sausage pizzaa",
+            "ar": "بيتزا الكبير نقانق"
+          },
+          "price": "35.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/5058a70451005e0e56e59192eb2ffa76?width=222"
+        },
+        {
+          "name": {
+            "en": "Chicken Pizza - Medium",
+            "ar": "بيتزا دجاج - وسط"
+          },
+          "description": {
+            "en": "Pizza dough covered with vegetables and chicken",
+            "ar": "عجينة البيتزا المغطاة بالخضروات والدجاج"
+          },
+          "price": "18.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-943390?width=1920"
+        },
+        {
+          "name": {
+            "en": "Ash Albulbul - Medium",
+            "ar": "عش البلبل - وسط"
+          },
+          "description": {
+            "en": "Dough topped with cheese, labneh and honey",
+            "ar": "عجينة مغطاة بالجبن واللبنة والعسل"
+          },
+          "price": "17.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/product/image_url_ref/075dbb71666f8a919db9fd8305f4f299.jpeg?width=1920"
+        },
+        {
+          "name": {
+            "en": "Ash Albulbul - Large",
+            "ar": "عش البلبل - كبير"
+          },
+          "description": {
+            "en": "Dough topped with cheese, labneh and honey",
+            "ar": "عجينة مغطاة بالجبن واللبنة والعسل"
+          },
+          "price": "27.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/product/image_url_ref/075dbb71666f8a919db9fd8305f4f299.jpeg?width=1920"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Syrian Falafel",
+        "ar": "الفلافل الشامية"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Falafel Phate - Small",
+            "ar": "صحن فلافل  - صحن فلافل"
+          },
+          "description": {
+            "en": "Falafl and potatoes",
+            "ar": "الفلافل مقليه"
+          },
+          "price": "17.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/product/image/97e7ebd6544a62d3b576b44aabe0a716?width=1920"
+        },
+        {
+          "name": {
+            "en": "Falafel Phate - Medium",
+            "ar": "صحن فلافل  - صحن فلافل"
+          },
+          "description": {
+            "en": "Falafl and potatoes",
+            "ar": "الفلافل مقليه"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/product/image/97e7ebd6544a62d3b576b44aabe0a716?width=1920"
+        },
+        {
+          "name": {
+            "en": "Falafel Phate - Big",
+            "ar": "صحن فلافل  - صحن فلافل"
+          },
+          "description": {
+            "en": "Falafl and potatoes",
+            "ar": "الفلافل مقليه"
+          },
+          "price": "35.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/product/image/97e7ebd6544a62d3b576b44aabe0a716?width=1920"
+        },
+        {
+          "name": {
+            "en": "Falafel Phate - Very Big",
+            "ar": "صحن فلافل  - صحن فلافل"
+          },
+          "description": {
+            "en": "Falafl and potatoes",
+            "ar": "الفلافل مقليه"
+          },
+          "price": "40.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/product/image/97e7ebd6544a62d3b576b44aabe0a716?width=1920"
+        },
+        {
+          "name": {
+            "en": "Falafel",
+            "ar": "فلافل مع الحمص"
+          },
+          "description": {
+            "en": "A sandwich filled with delicious falafel, hummus and fresh vegetables",
+            "ar": "ساندوتش بحشوة الفلافل الشهية مع الحمص و الخضروات الطازجة"
+          },
+          "price": "6.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1815924?width=222"
+        },
+        {
+          "name": {
+            "en": "Falafel1",
+            "ar": "فلافل شامية"
+          },
+          "description": {
+            "en": "Falafel sandwich with mixed vegetables and sauce",
+            "ar": "ساندوتش فلافل مشكل خضار وصوص"
+          },
+          "price": "6.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812352?width=222"
+        },
+        {
+          "name": {
+            "en": "Falafel",
+            "ar": "فلافل مشكل ."
+          },
+          "description": {
+            "en": "Falafel with eggs",
+            "ar": "فلافل مع  البيض"
+          },
+          "price": "7.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812353?width=222"
+        },
+        {
+          "name": {
+            "en": "Falafel",
+            "ar": "فلافل مشكل"
+          },
+          "description": {
+            "en": "Falafel with eggs and homos",
+            "ar": "مع الحمص والبيض"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812354?width=222"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Kudo And Mexican",
+        "ar": "الكودو والمكسيكي"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Kudo",
+            "ar": "كودو ."
+          },
+          "description": {
+            "en": "French bread stuffed with pieces of marinated chicken, topped with sauce, lettuce, cheese, tomatoes and fresh lettuce",
+            "ar": "خبز فرنسي محشي بقطع  الدجاج المتبل و مضاف له الصوص و الخس و الجبنة و الطماطم و الخس الطازج"
+          },
+          "price": "13.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812355?width=222"
+        },
+        {
+          "name": {
+            "en": "Kudo",
+            "ar": "كودو"
+          },
+          "description": {
+            "en": "Grilled chicken pieces with a variety of fresh vegetables in bread",
+            "ar": "قطع دجاج مشوية مع تشكيلة من الخضار الطازجة بالخبز"
+          },
+          "price": "12.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812356?width=222"
+        },
+        {
+          "name": {
+            "en": "Mexican",
+            "ar": "مكسيكي .."
+          },
+          "description": {
+            "en": "Soft samuli bread stuffed with spiced chicken",
+            "ar": "خبز الصامولي الطري بحشوة الدجاج المتبل"
+          },
+          "price": "13.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812357?width=222"
+        },
+        {
+          "name": {
+            "en": "Mexican",
+            "ar": "مكسيكي"
+          },
+          "description": {
+            "en": "Soft samuli bread stuffed with spiced chicken",
+            "ar": "خبز الصامولي الطري بحشوة الدجاج المتبل"
+          },
+          "price": "14.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812358?width=222"
+        },
+        {
+          "name": {
+            "en": "Kudo",
+            "ar": "صحن كودو"
+          },
+          "description": {
+            "en": "Kudu plate",
+            "ar": "صدوردجاج مع الصوص والبهارات"
+          },
+          "price": "30.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812360?width=222"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Sandwiches",
+        "ar": "الساندوتشات"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Sandwich",
+            "ar": "كرسبي دجاج"
+          },
+          "description": {
+            "en": "Crispy chicken strips with vegetables in french bread",
+            "ar": "شرائح الدجاج المقرمش مع الخضار في الخبز الفرنسي"
+          },
+          "price": "12.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812346?width=222"
+        },
+        {
+          "name": {
+            "en": "Hamburger Meal",
+            "ar": "وجبة همبرجر"
+          },
+          "description": {
+            "en": "Burger meal with fries, pepsi, salad and sauces",
+            "ar": "وجبة برجر مع بطاطا وببسي وسلطة وصوصات"
+          },
+          "price": "23.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/197d801c040d3290837135b4e9015608?width=222"
+        },
+        {
+          "name": {
+            "en": "Kudu Meal",
+            "ar": "وجبة كودو ببسي"
+          },
+          "description": {
+            "en": "Jumbo bread stuffed with pieces of marinated chicken and added sauce, lettuce, cheese, tomatoes and fresh lettuce and served with potatoes and drink and served with juice, appetizers and sauces.",
+            "ar": "خبز جامبو محشي بقطع  الدجاج المتبل و مضاف له الصوص و الخس و الجبنة و الطماطم و الخس الطازج ويقدم مع  البطاطس و المشروب وتقدم مع عصير و مقبلات وصوصات"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/3c1b17ce7b778280adfd1593479faed1?width=222"
+        },
+        {
+          "name": {
+            "en": "Chicken Burger Sandwich",
+            "ar": "ساندوتش برجر دجاج"
+          },
+          "description": {
+            "en": "Juicy beef burger served in a soft bun with cheese",
+            "ar": "شريحة لحم طرية في خبز البرجر  مع الجبن"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/89955?width=222"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Appetizers",
+        "ar": "المقبلات"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Hummus - Hummus",
+            "ar": "حمص - حمص صغير"
+          },
+          "description": {
+            "en": "A creamy blend of chickpeas, tahini",
+            "ar": "مزيج كريمي من الحمص والطحينة"
+          },
+          "price": "7.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/97d012f00837510f732b762a43b394fd?width=1920"
+        },
+        {
+          "name": {
+            "en": "Mtabbal - Small",
+            "ar": "متبل - صغير"
+          },
+          "description": {
+            "en": "Grilled eggplant mashed with tahini",
+            "ar": "باذنجان مشوي مهروس مع الطحينة"
+          },
+          "price": "7.5",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89944?width=1920"
+        },
+        {
+          "name": {
+            "en": "Grape Leaves - ورق عنب1",
+            "ar": "ورق عنب - صغير عدد4"
+          },
+          "description": {
+            "en": "Grape leaves stuffed with a rice mixture",
+            "ar": "ورق العنب المحشي بخلطة الأرز"
+          },
+          "price": "6.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89945?width=1920"
+        },
+        {
+          "name": {
+            "en": "Tabbouleh  - تبوله1",
+            "ar": "تبولة - صغير"
+          },
+          "description": {
+            "en": "Salad that includes parsley, mint, tomatoes, onions, and bulgur marinated in lemon juice and olive oil.",
+            "ar": "سلطة تحتوي على البقدونس والنعناع والطماطم والبصل والبرغل بعصير الليمون وزيت الزيتون"
+          },
+          "price": "10.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89946?width=1920"
+        },
+        {
+          "name": {
+            "en": "Kibbeh",
+            "ar": "كبة"
+          },
+          "description": {
+            "en": "Kibbeh stuffed with chicen",
+            "ar": "كبة بحشوة الدجاج لذيذة"
+          },
+          "price": "1.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/367713369b48913f2ba64b87785d3bb8?width=222"
+        },
+        {
+          "name": {
+            "en": "Hummus - Hummus.",
+            "ar": "حمص - حمص وسط"
+          },
+          "description": {
+            "en": "A creamy blend of chickpeas, tahini",
+            "ar": "مزيج كريمي من الحمص والطحينة"
+          },
+          "price": "15.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/97d012f00837510f732b762a43b394fd?width=1920"
+        },
+        {
+          "name": {
+            "en": "Mtabbal -  Medium",
+            "ar": "متبل - وسط"
+          },
+          "description": {
+            "en": "Grilled eggplant mashed with tahini",
+            "ar": "باذنجان مشوي مهروس مع الطحينة"
+          },
+          "price": "15.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89944?width=1920"
+        },
+        {
+          "name": {
+            "en": "Grape Leaves - ورق عنب2",
+            "ar": "ورق عنب - وسط عدد8"
+          },
+          "description": {
+            "en": "Grape leaves stuffed with a rice mixture",
+            "ar": "ورق العنب المحشي بخلطة الأرز"
+          },
+          "price": "12.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89945?width=1920"
+        },
+        {
+          "name": {
+            "en": "Tabbouleh  - Tabbouleh",
+            "ar": "تبولة - تبولة"
+          },
+          "description": {
+            "en": "Salad that includes parsley, mint, tomatoes, onions, and bulgur marinated in lemon juice and olive oil.",
+            "ar": "سلطة تحتوي على البقدونس والنعناع والطماطم والبصل والبرغل بعصير الليمون وزيت الزيتون"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89946?width=1920"
+        },
+        {
+          "name": {
+            "en": "French Fries",
+            "ar": "بطاطس مقلية"
+          },
+          "description": {
+            "en": "Crispy and delicious fried potatoes in oil",
+            "ar": "بطاطس مقلية بالزيت مقرمشة و لذيذة"
+          },
+          "price": "10.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/45004954?width=222"
+        },
+        {
+          "name": {
+            "en": "Hummus - Hummus1",
+            "ar": "حمص - حمص كبير"
+          },
+          "description": {
+            "en": "A creamy blend of chickpeas, tahini",
+            "ar": "مزيج كريمي من الحمص والطحينة"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/97d012f00837510f732b762a43b394fd?width=1920"
+        },
+        {
+          "name": {
+            "en": "Mtabbal - Large",
+            "ar": "متبل - كبير"
+          },
+          "description": {
+            "en": "Grilled eggplant mashed with tahini",
+            "ar": "باذنجان مشوي مهروس مع الطحينة"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89944?width=1920"
+        },
+        {
+          "name": {
+            "en": "Grape Leaves - ورق عنب3",
+            "ar": "ورق عنب - كبير عدد13"
+          },
+          "description": {
+            "en": "Grape leaves stuffed with a rice mixture",
+            "ar": "ورق العنب المحشي بخلطة الأرز"
+          },
+          "price": "20.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89945?width=1920"
+        },
+        {
+          "name": {
+            "en": "French Frie",
+            "ar": "بطاطس مقلية وسط"
+          },
+          "description": {
+            "en": "French friesa",
+            "ar": "بطاطس مقلية مقاس وسط"
+          },
+          "price": "15.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/348a9d66da9cc1a56d55d1062c2eed92?width=222"
+        },
+        {
+          "name": {
+            "en": "Grape Leaves - 17 Pieces Large",
+            "ar": "ورق عنب - كبير 17 حبة"
+          },
+          "description": {
+            "en": "Grape leaves stuffed with a rice mixture",
+            "ar": "ورق العنب المحشي بخلطة الأرز"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89945?width=1920"
+        },
+        {
+          "name": {
+            "en": "French Fries",
+            "ar": "صحن بطاطس مقاس كبير"
+          },
+          "description": {
+            "en": "French friess",
+            "ar": "صحن بطاطس كبير"
+          },
+          "price": "20.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/45004954?width=222"
+        },
+        {
+          "name": {
+            "en": "Grape Leaves - ورق عنب4",
+            "ar": "ورق عنب - كبير عدد25"
+          },
+          "description": {
+            "en": "Grape leaves stuffed with a rice mixture",
+            "ar": "ورق العنب المحشي بخلطة الأرز"
+          },
+          "price": "35.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89945?width=1920"
+        },
+        {
+          "name": {
+            "en": "French Friess",
+            "ar": "صحن بطاطس كبير جدا"
+          },
+          "description": {
+            "en": "French friese",
+            "ar": "صحن بطاطس مقاس كبير جدا"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/69055017605bd6a8c37467c279da667e?width=222"
+        },
+        {
+          "name": {
+            "en": "Grape Leaves - ورق عنب5",
+            "ar": "ورق عنب -  36كبير جدا عدد"
+          },
+          "description": {
+            "en": "Grape leaves stuffed with a rice mixture",
+            "ar": "ورق العنب المحشي بخلطة الأرز"
+          },
+          "price": "50.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-89945?width=1920"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Juices",
+        "ar": "العصائر"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Guava Juice",
+            "ar": "عصير جوافة"
+          },
+          "description": {
+            "en": "Natural guava juice",
+            "ar": "عصير جوافة طبيعي"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1812317?width=222"
+        },
+        {
+          "name": {
+            "en": "Orange",
+            "ar": "برتقال"
+          },
+          "description": {
+            "en": "Fresh orange",
+            "ar": "برتقال طازج"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/menu-import-gateway-prd/regions/ME/chains/HS-MMH/a5338a4960fd0744f4c11587add7cb13.jpg?width=222"
+        },
+        {
+          "name": {
+            "en": "Lemon",
+            "ar": "ليمون"
+          },
+          "description": {
+            "en": "Fresh lemon juice",
+            "ar": "عصير ليمون طازج"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-6729795?width=222"
+        },
+        {
+          "name": {
+            "en": "Mango",
+            "ar": "مانجو"
+          },
+          "description": {
+            "en": "Fresh mango juice",
+            "ar": "عصير مانجو طازج"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image_url_ref/754e88d0e621ba511321f7cbc5b66056.jpg?width=222"
+        },
+        {
+          "name": {
+            "en": "Cockatiel",
+            "ar": "كوكتيل"
+          },
+          "description": {
+            "en": "Mix cockatiel",
+            "ar": "كوكتيل مشكل"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/b2151153d40ea2f8c63319113c100f62?width=222"
+        },
+        {
+          "name": {
+            "en": "Strawberry",
+            "ar": "فراولة"
+          },
+          "description": {
+            "en": "Fresh strawberry",
+            "ar": "فراولة فرش"
+          },
+          "price": "8.0",
+          "image": "https://images.deliveryhero.io/image/menu-import-gateway-prd/regions/ME/chains/HS-MMH/43984b26785f655d3096041d3176d567.jpg?width=222"
+        },
+        {
+          "name": {
+            "en": "Pomegranate",
+            "ar": "رمان"
+          },
+          "description": {
+            "en": "Fresh pomegranate",
+            "ar": "رمان طبيعي"
+          },
+          "price": "9.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-127741?width=222"
+        },
+        {
+          "name": {
+            "en": "Gallon Of Natural Pomegranate",
+            "ar": "جالون رمان طبيعي"
+          },
+          "description": {
+            "en": "Fresh and refreshing pomegranate juice",
+            "ar": "عصير رمان طازج و منعش"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/ed013ecca070ca24c7be24ff5844c7f1?width=222"
+        },
+        {
+          "name": {
+            "en": "Cocktail Gallon",
+            "ar": "جالون كوكتيل"
+          },
+          "description": {
+            "en": "Fresh fruit mixed juice",
+            "ar": "عصير مشكل فواكه طازجة"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/185849fa5a700835ca757ab5b5d457be?width=222"
+        },
+        {
+          "name": {
+            "en": "Mango1",
+            "ar": "جالون منجا فرشش"
+          },
+          "description": {
+            "en": "Refreshing juice made from fresh mango.",
+            "ar": "عصير منعش محضر من المانجو الطازج."
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/cc8bf9006e176e0176424397a88dbdeb?width=222"
+        },
+        {
+          "name": {
+            "en": "Strawberry1",
+            "ar": "جالون فراولة"
+          },
+          "description": {
+            "en": "Strawberry",
+            "ar": "فراولة منعش"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/ed013ecca070ca24c7be24ff5844c7f1?width=222"
+        },
+        {
+          "name": {
+            "en": "Banana Milk",
+            "ar": "جالون موز حليب طبيعي"
+          },
+          "description": {
+            "en": "Banana milk1",
+            "ar": "موز مع الحليب الطازج"
+          },
+          "price": "30.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/5b77027c565292babdfa0654b1cb4f87?width=222"
+        },
+        {
+          "name": {
+            "en": "An Orange",
+            "ar": "جالون برتقال فرش"
+          },
+          "description": {
+            "en": "Fresh orange juice",
+            "ar": "عصير برتقال طازج"
+          },
+          "price": "25.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/e3c6218e24ad2f3b885046b9e3025193?width=222"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Sauces",
+        "ar": "الصوصات"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Levantine Hot Sauce",
+            "ar": "شطة شامي"
+          },
+          "description": {
+            "en": "Sautéed sauce with olive oil",
+            "ar": "شطه معجونه  بزيت الزيتون"
+          },
+          "price": "3.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/08f8e324c0a5754e9490ed3b54043602?width=222"
+        },
+        {
+          "name": {
+            "en": "Ketchup",
+            "ar": "كتشب"
+          },
+          "description": {
+            "en": "Delicious tomato sauce",
+            "ar": "صلصة الطماطم الشهيه"
+          },
+          "price": "1.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/29c1913b4e6508f0e5a0ed910142a099?width=222"
+        },
+        {
+          "name": {
+            "en": "Tahini",
+            "ar": "طحينة"
+          },
+          "description": {
+            "en": "Sauce made from tahini paste, lemon juice, garlic, and water,",
+            "ar": "طحينةصوص محضر من معجون الطحينة، عصير الليمون، الثوم، والماء,"
+          },
+          "price": "2.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/174fcf2ead0f4ddea2aa53bd715c3877?width=222"
+        },
+        {
+          "name": {
+            "en": "Mayonnaise With Garlic",
+            "ar": "مكس مايونيز وثوم"
+          },
+          "description": {
+            "en": "Mayonnaise sauce with garlic, large size",
+            "ar": "صوص المايونيز مع الثوم علبة كبيرة"
+          },
+          "price": "5.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/18c0f0ddde538c90d6c4ab0158bd7cdf?width=222"
+        },
+        {
+          "name": {
+            "en": "Hot Sauce",
+            "ar": "شطة عادية"
+          },
+          "description": {
+            "en": "Hot spices served in a delicious way",
+            "ar": "بهارات حاره تقدم بطريقة شهيه"
+          },
+          "price": "1.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/d1a84b46a51c72fdbad4026a988148ff?width=222"
+        },
+        {
+          "name": {
+            "en": "A Box Of Honey",
+            "ar": "علبة عسل خارجية"
+          },
+          "description": {
+            "en": "A box of honey",
+            "ar": "علبة عسل  اونصة واحده"
+          },
+          "price": "4.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/c20a4d64bf1904c6a115aa0cc5c4aa22?width=222"
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Soft Drinks",
+        "ar": "مشروبات غازية وماء"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Pepsi",
+            "ar": "بيبسي"
+          },
+          "description": {
+            "en": "Refreshing carbonated soft drink",
+            "ar": "مشروب بيبسي غازي منعش"
+          },
+          "price": "5.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1d2b05c5f8ce5bec091e2a19a4f8347a?width=222"
+        },
+        {
+          "name": {
+            "en": "Deo",
+            "ar": "ديو"
+          },
+          "description": {
+            "en": "Refreshing soft drink",
+            "ar": "مشروب غازي منعش"
+          },
+          "price": "5.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/c28f23dfd5f92c82b3d0ae19e88bb11c?width=222"
+        },
+        {
+          "name": {
+            "en": "Seven Up",
+            "ar": "سفن اب"
+          },
+          "description": {
+            "en": "Refreshing carbonated soft drink",
+            "ar": "مشروب غازي بنكهة الليمون"
+          },
+          "price": "5.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/d32e29512da2569ff674ca4fca729a6f?width=222"
+        },
+        {
+          "name": {
+            "en": "Wataer",
+            "ar": "ماء"
+          },
+          "description": {
+            "en": "Pure and refreshing fresh drinking water",
+            "ar": "مياة عذبة للشرب نقية ومنعشة"
+          },
+          "price": "2.0",
+          "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/459c9e666794d1121961881c5f404358?width=222"
+        }
+      ]
+    }
+  ]
+}

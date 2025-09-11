@@ -1,0 +1,2256 @@
+{
+  "categories": [
+    {
+      "name": {
+        "en": "Foul",
+        "ar": "الفول"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Al Shabrawey Foul Sandwich",
+            "ar": "ساندوتش فول الشبراوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 9,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Al Shabrawey Foul Sandwich",
+            "ar": "ساندوتش فول الشبراوي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Olive Oil Sandwich",
+            "ar": "ساندوتش فول زيت زيتون"
+          },
+          "description": {
+            "en": "Creamy foul beans, drizzled with extra virgin olive oil served in bread.",
+            "ar": "Creamy foul beans, drizzled with extra virgin olive oil served in bread."
+          },
+          "price": 13,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Olive Oil Sandwich",
+            "ar": "ساندوتش فول زيت زيتون عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 22,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Flaxseed Oil Sandwich",
+            "ar": "ساندوتش فول زيت حار"
+          },
+          "description": {
+            "en": "Sandwich made with foul (fava beans), flaxseed oil, and various toppings.",
+            "ar": "Sandwich made with foul (fava beans), flaxseed oil, and various toppings."
+          },
+          "price": 9,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Flaxseed Oil Sandwich",
+            "ar": "ساندوتش فول زيت حار عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 22,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Eggplant Sandwich",
+            "ar": "ساندوتش فول بالباذنجان"
+          },
+          "description": {
+            "en": "popular Egyptian street food made with foul, eggplant, and tahini sauce",
+            "ar": "طعام الشارع المصري الشعبي المصنوع من الفول والباذنجان وصلصة الطحينة"
+          },
+          "price": 13,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Baladi Ghee Sandwich",
+            "ar": "ساندوتش فول بالسمنة البلدي"
+          },
+          "description": {
+            "en": "fava beans, baladi ghee, spices and bread",
+            "ar": "فول مدمس، سمن بلدي، بهارات وخبز"
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Eggplant Sandwich",
+            "ar": "ساندوتش فول بالباذنجان عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 22,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Baladi Ghee Sandwich",
+            "ar": "ساندوتش فول بالسمنة البلدي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Alexandrian Foul Sandwich",
+            "ar": "ساندوتش فول إسكندراني"
+          },
+          "description": {
+            "en": "Savor the flavorful delight of our Alexandrian Foul Sandwich—a tantalizing fusion of creamy fava beans, aromatic herbs, and zesty toppings nestled in a warm, fluffy bread—for a heavenly culinary experience.",
+            "ar": "Savor the flavorful delight of our Alexandrian Foul Sandwich—a tantalizing fusion of creamy fava beans, aromatic herbs, and zesty toppings nestled in a warm, fluffy bread—for a heavenly culinary experience."
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Alexandrian Foul Sandwich",
+            "ar": "ساندوتش فول إسكندراني عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Tomato Sauce Sandwich",
+            "ar": "ساندوتش فول بالصلصة"
+          },
+          "description": {
+            "en": "Sandwich featuring creamy and flavorful foul (fava beans) smothered in a tangy tomato sauce, served with fresh herbs and condiments.",
+            "ar": "Sandwich featuring creamy and flavorful foul (fava beans) smothered in a tangy tomato sauce, served with fresh herbs and condiments."
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Tomato Sauce Sandwich",
+            "ar": "ساندوتش فول بالصلصة عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Fried Eggs Sandwich",
+            "ar": "ساندوتش فول بيض مقلي"
+          },
+          "description": {
+            "en": "A sandwich filled with fava beans (foul) and topped with fried eggs.",
+            "ar": "A sandwich filled with fava beans (foul) and topped with fried eggs."
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Fried Eggs Sandwich",
+            "ar": "ساندوتش فول بيض مقلي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Boiled Eggs Sandwich",
+            "ar": "ساندوتش فول بيض مسلوق"
+          },
+          "description": {
+            "en": "Sandwich with a filling of foul beans and boiled eggs.",
+            "ar": "Sandwich with a filling of foul beans and boiled eggs."
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Boiled Eggs Sandwich",
+            "ar": "ساندوتش فول بيض مسلوق عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Pastrami Sandwich",
+            "ar": "ساندوتش فول بالبسطرمة"
+          },
+          "description": {
+            "en": "Sandwich featuring a flavorful combination of savory foul (fava beans) and thinly sliced pastrami, served with fresh veggies and zesty condiments.",
+            "ar": "Sandwich featuring a flavorful combination of savory foul (fava beans) and thinly sliced pastrami, served with fresh veggies and zesty condiments."
+          },
+          "price": 23,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Pastrami Sandwich",
+            "ar": "ساندوتش فول بالبسطرمة عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Sausage Sandwich",
+            "ar": "ساندوتش فول سوسيس"
+          },
+          "description": {
+            "en": "A sandwich filled with cooked fava beans (foul) and sausage.",
+            "ar": "A sandwich filled with cooked fava beans (foul) and sausage."
+          },
+          "price": 23,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Foul With Sausage Sandwich",
+            "ar": "ساندوتش فول سوسيس عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 36,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Dynamite Sandwich",
+            "ar": "ساندويتش ديناميت"
+          },
+          "description": {
+            "en": "Foul, falafel, eggs, eggplant, potatoes",
+            "ar": "فول، طعميه، بيض، باذنجان، بطاطس"
+          },
+          "price": 23,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Taamia",
+        "ar": "الطعمية"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Al Shabrawey Taamia Sandwich",
+            "ar": "ساندوتش طعمية الشبراوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 10,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Al Shabrawey Taamia Sandwich",
+            "ar": "ساندوتش طعمية الشبراوي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Stuffed Taamia Sandwich",
+            "ar": "ساندوتش طعمية محشية"
+          },
+          "description": {
+            "en": "Crispy falafel balls, fresh vegetables, and a tangy sauce are lovingly wrapped in warm pita bread",
+            "ar": "Crispy falafel balls, fresh vegetables, and a tangy sauce are lovingly wrapped in warm pita bread"
+          },
+          "price": 15,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Stuffed Taamia Sandwich",
+            "ar": "ساندوتش طعمية محشية عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 23,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mix Taamia Sandwich",
+            "ar": "ساندوتش طعمية ميكس"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 15,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Mix Taamia Sandwich",
+            "ar": "ساندوتش طعمية ميكس عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Eggplant Sandwich",
+            "ar": "ساندوتش طعمية باذنجان"
+          },
+          "description": {
+            "en": "Sandwich with taamia (Egyptian falafel) and roasted eggplant.",
+            "ar": "Sandwich with taamia (Egyptian falafel) and roasted eggplant."
+          },
+          "price": 15,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Taamia With Eggplant Sandwich",
+            "ar": "ساندوتش طعمية باذنجان عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Double Taamia Sandwich",
+            "ar": "ساندوتش طعمية دوبل"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 15,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Double Taamia Sandwich",
+            "ar": "ساندوتش طعمية دوبل عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Tahabesh Taamia Sandwich",
+            "ar": "ساندوتش طعمية تحابيش"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Tahabesh Taamia Sandwich",
+            "ar": "ساندوتش طعمية تحابيش عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Boiled Eggs Sandwich",
+            "ar": "ساندوتش طعمية بيض مسلوق"
+          },
+          "description": {
+            "en": "A sandwich filled with taamia and boiled eggs.",
+            "ar": "ساندويتش  مليئة بالطعمية والبيض المسلوق."
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Taamia With Boiled Eggs Sandwich",
+            "ar": "ساندوتش طعمية بيض مسلوق عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 27,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Fried Eggs Sandwich",
+            "ar": "ساندوتش طعمية بيض مقلي"
+          },
+          "description": {
+            "en": "Falafel, fried eggs, Vegetables, bread and spices",
+            "ar": "فلافل، بيض مقلي، خضار، خبز وبهارات"
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Taamia With Fried Eggs Sandwich",
+            "ar": "ساندوتش طعمية بيض مقلي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Baladi Egga Sandwich",
+            "ar": "ساندوتش طعمية عجة بلدي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 20,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Taamia With Baladi Egga Sandwich",
+            "ar": "ساندوتش طعمية عجة بلدي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 29,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Ain Katkot Taamia Sandwich",
+            "ar": "ساندوتش طعمية عين كتكوت"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 21,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Ain Katkot Taamia Sandwich",
+            "ar": "ساندوتش طعمية عين كتكوت عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Kiri",
+            "ar": "طعمية مع كيري"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Cheddar",
+            "ar": "طعمية بالشيدر"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Mozzarella",
+            "ar": "طعمية بالموتزاريلا"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia Stuffed With Eggplant",
+            "ar": "طعمية محشية باذنجان"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 20,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Variety Items",
+        "ar": "الأصناف المتنوعة"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Mesakaa Sandwich",
+            "ar": "ساندوتش مسقعة"
+          },
+          "description": {
+            "en": "Indulge in our Mesakaa Sandwich, filled with a flavorful mix of roasted eggplant, bell peppers, tomatoes, and onions, infused with fragrant herbs and spices, and sandwiched between two slices of warm and fluffy bread for a taste of the Mediterranean.",
+            "ar": "Indulge in our Mesakaa Sandwich, filled with a flavorful mix of roasted eggplant, bell peppers, tomatoes, and onions, infused with fragrant herbs and spices, and sandwiched between two slices of warm and fluffy bread for a taste of the Mediterranean."
+          },
+          "price": 15,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Mesakaa Sandwich",
+            "ar": "ساندوتش مسقعة عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Baba Ghannoug Sandwich",
+            "ar": "ساندوتش بابا غنوج"
+          },
+          "description": {
+            "en": "A creamy and smoky blend of roasted eggplant, tahini, and garlic, paired with a crisp and refreshing array of vegetables and herbs, all nestled between two slices of warm  breaD",
+            "ar": "A creamy and smoky blend of roasted eggplant, tahini, and garlic, paired with a crisp and refreshing array of vegetables and herbs, all nestled between two slices of warm  breaD"
+          },
+          "price": 15,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Baba Ghannoug Sandwich",
+            "ar": "ساندوتش بابا غنوج عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 23,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Tomato With Cheese Sandwich",
+            "ar": "ساندوتش جبنة بالطماطم"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 15,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Tomato With Cheese Sandwich",
+            "ar": "ساندوتش جبنة بالطماطم عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Shami Fried Cheese Sandwich",
+            "ar": "ساندوتش جبنة مقلية شامي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 29,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Shami Fried Cheese Sandwich",
+            "ar": "ساندوتش جبنة مقلية شامي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 40,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Roll",
+        "ar": "الرول"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Falafel Roll",
+            "ar": "فلافل رول"
+          },
+          "description": {
+            "en": "Falafel, Vegetables, Pita bread and spices",
+            "ar": "فلافل، خضار، خبز بيتا وبهارات"
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries Roll",
+            "ar": "بطاطس رول"
+          },
+          "description": {
+            "en": "deep fried potato, spices and bread",
+            "ar": "بطاطا مقلية، بهارات وخبز"
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Valentino Roll",
+            "ar": "فلانتينو رول"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 38,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Fried Cheese Roll",
+            "ar": "جبنة مقلية رول"
+          },
+          "description": {
+            "en": "Spring roll wrappers, cheese, vegetable oil",
+            "ar": "ورق سبرينج رول، جبنة، زيت نباتي"
+          },
+          "price": 38,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "French Fries",
+        "ar": "البطاطس"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "French Fries Sandwich",
+            "ar": "ساندوتش بطاطس صوابع"
+          },
+          "description": {
+            "en": "Made with crispy fries for those who want a quick and tasty sandwich that packs a punch of flavor.",
+            "ar": "Made with crispy fries for those who want a quick and tasty sandwich that packs a punch of flavor."
+          },
+          "price": 16,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس صوابع عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Potato Chips Sandwich",
+            "ar": "ساندوتش بطاطس شيبسي"
+          },
+          "description": {
+            "en": "Made with potato chips for those who want a quick and tasty sandwich that packs a punch of flavor.",
+            "ar": "Made with potato chips for those who want a quick and tasty sandwich that packs a punch of flavor."
+          },
+          "price": 16,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Potato Chips Sandwich",
+            "ar": "ساندوتش بطاطس شيبسي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Potato Puree Sandwich",
+            "ar": "ساندوتش بطاطس بوريه"
+          },
+          "description": {
+            "en": "Sandwich filled with potato puree.",
+            "ar": "ساندويتش مملوء ببطاطس مهروسة."
+          },
+          "price": 16,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Potato Puree Sandwich",
+            "ar": "ساندوتش بطاطس بوريه عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Mozzarella Cheese Sandwich",
+            "ar": "ساندوتش بطاطس موتزاريلا"
+          },
+          "description": {
+            "en": "A crispy and golden stack of fries, layered with melty and gooey mozzarella cheese, all nestled between two slices of warm and toasty bread.",
+            "ar": "A crispy and golden stack of fries, layered with melty and gooey mozzarella cheese, all nestled between two slices of warm and toasty bread."
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Mozzarella Cheese Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس موتزاريلا عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 34,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Ketchup And Mayonnaise Sandwich",
+            "ar": "ساندوتش بطاطس محمرة مع كاتشب ومايونيز"
+          },
+          "description": {
+            "en": "Crispy fries, tangy ketchup, and creamy mayo, all sandwiched between two slices of bread.",
+            "ar": "Crispy fries, tangy ketchup, and creamy mayo, all sandwiched between two slices of bread."
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Ketchup And Mayonnaise Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس محمرة مع كاتشب ومايونيز - خبز فرنسي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 34,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Roumi Cheese Sandwich",
+            "ar": "ساندوتش بطاطس جبنة رومي"
+          },
+          "description": {
+            "en": "Experience the ultimate indulgence: our French Fries With Roumi Cheese Sandwich! Golden, crispy fries between artisanal bread, layered with melty Roumi cheese. Crave every cheesy, savory bite of this harmonious delight.",
+            "ar": "Experience the ultimate indulgence: our French Fries With Roumi Cheese Sandwich! Golden, crispy fries between artisanal bread, layered with melty Roumi cheese. Crave every cheesy, savory bite of this harmonious delight."
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Roumi Cheese Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس جبنة رومي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 34,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Cheddar Cheese Sandwich",
+            "ar": "ساندوتش بطاطس جبنة شيدر"
+          },
+          "description": {
+            "en": "Made of crispy fries and melted cheddar cheese, layered between two slices of toasted bread.",
+            "ar": "Made of crispy fries and melted cheddar cheese, layered between two slices of toasted bread."
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Cheddar Cheese Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس جبنة شيدر عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 34,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Fried Eggs Sandwich",
+            "ar": "ساندوتش بطاطس بيض مقلي"
+          },
+          "description": {
+            "en": "bread, fries, butter, fried eggs and spices",
+            "ar": "خبز، بطاطس مقلية، زبدة، بيض مقلي والتوابل"
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Fried Eggs Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس بيض مقلي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Boiled Eggs Sandwich",
+            "ar": "ساندوتش بطاطس بيض مسلوق"
+          },
+          "description": {
+            "en": "Sandwich with French fries and boiled eggs.",
+            "ar": "سندويتش مع بطاطا مقلية وبيض مسلوق."
+          },
+          "price": 24,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Boiled Eggs Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس بيض مسلوق عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 33,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Pastrami Sandwich",
+            "ar": "ساندوتش بطاطس بسطرمة"
+          },
+          "description": {
+            "en": "Pastrami, bread and fries",
+            "ar": "بسطرمة، خبز و بطاطا مقلية"
+          },
+          "price": 27,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Pastrami Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس بسطرمة عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 37,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Sausage Sandwich",
+            "ar": "ساندوتش بطاطس سوسيس"
+          },
+          "description": {
+            "en": "bread, sausage, butter, lettuce, tomato, fries and spices",
+            "ar": "خبز، سجق ، زبدة، خس، طماطم، بطاطا مقلية وبهارات"
+          },
+          "price": 27,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Sausage Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس سوسيس عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 37,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Baba Ghannoug Sandwich",
+            "ar": "ساندوتش بطاطس بابا غنوج"
+          },
+          "description": {
+            "en": "Sandwich with French fries and baba ghannoug.",
+            "ar": "سندويتش مع بطاطا مقلية وبابا غنوج."
+          },
+          "price": 20,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Baba Ghannoug Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس بابا غنوج عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 29,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Ketchup Sandwich",
+            "ar": "ساندوتش بطاطس كاتشب"
+          },
+          "description": {
+            "en": "Crispy fries tucked between soft bread, perfectly complemented by tangy ketchup.",
+            "ar": "Crispy fries tucked between soft bread, perfectly complemented by tangy ketchup."
+          },
+          "price": 20,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Ketchup Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس كاتشب عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 29,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Mayonnaise Sandwich",
+            "ar": "ساندوتش بطاطس مايونيز"
+          },
+          "description": {
+            "en": "Sandwich with French fries and mayo.",
+            "ar": "Sandwich with French fries and mayo."
+          },
+          "price": 20,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Mayonnaise Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس مايونيز عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 32,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Bazooka French Fries Sandwich",
+            "ar": "ساندوتش بطاطس بازوكا"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Bazooka French Fries Sandwich - French Bread",
+            "ar": "ساندوتش بطاطس بازوكا عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 38,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries Packet",
+            "ar": "باكيت بطاطس"
+          },
+          "description": {
+            "en": "Made with fresh potatoes, cut into thin strips, and deep fried to golden perfection, they're a perfect snack or side dish to enjoy with any meal.",
+            "ar": "Made with fresh potatoes, cut into thin strips, and deep fried to golden perfection, they're a perfect snack or side dish to enjoy with any meal."
+          },
+          "price": 22,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Cheddar Sauce Fries",
+            "ar": " بطاطس صوص شيدر"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 24,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Eggs",
+        "ar": "البيض"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Boiled Eggs Sandwich",
+            "ar": "ساندوتش بيض مسلوق"
+          },
+          "description": {
+            "en": "Perfectly cooked eggs nestled between two slices of freshly toasted bread and a savory spread that will have you craving it all day long.",
+            "ar": "Perfectly cooked eggs nestled between two slices of freshly toasted bread and a savory spread that will have you craving it all day long."
+          },
+          "price": 17,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Boiled Eggs Sandwich",
+            "ar": "ساندوتش بيض مسلوق عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 28,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Fried Eggs Sandwich",
+            "ar": "ساندوتش بيض مقلي"
+          },
+          "description": {
+            "en": "Perfectly cooked eggs, nestled between soft bread",
+            "ar": "Perfectly cooked eggs, nestled between soft bread"
+          },
+          "price": 19,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fried Eggs Sandwich",
+            "ar": "ساندوتش بيض مقلي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Eggs With Roumi Cheese Sandwich",
+            "ar": "ساندوتش بيض جبنة رومي"
+          },
+          "description": {
+            "en": "Fried eggs, melted roumi cheese, served in sandwich.",
+            "ar": "بيض مقلي، جبنة رومي ذائبة، يقدم في سندويتش."
+          },
+          "price": 27,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Eggs With Roumi Cheese Sandwich",
+            "ar": "ساندوتش بيض جبنة رومي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 36,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Eggs With Pastrami Sandwich",
+            "ar": "ساندوتش بيض بسطرمة"
+          },
+          "description": {
+            "en": "Delight in the savory delight of our Eggs With Pastrami Sandwich, featuring perfectly cooked eggs, thinly sliced pastrami, and a medley of delectable flavors, all nestled between two slices of toasted bread for a satisfying breakfast or brunch experience.",
+            "ar": "Delight in the savory delight of our Eggs With Pastrami Sandwich, featuring perfectly cooked eggs, thinly sliced pastrami, and a medley of delectable flavors, all nestled between two slices of toasted bread for a satisfying breakfast or brunch experience."
+          },
+          "price": 27,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Eggs With Pastrami Sandwich",
+            "ar": "ساندوتش بيض بسطرمة عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 38,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Eggs With Sausage Sandwich",
+            "ar": "ساندوتش بيض سوسيس"
+          },
+          "description": {
+            "en": "bread, egg and sausage pieces",
+            "ar": "خبز ، بيض وقطع سجق"
+          },
+          "price": 27,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Eggs With Sausage Sandwich",
+            "ar": "ساندوتش بيض سوسيس عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 38,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Eggs With Cheddar Cheese Sandwich",
+            "ar": "ساندوتش بيض شيدر"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 27,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Eggs Sandwich",
+            "ar": "ساندوتش بيض فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 21,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Eggs With Cheddar Cheese Sandwich",
+            "ar": "ساندوتش بيض شيدر عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 36,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Shakshoka Eggs Sandwich",
+            "ar": "ساندوتش بيض شكشوكة"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 21,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Shakshoka Eggs Sandwich",
+            "ar": "ساندوتش بيض شكشوكة عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 33,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Eggs Pizza Sandwich",
+            "ar": "ساندوتش بيض بيتزا"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 29,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Eggs Pizza Sandwich",
+            "ar": "ساندوتش بيض بيتزا عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 41,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Apache Eggs Sandwich",
+            "ar": "ساندوتش بيض أباتشي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Apache Eggs Sandwich",
+            "ar": "ساندوتش بيض أباتشي عيش فرنساوي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 44,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Meat",
+        "ar": "اللحم"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Jumbo Plain Burger Sandwich",
+            "ar": "ساندوتش برجر سادة جامبو"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 60,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Burger With Cheddar Cheese Sandwich",
+            "ar": "ساندوتش برجر جبنة شيدر"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 68,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mix Burger With Eggs And Cheese Sandwich",
+            "ar": "ساندوتش برجر ميكس بيض وجبنة"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 75,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Large Sausage Sandwich",
+            "ar": "ساندوتش سوسيس كبير"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 70,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Syrian Sausage Sandwich",
+            "ar": "ساندوتش سوسيس سوري"
+          },
+          "description": {
+            "en": "sausage, spices and Syrian pita bread",
+            "ar": "سجق، بهارات وخبز بيتا سوري"
+          },
+          "price": 75,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Large Mexican Hot Dog Sandwich",
+            "ar": "ساندوتش مكسيكان هوت دوج كبير"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 80,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Syrian Mexican Hot Dog Sandwich",
+            "ar": "ساندوتش مكسيكان هوت دوج سوري"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 85,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Chicken",
+        "ar": "الدجاج"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Large Chicken Pane Sandwich",
+            "ar": "ساندوتش تشيكن بانيه كبير"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 80,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Syrian Chicken Pane Sandwich",
+            "ar": "ساندوتش تشيكن بانيه سوري"
+          },
+          "description": {
+            "en": "boneless chicken breasts, onion, pepper and Syrian pita bread",
+            "ar": "صدور دجاج مسحب، بصل، فلفل وخبز بيتا سوري"
+          },
+          "price": 85,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Large Shish Tawook Sandwich",
+            "ar": "ساندوتش شيش طاووق كبير"
+          },
+          "description": {
+            "en": "Large sandwich with shish tawook.",
+            "ar": "ساندوتش كبير مع شيش طاووق."
+          },
+          "price": 80,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Syrian Shish Tawook Sandwich",
+            "ar": "ساندوتش شيش طاووق سوري"
+          },
+          "description": {
+            "en": "Grilled chicken skewers wrapped in a soft pita bread, with aromatic spices and condiments.",
+            "ar": "Grilled chicken skewers wrapped in a soft pita bread, with aromatic spices and condiments."
+          },
+          "price": 85,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Large Chicken Fajita Sandwich",
+            "ar": "ساندوتش تشيكن فاهيتا كبير"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 80,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Syrian Chicken Fajita Sandwich",
+            "ar": "ساندوتش تشيكن فاهيتا سوري"
+          },
+          "description": {
+            "en": "Sandwich featuring Syrian style chicken fajita.",
+            "ar": "ساندويتش مكون من فاهيتا الدجاج على الطريقة السورية."
+          },
+          "price": 85,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Shawerma",
+        "ar": "الشاورما"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Large Chicken Shawerma Sandwich",
+            "ar": "ساندوتش شاورما دجاج كبير"
+          },
+          "description": {
+            "en": "Large sandwich filled with chicken shawarma.",
+            "ar": "ساندويتش كبير محشو بشاورما الدجاج."
+          },
+          "price": 80,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Syrian Chicken Shawerma Sandwich",
+            "ar": "ساندوتش شاورما دجاج سوري"
+          },
+          "description": {
+            "en": "Sandwich featuring tender and marinated chicken shawarma, wrapped in warm bread, and accompanied by fresh vegetables and flavorful sauces.",
+            "ar": "Sandwich featuring tender and marinated chicken shawarma, wrapped in warm bread, and accompanied by fresh vegetables and flavorful sauces."
+          },
+          "price": 85,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Crepes",
+        "ar": "الكريب"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Pane Crepe",
+            "ar": "كريب بانيه"
+          },
+          "description": {
+            "en": "A crepe filled with paneer, a type of Indian cheese.",
+            "ar": "A crepe filled with paneer, a type of Indian cheese."
+          },
+          "price": 90,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Crispy Crepe",
+            "ar": "كريب كرسبي"
+          },
+          "description": {
+            "en": "Thin and lacy, filled with a variety of savory or sweet fillings",
+            "ar": "Thin and lacy, filled with a variety of savory or sweet fillings"
+          },
+          "price": 90,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Shish Tawook Crepe",
+            "ar": "كريب شيش طاووق"
+          },
+          "description": {
+            "en": "Made with tender chunks of chicken marinated in a blend of spices and yogurt, grilled to perfection, and wrapped in a warm crepe, it's a perfect meal for breakfast or lunch.",
+            "ar": "Made with tender chunks of chicken marinated in a blend of spices and yogurt, grilled to perfection, and wrapped in a warm crepe, it's a perfect meal for breakfast or lunch."
+          },
+          "price": 95,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Chicken Fajita Crepe",
+            "ar": "كريب فاهيتا دجاج"
+          },
+          "description": {
+            "en": "Made with tender chicken, sauteed peppers & onions, wrapped in a warm crep, topped with sauce and cheese. It's a perfect meal for breakfast or lunch.",
+            "ar": "Made with tender chicken, sauteed peppers & onions, wrapped in a warm crep, topped with sauce and cheese. It's a perfect meal for breakfast or lunch."
+          },
+          "price": 95,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Chicken Shawerma Crepe",
+            "ar": "كريب شاورما دجاج"
+          },
+          "description": {
+            "en": "Experience the irresistible fusion of Middle Eastern and French cuisine with our delectable Chicken Shawarma Crepe, filled with tender, succulent chicken, fresh veggies, and tangy sauce, all wrapped in a thin and crispy crepe.",
+            "ar": "Experience the irresistible fusion of Middle Eastern and French cuisine with our delectable Chicken Shawarma Crepe, filled with tender, succulent chicken, fresh veggies, and tangy sauce, all wrapped in a thin and crispy crepe."
+          },
+          "price": 95,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Beef Burger Crepe",
+            "ar": "كريب برجر لحم"
+          },
+          "description": {
+            "en": "Made with juicy beef patty, topped with veggies and cheese, all wrapped in a thin and warm crepe.",
+            "ar": "Made with juicy beef patty, topped with veggies and cheese, all wrapped in a thin and warm crepe."
+          },
+          "price": 70,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mexican Hot Dog Crepe",
+            "ar": "كريب هوت دوج مكسيكي"
+          },
+          "description": {
+            "en": "hot dog, bell pepper, mexican cheese, onion and spices",
+            "ar": "هوت دوج، فلفل ألوان، جبنة مكسيكية، بصل و بهارات"
+          },
+          "price": 90,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mix Mexican And Pane Crepe",
+            "ar": "كريب ميكس مكسيكان وبانيه"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 99,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mix Shish And Pane Crepe",
+            "ar": "كريب ميكس شيش وبانيه"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 99,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mix Burger And Pane Crepe",
+            "ar": "كريب ميكس برجر وبانيه"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 99,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries Crepe",
+            "ar": "كريب بطاطس"
+          },
+          "description": {
+            "en": "Made with freshly cooked French fries, wrapped in a warm crepe and topped with your choice of sauce and cheese, it's a perfect meal for breakfast or lunch.",
+            "ar": "Made with freshly cooked French fries, wrapped in a warm crepe and topped with your choice of sauce and cheese, it's a perfect meal for breakfast or lunch."
+          },
+          "price": 60,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "French Fries With Roumi Cheese Crepe",
+            "ar": "كريب بطاطس جبنة رومي"
+          },
+          "description": {
+            "en": "crepe dough, fries, roumi cheese and spices ",
+            "ar": "عجينة كريب، بطاطا مقلية، جبنة رومي وبهارات"
+          },
+          "price": 65,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Pastrami Crepe",
+            "ar": "كريب بسطرمة"
+          },
+          "description": {
+            "en": "Made with tender slices of pastrami and cheese, all wrapped in a warm crepe, It's perfect meal for breakfast or lunch.",
+            "ar": "Made with tender slices of pastrami and cheese, all wrapped in a warm crepe, It's perfect meal for breakfast or lunch."
+          },
+          "price": 80,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Salads",
+        "ar": "السلطات"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Baladi Salad",
+            "ar": "سلطة بلدي"
+          },
+          "description": {
+            "en": "Our fresh and vibrant Baladi Salad, featuring a colorful array of crisp veggies, tangy feta cheese, and zesty lemon dressing, is the perfect way to add a healthy and flavorful touch to your meal.",
+            "ar": "Our fresh and vibrant Baladi Salad, featuring a colorful array of crisp veggies, tangy feta cheese, and zesty lemon dressing, is the perfect way to add a healthy and flavorful touch to your meal."
+          },
+          "price": 15,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Marinated Tomatoes",
+            "ar": "طماطم متبلة"
+          },
+          "description": {
+            "en": "Experience the burst of tangy and savory flavors with our exquisite Marinated Tomatoes, guaranteed to tantalize your taste buds!",
+            "ar": "Experience the burst of tangy and savory flavors with our exquisite Marinated Tomatoes, guaranteed to tantalize your taste buds!"
+          },
+          "price": 20,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Sesame Paste",
+            "ar": "طحينة"
+          },
+          "description": {
+            "en": "Thick paste made from ground sesame seeds",
+            "ar": "Thick paste made from ground sesame seeds"
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Baba Ghannoug",
+            "ar": "بابا غنوج"
+          },
+          "description": {
+            "en": "Made with cooked and mashed eggplants, mixed with vegetables, perfect as a side dish.",
+            "ar": "Made with cooked and mashed eggplants, mixed with vegetables, perfect as a side dish."
+          },
+          "price": 20,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Tomato With Cheese",
+            "ar": "جبنة بالطماطم"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 20,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Pickled Eggplant",
+            "ar": "باذنجان مخلل"
+          },
+          "description": {
+            "en": "Savor the tangy, salty, and sour flavors in every bite of these mouth-watering Pickled Eggplants.",
+            "ar": "Savor the tangy, salty, and sour flavors in every bite of these mouth-watering Pickled Eggplants."
+          },
+          "price": 13,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mixed Pickles",
+            "ar": "مخلل مشكل"
+          },
+          "description": {
+            "en": "A medley of crunchy and spicy pickled vegetables",
+            "ar": "A medley of crunchy and spicy pickled vegetables"
+          },
+          "price": 7,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Side Items",
+        "ar": "الأصناف الجانبية"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Omelette Spanish Plate",
+            "ar": "طبق أومليت أسباني"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 36,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Omelette Pizza Plate",
+            "ar": "طبق بيتزا أومليت"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 39,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Omelette Apatshi Plate",
+            "ar": "طبق أومليت أباتشي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 39,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Cheddar Patty",
+            "ar": "قرص طعمية مع شيدر"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 21,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Curry Patty",
+            "ar": "قرص طعمية مع كاري"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 21,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Taamia With Mozzarella Patty",
+            "ar": "قرص طعمية مع موزاريلا"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 21,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Cheddar Sauce",
+            "ar": "صوص شيدر "
+          },
+          "description": {
+            "en": "Creamy Cheddar Sauce, Made with sharp cheddar cheese.",
+            "ar": "Creamy Cheddar Sauce, Made with sharp cheddar cheese."
+          },
+          "price": 16,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Smoked Turkey",
+            "ar": "تركي مدخن"
+          },
+          "description": {
+            "en": "Turkey meat that has been smoked for added flavor.",
+            "ar": "Turkey meat that has been smoked for added flavor."
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Plain Foul Box",
+            "ar": "علبة فول سادة"
+          },
+          "description": {
+            "en": "Creamy and spiced fava beans, served with fresh bread and a variety of toppings and condiments",
+            "ar": "Creamy and spiced fava beans, served with fresh bread and a variety of toppings and condiments"
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Flavored Foul Box",
+            "ar": "علبة فول محوج"
+          },
+          "description": {
+            "en": "A boxed meal featuring foul (fava beans) with added flavors and toppings, served with accompaniments.",
+            "ar": "A boxed meal featuring foul (fava beans) with added flavors and toppings, served with accompaniments."
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Flaxseed Oil Box",
+            "ar": "علبة فول زيت حار"
+          },
+          "description": {
+            "en": "Boxed meal featuring foul beans with a drizzle of flaxseed oil.",
+            "ar": "Boxed meal featuring foul beans with a drizzle of flaxseed oil."
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Olive Oil Box",
+            "ar": "علبة فول زيت زيتون"
+          },
+          "description": {
+            "en": "Foul with Olive Oil Box is a creamy fava beans, drizzled with olive oil and sprinkled with aromatic spices,",
+            "ar": "Foul with Olive Oil Box is a creamy fava beans, drizzled with olive oil and sprinkled with aromatic spices,"
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Ghee Box",
+            "ar": "علبة فول سمنة"
+          },
+          "description": {
+            "en": "traditional Egyptian dish made with fava beans, garlic, spices, and ghee",
+            "ar": "طبق مصري تقليدي مصنوع من الفول والثوم والبهارات والسمن\n"
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Alexandrian Foul Box",
+            "ar": "علبة فول أسكندراني"
+          },
+          "description": {
+            "en": "Creamy fava beans slow-cooked with aromatic spices, served with a selection of toppings and warm bread.",
+            "ar": "Creamy fava beans slow-cooked with aromatic spices, served with a selection of toppings and warm bread."
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Tomato Sauce Box",
+            "ar": "علبة فول بالصلصة"
+          },
+          "description": {
+            "en": "Traditional Middle Eastern dish of fava beans with tomato sauce.",
+            "ar": "Traditional Middle Eastern dish of fava beans with tomato sauce."
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Fried Eggs Box",
+            "ar": "علبة فول بيض مقلي"
+          },
+          "description": {
+            "en": "fried egg, Fava beans, Tomatoes, Onions, Garlic, Cilantro, Salt, Pepper, Cumin",
+            "ar": "بيض مقلي، فول مدمس ، طماطم ، بصل ، ثوم ، كزبرة ، ملح ، فلفل ، كمون"
+          },
+          "price": 36,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Foul With Boiled Eggs Box",
+            "ar": "علبة فول بيض مسلوق"
+          },
+          "description": {
+            "en": "fava beans, boiled egg and spices",
+            "ar": "فول مدمس، بيض مسلوق و بهارات"
+          },
+          "price": 35,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Uncooked Taamia Box",
+            "ar": "علبة عجينة طعمية"
+          },
+          "description": {
+            "en": "Falafel mix box made of ground chickpeas, herbs, and spices served in pita bread with salad, hummus, and tahini sauce.",
+            "ar": "Falafel mix box made of ground chickpeas, herbs, and spices served in pita bread with salad, hummus, and tahini sauce."
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mesakaa Box",
+            "ar": "علبة مسقعة"
+          },
+          "description": {
+            "en": "Savor the Middle Eastern feast in our Mesakaa Box, a delightful assortment of grilled meats, flavorful rice, and mouthwatering sides, offering a culinary journey you'll crave for.",
+            "ar": "Savor the Middle Eastern feast in our Mesakaa Box, a delightful assortment of grilled meats, flavorful rice, and mouthwatering sides, offering a culinary journey you'll crave for."
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mashed Potato Box",
+            "ar": "علبة بطاطس مهروسة"
+          },
+          "description": {
+            "en": "Box with creamy and fluffy mashed potatoes.",
+            "ar": "Box with creamy and fluffy mashed potatoes."
+          },
+          "price": 31,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "3 Small Taamia Patty",
+            "ar": "3 قرص طعمية صغير"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 9,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Large Taamia Patty",
+            "ar": "قرص طعمية كبير"
+          },
+          "description": {
+            "en": "Fava beans, soaked overnight, fresh parsley, fresh cilantro, fresh mint, green onions, garlic cloves, onion, salt, black pepper, ground cumin, ground coriander, baking powder and vegetable oil",
+            "ar": "فول مدمس منقوع طوال الليل، بقدونس طازج، كزبرة طازجة، نعناع طازج، بصل أخضر، فصوص ثوم، بصل، ملح، فلفل أسود، كمون مطحون، كزبرة مطحونة، بيكنج باودر وزيت نباتي"
+          },
+          "price": 9,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Stuffed Taamia Patty",
+            "ar": "قرص طعمية محشية"
+          },
+          "description": {
+            "en": "Taamia stuffed with Cheese, spices and herbs",
+            "ar": "طعمية محشوة بالجبن والبهارات والاعشاب"
+          },
+          "price": 13,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Egga Patty",
+            "ar": "قرص عجة"
+          },
+          "description": {
+            "en": "eggs, chopped vegetables and spices",
+            "ar": "البيض والخضروات المفرومة والتوابل"
+          },
+          "price": 23,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Ain Katkot Taamia Patty",
+            "ar": "قرص طعمية عين كتكوت"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 23,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Omelet Plate",
+            "ar": "صحن اومليت"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 35,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Omelet With Romy Plate",
+            "ar": "صحن اومليت مع  رومي"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 40,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Omelet With Pastrami Plate",
+            "ar": "صحن اومليت بالبسطرمة"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 40,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Omelette With Sausage Plate",
+            "ar": "طبق أومليت مع سوسيس"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 40,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Omelette With Cheddar Plate",
+            "ar": "طبق أومليت مع شيدر"
+          },
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "price": 40,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Beverages",
+        "ar": "المشروبات"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "en": "Pepsi Can",
+            "ar": "بيبسي علب"
+          },
+          "description": {
+            "en": "Carbonated soft drink",
+            "ar": "Carbonated soft drink"
+          },
+          "price": 18,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "7 Up Can",
+            "ar": "سفن أب علب"
+          },
+          "description": {
+            "en": "Non-caffeinated soft drink",
+            "ar": "Non-caffeinated soft drink"
+          },
+          "price": 18,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mirinda Can",
+            "ar": "ميرندا علب"
+          },
+          "description": {
+            "en": "Soft drink",
+            "ar": "Soft drink"
+          },
+          "price": 18,
+          "image": ""
+        },
+        {
+          "name": {
+            "en": "Mineral Water",
+            "ar": "مياه معدنية"
+          },
+          "description": {
+            "en": "Stay hydrated and refreshed with our mineral water. ",
+            "ar": "Stay hydrated and refreshed with our mineral water. "
+          },
+          "price": 9,
+          "image": ""
+        }
+      ]
+    }
+  ]
+}

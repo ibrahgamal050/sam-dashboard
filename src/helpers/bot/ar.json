@@ -1,0 +1,743 @@
+
+{
+    "props": {
+        "pageProps": {
+            "_nextI18Next": {
+                "initialI18nStore": {
+                    "ar": {
+                        "common": {
+                            "locale": "eng",
+                            "copyright": "© {{year}} HungerStation LTD.",
+                            "english": "English",
+                            "arabic": "عربي",
+                            "footer": {
+                                "hungerstation": "هنقرستيشن",
+                                "about": "عن هنقرستيشن",
+                                "careers": "وظائف",
+                                "rider": "سجّل كمندوب توصيل",
+                                "business": "انضم الآن كشريك",
+                                "market": "كويك ماركت",
+                                "fazaa": "فزعة",
+                                "help": "مساعدة",
+                                "faqs": "أسئلة وأجوبة",
+                                "terms": "شروط الإستخدام",
+                                "rewards_terms": "شروط إستخدام المكافآت",
+                                "policy": "سياسة الخصوصية",
+                                "contact": "تواصل معنا",
+                                "countries": "البلاد",
+                                "region": "متواجدين في",
+                                "bh": "البحرين",
+                                "sa": "السعودية",
+                                "download": {
+                                    "label": "حمّل التطبيق",
+                                    "content": "احصل على كل ما تحتاجه بتوصيل سريع من الأكل والمقاضي إلى الصيدلية والورود وأكثر"
+                                }
+                            },
+                            "unit": {
+                                "distance": "المسافة",
+                                "delivery-time": "مدة التوصيل",
+                                "delivery": "التوصيل"
+                            },
+                            "actions": {
+                                "close": "تم",
+                                "expand": "عرض الكل..."
+                            },
+                            "completeOrder": {
+                                "label": "كمل طلبك عن طريق التطبيق",
+                                "content": "كمل طلبك عن طريق التطبيق واستمتع بتجربة أفضل"
+                            },
+                            "location-picker": {
+                                "title": "عنوان التوصيل",
+                                "deliver-to": "التوصيل إلى",
+                                "submit": "التوصيل لهذا العنوان",
+                                "placeholder": "ابحث عن منطقة ، شارع ، معلم معروف",
+                                "not-available": "للأسف، ،لا يوجد توصيل لهذا الموقع",
+                                "widget": {
+                                    "title": "اختر موقع التوصيل",
+                                    "subtitle": "حدد موقعك لعرض المتاجر والعروض الخاصة بمنطقتك",
+                                    "button": "حدد موقعك"
+                                },
+                                "errors": {
+                                    "permission": "اسمح لهنقرستيشن بتحديد موقعك بشكل أوتوماتيكي"
+                                }
+                            },
+                            "currency": "{{value}} {{currency}}",
+                            "cookies": {
+                                "content": "\u003clink-privacy-policy\u003eسياسة الخصوصية\u003c/link-privacy-policy\u003e مرحبا! نحن نستخدم ملفات تعريف الارتباط لتحسين تجربة مستخدمي الموقع. لمعرفة المزيد الرجاء قراءة"
+                            }
+                        },
+                        "error": {
+                            "404": {
+                                "title": "Looks like you're lost",
+                                "description": "The page you are looking for is not available",
+                                "meta": {
+                                    "title": "404 | هنقرستيشن",
+                                    "description": "404 | هنقرستيشن"
+                                }
+                            },
+                            "500": {
+                                "title": "Something went wrong on our side. Sorry about that!",
+                                "description": "We are working on fixing it right now",
+                                "meta": {
+                                    "title": "500 | هنقرستيشن",
+                                    "description": "500 | هنقرستيشن"
+                                }
+                            },
+                            "offline": {
+                                "title": "أنت غير متصل حاليًا",
+                                "description": "هناك خطأ ما. الرجاء التحقق من الاتصال بالانترنت والمحاولة مرة اخرى !",
+                                "meta": {
+                                    "title": "غير متصل بالانترنت",
+                                    "description": "تحقق من اتصالك بالإنترنت."
+                                }
+                            },
+                            "go-to-home": "Go to homepage"
+                        },
+                        "restaurant": {
+                            "meta": {
+                                "description": {
+                                    "no-place": "هل تبحث عن توصيل {{restaurant}} في ؟ ألق نظرة على القوائم و هنقرستيشن يوصلك اللي تحتاجه !",
+                                    "place": "هل تبحث عن خدمة توصيل {{restaurant}} في {{place}}؟ ألق نظرة على المنيو واطلب كل ما تحتاجه عبر الإنترنت، وسنقوم بتوصيله إليك. استعد، تجهز، هنقرستيشن!"
+                                },
+                                "title": {
+                                    "no-place": "إطلب اونلاين من مطاعم {{restaurant}} | هنقرستيشن",
+                                    "place": "منيو التوصيل من {{restaurant}} في {{place}} | هنقرستيشن {{country}}"
+                                }
+                            },
+                            "serp": {
+                                "meta": {
+                                    "title": "المطاعم ومحلات البقالة بالقرب منك في {{area}} | هنقرستيشن {{country}}",
+                                    "description": "اطلب الطعام والبقالة عبر الإنترنت من المتاجر والمطاعم القريبة منك في {{area}}، {{city}}. سنقوم بتوصيل طلبك حتى باب المنزل مع هنقرستيشن {{country}}."
+                                }
+                            },
+                            "error": {
+                                "not-found": {
+                                    "title": "نأسف! لا يوجد متجر في مدينتك",
+                                    "description": "معذرة, لم نتمكن من العثور على أي من المتاجر القريبة كما أننا لا نقدم في هذا المجال حتى الآن"
+                                }
+                            },
+                            "x-store": "\u003cbold\u003e{{storeCount}}\u003c/bold\u003e المتاجر",
+                            "all-cuisines": "جميع المطابخ",
+                            "filters": {
+                                "title": "تصفية",
+                                "cuisines": "أنواع المأكولات"
+                            },
+                            "x-calories": "{{value}} سعرة حرارية"
+                        }
+                    },
+                    "en": {
+                        "common": {
+                            "locale": "عربي",
+                            "copyright": "© {{year}} HungerStation LTD.",
+                            "english": "English",
+                            "arabic": "عربي",
+                            "footer": {
+                                "hungerstation": "HungerStation",
+                                "about": "About us",
+                                "careers": "Careers",
+                                "rider": "Register as a rider",
+                                "business": "Register as a vendor",
+                                "market": "Quick Market",
+                                "fazaa": "Fazaa",
+                                "help": "Help",
+                                "faqs": "FAQs",
+                                "terms": "Terms of use",
+                                "rewards_terms": "Rewards terms of use",
+                                "policy": "Privacy policy",
+                                "contact": "Contact us",
+                                "countries": "Countries",
+                                "region": "Our regions",
+                                "bh": "Bahrain",
+                                "sa": "Saudi",
+                                "download": {
+                                    "label": "Download the App",
+                                    "content": "Get all your needs with fast delivery from food, groceries, pharmacy items, flowers, and more."
+                                }
+                            },
+                            "unit": {
+                                "distance": "Distance",
+                                "delivery-time": "Delivery Time",
+                                "delivery": "Delivery"
+                            },
+                            "actions": {
+                                "close": "Close",
+                                "expand": "View All..."
+                            },
+                            "completeOrder": {
+                                "label": "Complete Your Order",
+                                "content": "Continue your order experience through our mobile app"
+                            },
+                            "location-picker": {
+                                "title": "Delivery Address",
+                                "deliver-to": "Deliver to:",
+                                "submit": "Deliver here",
+                                "placeholder": "Search for area, street, land mark",
+                                "not-available": "Sorry, the address is not eligible for delivery",
+                                "widget": {
+                                    "title": "Choose your delivery location",
+                                    "subtitle": "Set your address to view available offers and stores",
+                                    "button": "Set Location"
+                                },
+                                "errors": {
+                                    "permission": "Please authorise HungerStation to locate you in order to use automatically your position."
+                                }
+                            },
+                            "currency": "{{value}} {{currency}}",
+                            "cookies": {
+                                "content": "Hi! We use cookies to make this site better for you, and to understand our audience. To learn more please read our \u003clink-privacy-policy\u003ePrivacy Policy\u003c/link-privacy-policy\u003e"
+                            }
+                        },
+                        "error": {
+                            "404": {
+                                "title": "Looks like you're lost",
+                                "description": "The page you are looking for is not available",
+                                "meta": {
+                                    "title": "404 | HungerStation",
+                                    "description": "404 | HungerStation"
+                                }
+                            },
+                            "500": {
+                                "title": "Something went wrong on our side. Sorry about that!",
+                                "description": "We are working on fixing it right now",
+                                "meta": {
+                                    "title": "500 | HungerStation",
+                                    "description": "500 | HungerStation"
+                                }
+                            },
+                            "offline": {
+                                "title": "You are currently offline",
+                                "description": "Something went wrong. Please check your internet connection and try again!",
+                                "meta": {
+                                    "title": "Offline",
+                                    "description": "Check your internet connection."
+                                }
+                            },
+                            "go-to-home": "Go to homepage"
+                        },
+                        "restaurant": {
+                            "meta": {
+                                "description": {
+                                    "no-place": "Looking for {{restaurant}} delivery? Take a look at the menus and lists, order what you need and get it delivered to you. Ready, steady, HungerStation!",
+                                    "place": "Looking for {{restaurant}} delivery in {{place}}? Take a look at their menu \u0026 order everything you need online, and we will get it delivered to you. Ready, steady, HungerStation!"
+                                },
+                                "title": {
+                                    "no-place": "Order online from {{restaurant}} restaurants | HungerStation",
+                                    "place": "{{restaurant}} Delivery Menu in {{place}} | HungerStation {{country}}"
+                                }
+                            },
+                            "serp": {
+                                "meta": {
+                                    "title": "Restaurants \u0026 Grocery Stores Near You in {{area}} | HungerStation {{country}}",
+                                    "description": "Order food \u0026 groceries online from shops near to you in {{area}}, {{city}}. get your order delivered to your doorsteps with HungerStation {{country}}."
+                                }
+                            },
+                            "error": {
+                                "not-found": {
+                                    "title": "Sorry! No store found in your city.",
+                                    "description": "Sorry, we couldn't find any stores nearby as we don't deliver to this area yet"
+                                }
+                            },
+                            "x-store": "\u003cbold\u003e{{storeCount}}\u003c/bold\u003e Stores",
+                            "all-cuisines": "All Cuisines",
+                            "filters": {
+                                "title": "Filters",
+                                "cuisines": "Cuisines"
+                            },
+                            "x-calories": "{{value}} Calories"
+                        }
+                    }
+                },
+                "initialLocale": "ar",
+                "ns": [
+                    "common",
+                    "error",
+                    "restaurant"
+                ],
+                "userConfig": {
+                    "i18n": {
+                        "defaultLocale": "redirect",
+                        "locales": [
+                            "redirect",
+                            "sa-ar",
+                            "sa-en"
+                        ],
+                        "localeDetection": false
+                    },
+                    "lng": "ar",
+                    "fallbackLng": [
+                        "en",
+                        "ar"
+                    ],
+                    "reloadOnPrerender": false,
+                    "default": {
+                        "i18n": {
+                            "defaultLocale": "redirect",
+                            "locales": [
+                                "redirect",
+                                "sa-ar",
+                                "sa-en"
+                            ],
+                            "localeDetection": false
+                        },
+                        "lng": "ar",
+                        "fallbackLng": [
+                            "en",
+                            "ar"
+                        ],
+                        "reloadOnPrerender": false
+                    }
+                }
+            },
+            "vendor": {
+                "id": 32231,
+                "external_id": null,
+                "chain_id": 14679,
+                "chain_name": "مطعم بخاري غير",
+                "chain_type": "RESTAURANT",
+                "logo": "https://images.deliveryhero.io/image/hungerstation/restaurant/logo_ar/4cab3f3df48b3aa9455288a1eb753fbd.jpg",
+                "cover_photo": "https://images.deliveryhero.io/image/hungerstation/restaurant/android_cover_photo/b9200acd600971859ac085694e999b0f.JPG",
+                "kitchens": [
+                    "عربي"
+                ],
+                "average_rating": "4.6",
+                "rate_count": 357,
+                "vertical": "restaurants",
+                "status": "CLOSE",
+                "label": {
+                    "type": "NO_DELIVERY",
+                    "value": "بدون توصيل"
+                },
+                "subscription": null,
+                "promotion": null,
+                "delivery": {
+                    "type": "OWN_DELIVERY",
+                    "name": "أسرررع شي"
+                },
+                "location": {
+                    "latitude": 26.4133379,
+                    "longitude": 50.0312712
+                },
+                "supports_scheduled_order": true
+            },
+            "vendorMenu": [
+                {
+                    "id": 1,
+                    "name": "🔥 الأكثر مبيعًا",
+                    "branch_id": 32231,
+                    "items": [
+                        {
+                            "id": 1620852,
+                            "name": "نصف دجاج على الفحم مع الأرز",
+                            "calories": 2225,
+                            "price": "26.0",
+                            "group_id": 1,
+                            "description": "نص دجاجة علي مع الأرز",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620852?width=222"
+                        },
+                        {
+                            "id": 1620845,
+                            "name": "نصف دجاج شواية مع الأرز",
+                            "calories": 2160,
+                            "price": "25.0",
+                            "group_id": 1,
+                            "description": "نص دجاج شواية مع الأرز",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620845?width=222"
+                        },
+                        {
+                            "id": 1620851,
+                            "name": "دجاج على الفحم مع الأرز",
+                            "calories": 4450,
+                            "price": "52.0",
+                            "group_id": 1,
+                            "description": "دجاجة مطبوخة علي فحم مع الأرز",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620851?width=222"
+                        },
+                        {
+                            "id": 1620952,
+                            "name": "سلطة لبن بالخيار",
+                            "calories": 111,
+                            "price": "8.0",
+                            "group_id": 1,
+                            "description": "سلطة محضرة من الخضار الطازجة و الزبادي",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620952?width=222"
+                        }
+                    ]
+                },
+                {
+                    "id": 139733,
+                    "name": "الدجاج",
+                    "branch_id": 32231,
+                    "items": [
+                        {
+                            "id": 1620841,
+                            "name": "دجاج شواية مع الأرز",
+                            "calories": 4320,
+                            "price": "50.0",
+                            "group_id": 139733,
+                            "description": "دجاج شواية مع الأرز",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620841?width=222"
+                        },
+                        {
+                            "id": 1620845,
+                            "name": "نصف دجاج شواية مع الأرز",
+                            "calories": 2160,
+                            "price": "25.0",
+                            "group_id": 139733,
+                            "description": "نص دجاج شواية مع الأرز",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620845?width=222"
+                        },
+                        {
+                            "id": 1620876,
+                            "name": "ربع دجاج شواية مع الأرز",
+                            "calories": 1080,
+                            "price": "15.0",
+                            "group_id": 139733,
+                            "description": "ربع دجاج مشوي بطعم لذيذ وقوام طري مع الأرز",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1620876?width=222"
+                        },
+                        {
+                            "id": 1620851,
+                            "name": "دجاج على الفحم مع الأرز",
+                            "calories": 4450,
+                            "price": "52.0",
+                            "group_id": 139733,
+                            "description": "دجاجة مطبوخة علي فحم مع الأرز",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620851?width=222"
+                        },
+                        {
+                            "id": 1620852,
+                            "name": "نصف دجاج على الفحم مع الأرز",
+                            "calories": 2225,
+                            "price": "26.0",
+                            "group_id": 139733,
+                            "description": "نص دجاجة علي مع الأرز",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620852?width=222"
+                        },
+                        {
+                            "id": 1620855,
+                            "name": "دجاج شواية سادة",
+                            "calories": 1561,
+                            "price": "36.0",
+                            "group_id": 139733,
+                            "description": "دجاج شواية",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620855?width=222"
+                        },
+                        {
+                            "id": 1620859,
+                            "name": "نصف دجاج شواية سادة",
+                            "calories": 780,
+                            "price": "18.0",
+                            "group_id": 139733,
+                            "description": "نص دجاج شواية",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620859?width=222"
+                        },
+                        {
+                            "id": 1620864,
+                            "name": "دجاج على الفحم سادة",
+                            "calories": 1854,
+                            "price": "38.0",
+                            "group_id": 139733,
+                            "description": "دجاج علي فحم ساده بخلطة المميزة",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620864?width=222"
+                        },
+                        {
+                            "id": 1620874,
+                            "name": "نصف دجاج على الفحم سادة",
+                            "calories": 928,
+                            "price": "19.0",
+                            "group_id": 139733,
+                            "description": "نص دجاج علي فحم سادة بخلطة المميزة",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620874?width=222"
+                        },
+                        {
+                            "id": 1620878,
+                            "name": "ربع دجاج شواية سادة",
+                            "calories": 463,
+                            "price": "9.0",
+                            "group_id": 139733,
+                            "description": "",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1620878?width=222"
+                        }
+                    ]
+                },
+                {
+                    "id": 139735,
+                    "name": "الايدامات",
+                    "branch_id": 32231,
+                    "items": [
+                        {
+                            "id": 1620935,
+                            "name": "ايدام مسقعة",
+                            "calories": 226,
+                            "price": "9.0",
+                            "group_id": 139735,
+                            "description": "باذينجان مطبوخة مع صوص طماطم",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620935?width=222"
+                        },
+                        {
+                            "id": 1620936,
+                            "name": "ايدام بامية",
+                            "calories": 195,
+                            "price": "9.0",
+                            "group_id": 139735,
+                            "description": "ايدام بامية",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620936?width=222"
+                        },
+                        {
+                            "id": 1620938,
+                            "name": "ايدام ملوخية",
+                            "calories": 67,
+                            "price": "9.0",
+                            "group_id": 139735,
+                            "description": "طبق يجمع بين لحم الإيدام (لحم العجل) ونكهة الملوخية الخضراء الطازجة والمطبوخة",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620938?width=222"
+                        },
+                        {
+                            "id": 1620942,
+                            "name": "ايدام مشكل",
+                            "calories": 256,
+                            "price": "9.0",
+                            "group_id": 139735,
+                            "description": "ايدام مشكل خضار",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620942?width=222"
+                        },
+                        {
+                            "id": 1620937,
+                            "name": "ايدام بطاطس",
+                            "calories": 224,
+                            "price": "9.0",
+                            "group_id": 139735,
+                            "description": "ايدام بطاطس",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620937?width=222"
+                        },
+                        {
+                            "id": 9036894,
+                            "name": "ايدام دجاج",
+                            "calories": 641,
+                            "price": "13.0",
+                            "group_id": 139735,
+                            "description": "ايدام دجاجة كاري",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/9036894?width=222"
+                        }
+                    ]
+                },
+                {
+                    "id": 139736,
+                    "name": "السلطات",
+                    "branch_id": 32231,
+                    "items": [
+                        {
+                            "id": 1620944,
+                            "name": "سلطة خضراء",
+                            "calories": 25,
+                            "price": "8.0",
+                            "group_id": 139736,
+                            "description": "سلطة خضراء متنوعة",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620944?width=222"
+                        },
+                        {
+                            "id": 1620952,
+                            "name": "سلطة لبن بالخيار",
+                            "calories": 111,
+                            "price": "8.0",
+                            "group_id": 139736,
+                            "description": "سلطة محضرة من الخضار الطازجة و الزبادي",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620952?width=222"
+                        },
+                        {
+                            "id": 1620953,
+                            "name": "صحن ثوم",
+                            "calories": 140,
+                            "price": "6.0",
+                            "group_id": 139736,
+                            "description": "صلصة شهية تحتوي على ثوم و ملح و عصير الليمون",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620953?width=222"
+                        },
+                        {
+                            "id": 9036884,
+                            "name": "سومطرا",
+                            "calories": 142,
+                            "price": "6.0",
+                            "group_id": 139736,
+                            "description": "بهارات حاره تقدم بطريقة شهيه",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/9036884?width=222"
+                        },
+                        {
+                            "id": 9036887,
+                            "name": "دقوس احمر",
+                            "calories": 18,
+                            "price": "4.0",
+                            "group_id": 139736,
+                            "description": "صوص فلفل احمر حار",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/9036887?width=222"
+                        },
+                        {
+                            "id": 9036888,
+                            "name": "دقوس اخضر",
+                            "calories": 18,
+                            "price": "4.0",
+                            "group_id": 139736,
+                            "description": "صوص حار فلفل اخضر",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/9036888?width=222"
+                        },
+                        {
+                            "id": 9036889,
+                            "name": "دقوس بالطحينة",
+                            "calories": 36,
+                            "price": "4.0",
+                            "group_id": 139736,
+                            "description": "طحينية بفلفل حاره",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/9036889?width=222"
+                        }
+                    ]
+                },
+                {
+                    "id": 139738,
+                    "name": "الارز",
+                    "branch_id": 32231,
+                    "items": [
+                        {
+                            "id": 1620919,
+                            "name": "صحن أرز بخاري",
+                            "calories": 678,
+                            "price": "10.0",
+                            "group_id": 139738,
+                            "description": "أرز بخاري علي طريقة طبخ البخاري",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620919?width=222"
+                        },
+                        {
+                            "id": 1620920,
+                            "name": "صحن أرز مخصوص",
+                            "calories": 678,
+                            "price": "10.0",
+                            "group_id": 139738,
+                            "description": "أرز بخلطة مميزة خاصة",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image/1620920?width=222"
+                        },
+                        {
+                            "id": 9036896,
+                            "name": "صحن رز مخصوص سبايسي",
+                            "calories": 778,
+                            "price": "10.0",
+                            "group_id": 139738,
+                            "description": "",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-9036896?width=222"
+                        },
+                        {
+                            "id": 9036897,
+                            "name": "صحن رز بخاري سبايسي",
+                            "calories": 778,
+                            "price": "10.0",
+                            "group_id": 139738,
+                            "description": "",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-9036897?width=222"
+                        }
+                    ]
+                },
+                {
+                    "id": 139739,
+                    "name": "المشروبات",
+                    "branch_id": 32231,
+                    "items": [
+                        {
+                            "id": 1620959,
+                            "name": "ببسي حجم عائلي",
+                            "calories": 350,
+                            "price": "12.0",
+                            "group_id": 139739,
+                            "description": "مشروب غازي منعش",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menuitem/image_url_ref/cb66215555dc66ef6dc651175e6567cb.jpg?width=222"
+                        },
+                        {
+                            "id": 1620960,
+                            "name": "بيبسي",
+                            "calories": 140,
+                            "price": "4.0",
+                            "group_id": 139739,
+                            "description": "مشروب بيبسي غازي منعش",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1076946?width=222"
+                        },
+                        {
+                            "id": 1620962,
+                            "name": "ماء",
+                            "calories": 1,
+                            "price": "2.0",
+                            "group_id": 139739,
+                            "description": "مياة معدنية معبأة",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1620962?width=222"
+                        },
+                        {
+                            "id": 1660328,
+                            "name": "ميراندا حمضيات",
+                            "calories": 140,
+                            "price": "4.0",
+                            "group_id": 139739,
+                            "description": "مشروب منعش بنكهة الحمضيات",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1660328?width=222"
+                        },
+                        {
+                            "id": 1660329,
+                            "name": "سفن أب",
+                            "calories": 140,
+                            "price": "4.0",
+                            "group_id": 139739,
+                            "description": "مشروب غازي يحتوي على نكهة الليمون مع نكهات حمضية لذيذة",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1660329?width=222"
+                        },
+                        {
+                            "id": 1660330,
+                            "name": "ماونتن ديو",
+                            "calories": 140,
+                            "price": "4.0",
+                            "group_id": 139739,
+                            "description": "مشروب غازي منعش",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1660330?width=222"
+                        },
+                        {
+                            "id": 1660332,
+                            "name": "ميراندا حمضيات حجم عائلي",
+                            "calories": 350,
+                            "price": "12.0",
+                            "group_id": 139739,
+                            "description": "مشروب غازي بنكهة فريدة ومنعشة مع نكهة الحمضيات",
+                            "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1660332?width=222"
+                        },
+                        {"id": 1660333,
+                        "name": "سفن أب حجم عائلي",
+                        "calories": 350,
+                        "price": "12.0",
+                        "group_id": 139739,
+                        "description": "مشروب غازي يحتوي على نكهة الليمون مع نكهات حمضية لذيذة",
+                        "image": "https://images.deliveryhero.io/image/hungerstation/menus/menuitem/hsimg-1660333?width=222"
+                    }
+                ]
+            }
+        ],
+        "city": null,
+        "district": null,
+        "hasAnalytics": true
+    },
+    "__N_SSP": true
+},
+"page": "/restaurant/[...slug]",
+"query": {
+    "slug": [
+        "different-bukhari",
+        "dammam",
+        "uhud"
+    ]
+},
+"buildId": "dZZANJAWlZQJ7xsXBFAxp",
+"isFallback": false,
+"isExperimentalCompile": false,
+"gssp": true,
+"locale": "sa-ar",
+"locales": [
+    "redirect",
+    "sa-ar",
+    "sa-en"
+],
+"defaultLocale": "redirect",
+"scriptLoader": [
+]
+}

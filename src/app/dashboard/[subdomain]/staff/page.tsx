@@ -1,0 +1,91 @@
+"use client"
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+
+type Staff = { _id: string; name: string; role: string; active: boolean }
+
+export default function StaffPage() {
+  const { subdomain } = useParams() as { subdomain: string }
+  const [list, setList] = useState<Staff[]>([])
+  const [name, setName] = useState('')
+  const [role, setRole] = useState('cashier')
+  const [pin, setPin] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function load() {
+    const res = await fetch(`/api/${subdomain}/employees`)
+    if (res.ok) { const data = await res.json(); setList(data.staff || []) }
+  }
+  useEffect(() => { load() }, [subdomain])
+
+  async function add() {
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/${subdomain}/employees`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, role, pin }) })
+      if (res.ok) { setName(''); setPin(''); setRole('cashier'); await load() }
+    } finally { setLoading(false) }
+  }
+
+  async function toggleActive(id: string, active: boolean) {
+    await fetch(`/api/${subdomain}/employees/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ active }) })
+    await load()
+  }
+
+  return (
+    <div className="mx-auto max-w-4xl p-6 space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Staff Management</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <Input placeholder="Name" value={name} onChange={(e)=>setName(e.target.value)} />
+            <Select value={role} onValueChange={setRole}>
+              <SelectTrigger><SelectValue placeholder="Role" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="manager">Manager</SelectItem>
+                <SelectItem value="cashier">Cashier</SelectItem>
+                <SelectItem value="waiter">Waiter</SelectItem>
+                <SelectItem value="expo">Expo</SelectItem>
+                <SelectItem value="kitchen">Kitchen</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input placeholder="PIN (4-6 digits)" value={pin} onChange={(e)=>setPin(e.target.value)} />
+            <Button onClick={add} disabled={!name || !role || !pin || loading}>Add</Button>
+          </div>
+
+          <div className="border-t pt-3">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left text-muted-foreground">
+                  <th className="p-2">Name</th>
+                  <th className="p-2">Role</th>
+                  <th className="p-2">Status</th>
+                  <th className="p-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((s)=> (
+                  <tr key={s._id} className="border-t">
+                    <td className="p-2">{s.name}</td>
+                    <td className="p-2 capitalize">{s.role}</td>
+                    <td className="p-2">{s.active ? 'Active' : 'Inactive'}</td>
+                    <td className="p-2">
+                      <Button variant="secondary" size="sm" onClick={()=>toggleActive(s._id, !s.active)}>{s.active ? 'Deactivate' : 'Activate'}</Button>
+                    </td>
+                  </tr>
+                ))}
+                {list.length === 0 && (<tr><td colSpan={4} className="p-4 text-center text-muted-foreground">No staff yet</td></tr>)}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+

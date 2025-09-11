@@ -1,0 +1,9 @@
+{
+  "name": "Jeemify Expo",
+  "short_name": "Expo",
+  "start_url": "/expo",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c3aed",
+  "icons": []
+}

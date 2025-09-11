@@ -1,0 +1,1888 @@
+{
+  "name": {
+    "ar": "باب اليمن"
+  },
+  "categories": [
+    {
+      "name": {
+        "ar": "الفول"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "ساندوتش فول الشبراوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 9,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638642597052797379?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول الشبراوي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_الشبراوي_عيش_فرنساوي637776754193019549.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول زيت زيتون"
+          },
+          "description": {
+            "ar": "Creamy foul beans, drizzled with extra virgin olive oil served in bread."
+          },
+          "price": 13,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638642598991659168?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول زيت زيتون عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 22,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_زيت_زيتون_عيش_فرنساوي637776754370575426.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول زيت حار"
+          },
+          "description": {
+            "ar": "Sandwich made with foul (fava beans), flaxseed oil, and various toppings."
+          },
+          "price": 9,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321227777901311?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول زيت حار عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 22,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323088461216784?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بالباذنجان"
+          },
+          "description": {
+            "ar": "طعام الشارع المصري الشعبي المصنوع من الفول والباذنجان وصلصة الطحينة"
+          },
+          "price": 13,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323088021009613?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بالسمنة البلدي"
+          },
+          "description": {
+            "ar": "فول مدمس، سمن بلدي، بهارات وخبز"
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بالسمنة_البلدي637776754910977553.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بالباذنجان عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 22,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بائنجان_عيش_فرنساوي637776754753113332.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بالسمنة البلدي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بالسمنة_البلدي_عيش_فرنساوي637776754944929351.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول إسكندراني"
+          },
+          "description": {
+            "ar": "Savor the flavorful delight of our Alexandrian Foul Sandwich—a tantalizing fusion of creamy fava beans, aromatic herbs, and zesty toppings nestled in a warm, fluffy bread—for a heavenly culinary experience."
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_أسكندراني637776755084631900.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول إسكندراني عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638324892996829283?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بالصلصة"
+          },
+          "description": {
+            "ar": "Sandwich featuring creamy and flavorful foul (fava beans) smothered in a tangy tomato sauce, served with fresh herbs and condiments."
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بالصلصة637776755274433209.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بالصلصة عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بالصلصة_عيش_فرنساوي637776755327833056.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بيض مقلي"
+          },
+          "description": {
+            "ar": "A sandwich filled with fava beans (foul) and topped with fried eggs."
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638642638228128880?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بيض مقلي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323094385030375?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بيض مسلوق"
+          },
+          "description": {
+            "ar": "Sandwich with a filling of foul beans and boiled eggs."
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بيض_مسلوق637776755736162356.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بيض مسلوق عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بيض_مسلوق_عيش_فرنساوي637776755787877111.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بالبسطرمة"
+          },
+          "description": {
+            "ar": "Sandwich featuring a flavorful combination of savory foul (fava beans) and thinly sliced pastrami, served with fresh veggies and zesty condiments."
+          },
+          "price": 23,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بالبسطرمة637776755925862349.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول بالبسطرمة عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_بالبسطرمة_عيش_فرنساوي637776755942010243.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول سوسيس"
+          },
+          "description": {
+            "ar": "A sandwich filled with cooked fava beans (foul) and sausage."
+          },
+          "price": 23,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638642648729716859?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش فول سوسيس عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 36,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فول_سوسيس_عيش_فرنساوي637776756174279374.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندويتش ديناميت"
+          },
+          "description": {
+            "ar": "فول، طعميه، بيض، باذنجان، بطاطس"
+          },
+          "price": 23,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321241764548193?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "الطعمية"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "ساندوتش طعمية الشبراوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 10,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_الشبراوي637776756448895438.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية الشبراوي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_الشبراوي_عيش_فرنساوي637776756495945765.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية محشية"
+          },
+          "description": {
+            "ar": "Crispy falafel balls, fresh vegetables, and a tangy sauce are lovingly wrapped in warm pita bread"
+          },
+          "price": 15,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_محشية637776756622770992.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية محشية عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 23,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_محشية_عيش_فرنساوي637776756699077578.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية ميكس"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 15,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321241999637858?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية ميكس عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323103540491257?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية باذنجان"
+          },
+          "description": {
+            "ar": "Sandwich with taamia (Egyptian falafel) and roasted eggplant."
+          },
+          "price": 15,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_بائنجان637776757001242648.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية باذنجان عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_بائنجان_عيش_فرنساوي637776757060465107.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية دوبل"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 15,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_دبل637776757156595090.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية دوبل عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/French_Double_Taamia_Sand637809925691247400.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية تحابيش"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321244668759042?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية تحابيش عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323107644562145?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية بيض مسلوق"
+          },
+          "description": {
+            "ar": "ساندويتش  مليئة بالطعمية والبيض المسلوق."
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321247293789642?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية بيض مسلوق عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 27,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_بيض_مسلوق_عيش_فرنساوي637776757778909239.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية بيض مقلي"
+          },
+          "description": {
+            "ar": "فلافل، بيض مقلي، خضار، خبز وبهارات"
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321246065315939?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية بيض مقلي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_بيض_مقلي_عيش_فرنساوي637776757981884716.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية عجة بلدي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 20,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321248497298979?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية عجة بلدي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 29,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321249137371897?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية عين كتكوت"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 21,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323113428385314?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش طعمية عين كتكوت عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طعمية_عين_كتكوت_عيش_فرنساوي637776758300106144.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "طعمية مع كيري"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321254005854297?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "طعمية بالشيدر"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638313112544074160?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "طعمية بالموتزاريلا"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638313111845441318?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "طعمية محشية باذنجان"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 20,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638313111982622613?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "الأصناف المتنوعة"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "ساندوتش مسقعة"
+          },
+          "description": {
+            "ar": "Indulge in our Mesakaa Sandwich, filled with a flavorful mix of roasted eggplant, bell peppers, tomatoes, and onions, infused with fragrant herbs and spices, and sandwiched between two slices of warm and fluffy bread for a taste of the Mediterranean."
+          },
+          "price": 15,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/مسقعة637776758442092971.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش مسقعة عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/مسقعة_عيش_فرنساوي637776758515908844.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بابا غنوج"
+          },
+          "description": {
+            "ar": "A creamy and smoky blend of roasted eggplant, tahini, and garlic, paired with a crisp and refreshing array of vegetables and herbs, all nestled between two slices of warm  breaD"
+          },
+          "price": 15,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بابا_غنوج637776758590493120.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بابا غنوج عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 23,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بابا_غنوج_عيش_فرنساوي637776758644810432.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش جبنة بالطماطم"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 15,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/جبنة_بالطماطم637776758700335835.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش جبنة بالطماطم عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/جبنة_بالطماطم_عيش_فرنساوي637776758803455567.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش جبنة مقلية شامي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 29,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/جبنة_مقلية_شامي637776758927115512.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش جبنة مقلية شامي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 40,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/جبنة_مقلية_شامي_عيش_فرنساوي637776758988271642.jpg?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "الرول"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "فلافل رول"
+          },
+          "description": {
+            "ar": "فلافل، خضار، خبز بيتا وبهارات"
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/فالفل_رول637776759225426637.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "بطاطس رول"
+          },
+          "description": {
+            "ar": "بطاطا مقلية، بهارات وخبز"
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_رول637776759319796885.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "فلانتينو رول"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 38,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/roll637811568248067681.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "جبنة مقلية رول"
+          },
+          "description": {
+            "ar": "ورق سبرينج رول، جبنة، زيت نباتي"
+          },
+          "price": 38,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/جبنة_مقلية_رول637776759554014760.jpg?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "البطاطس"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس صوابع"
+          },
+          "description": {
+            "ar": "Made with crispy fries for those who want a quick and tasty sandwich that packs a punch of flavor."
+          },
+          "price": 16,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_صوابع637776760124452703.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس صوابع عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 25,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_صوابع_عيش_فرنساوي637776760201338077.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس شيبسي"
+          },
+          "description": {
+            "ar": "Made with potato chips for those who want a quick and tasty sandwich that packs a punch of flavor."
+          },
+          "price": 16,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_شيبسي637776760267554213.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس شيبسي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 25,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321269953117545?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بوريه"
+          },
+          "description": {
+            "ar": "ساندويتش مملوء ببطاطس مهروسة."
+          },
+          "price": 16,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_بورية637776760487066130.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بوريه عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_بورية_عيش_فرنساوي637776760553618220.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس موتزاريلا"
+          },
+          "description": {
+            "ar": "A crispy and golden stack of fries, layered with melty and gooey mozzarella cheese, all nestled between two slices of warm and toasty bread."
+          },
+          "price": 25,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321271866791415?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس موتزاريلا عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 34,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/20190613_Talabat_UAE_The_637811568632376690.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس محمرة مع كاتشب ومايونيز"
+          },
+          "description": {
+            "ar": "Crispy fries, tangy ketchup, and creamy mayo, all sandwiched between two slices of bread."
+          },
+          "price": 25,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321274593335475?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس محمرة مع كاتشب ومايونيز - خبز فرنسي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 34,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_كاتشب_ومايونيز_عيش_فرنساوي637776761010829160.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس جبنة رومي"
+          },
+          "description": {
+            "ar": "Experience the ultimate indulgence: our French Fries With Roumi Cheese Sandwich! Golden, crispy fries between artisanal bread, layered with melty Roumi cheese. Crave every cheesy, savory bite of this harmonious delight."
+          },
+          "price": 25,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321274772658823?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس جبنة رومي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 34,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323133822594880?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس جبنة شيدر"
+          },
+          "description": {
+            "ar": "Made of crispy fries and melted cheddar cheese, layered between two slices of toasted bread."
+          },
+          "price": 25,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321276515072825?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس جبنة شيدر عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 34,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323134918297134?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بيض مقلي"
+          },
+          "description": {
+            "ar": "خبز، بطاطس مقلية، زبدة، بيض مقلي والتوابل"
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321277203709871?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بيض مقلي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323134895679003?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بيض مسلوق"
+          },
+          "description": {
+            "ar": "سندويتش مع بطاطا مقلية وبيض مسلوق."
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321279060043414?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بيض مسلوق عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 33,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_بيض_مسلوق_عيش_فرنساوي637776761732893591.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بسطرمة"
+          },
+          "description": {
+            "ar": "بسطرمة، خبز و بطاطا مقلية"
+          },
+          "price": 27,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321279645184810?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بسطرمة عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 37,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321281958116039?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس سوسيس"
+          },
+          "description": {
+            "ar": "خبز، سجق ، زبدة، خس، طماطم، بطاطا مقلية وبهارات"
+          },
+          "price": 27,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321280530798235?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس سوسيس عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 37,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_سوسيس_عيش_فرنساوي637776762188536401.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بابا غنوج"
+          },
+          "description": {
+            "ar": "سندويتش مع بطاطا مقلية وبابا غنوج."
+          },
+          "price": 20,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321283575320531?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بابا غنوج عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 29,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_بابا_غنوج_عيش_فرنساوي637776762683454012.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس كاتشب"
+          },
+          "description": {
+            "ar": "Crispy fries tucked between soft bread, perfectly complemented by tangy ketchup."
+          },
+          "price": 20,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321285107646308?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس كاتشب عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 29,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_كاتشب_عيش_فرنساوي637776762911986300.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس مايونيز"
+          },
+          "description": {
+            "ar": "Sandwich with French fries and mayo."
+          },
+          "price": 20,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321286108074197?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس مايونيز عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 32,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_مايونيز_عيش_فرنساوي637776763075015827.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بازوكا"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321291593067533?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بطاطس بازوكا عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 38,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بطاطس_بازوكا_عيش_فرنساوي637776763434214686.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "باكيت بطاطس"
+          },
+          "description": {
+            "ar": "Made with fresh potatoes, cut into thin strips, and deep fried to golden perfection, they're a perfect snack or side dish to enjoy with any meal."
+          },
+          "price": 22,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/باكيت_بطاطس637776763483887031.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": " بطاطس صوص شيدر"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 24,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321293505228740?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "البيض"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "ساندوتش بيض مسلوق"
+          },
+          "description": {
+            "ar": "Perfectly cooked eggs nestled between two slices of freshly toasted bread and a savory spread that will have you craving it all day long."
+          },
+          "price": 17,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323140834338250?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض مسلوق عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 28,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بيض_مسلوق_12637776763797918336.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض مقلي"
+          },
+          "description": {
+            "ar": "Perfectly cooked eggs, nestled between soft bread"
+          },
+          "price": 19,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بيض_مقلي637776763906072172.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض مقلي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بيض_مقلي_12637776763968927019.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض جبنة رومي"
+          },
+          "description": {
+            "ar": "بيض مقلي، جبنة رومي ذائبة، يقدم في سندويتش."
+          },
+          "price": 27,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321296001971760?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض جبنة رومي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 36,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323142873397141?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض بسطرمة"
+          },
+          "description": {
+            "ar": "Delight in the savory delight of our Eggs With Pastrami Sandwich, featuring perfectly cooked eggs, thinly sliced pastrami, and a medley of delectable flavors, all nestled between two slices of toasted bread for a satisfying breakfast or brunch experience."
+          },
+          "price": 27,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321297911368925?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض بسطرمة عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 38,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بيض_بسطرمة_12637776764302331785.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض سوسيس"
+          },
+          "description": {
+            "ar": "خبز ، بيض وقطع سجق"
+          },
+          "price": 27,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321300130069521?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض سوسيس عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 38,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323145117616737?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض شيدر"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 27,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321301219292364?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 21,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323145678972368?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض شيدر عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 36,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323145400657326?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض شكشوكة"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 21,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321304005020782?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض شكشوكة عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 33,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321306567513639?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض بيتزا"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 29,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321304817329466?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض بيتزا عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 41,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638324896586878619?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض أباتشي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321306443503871?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش بيض أباتشي عيش فرنساوي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 44,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323148272597314?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "اللحم"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "ساندوتش برجر سادة جامبو"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 60,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/برجر_سادة_جامبو637776765314788657.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش برجر جبنة شيدر"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 68,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/برجر_جبنة_شيدر637776765379200626.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش برجر ميكس بيض وجبنة"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 75,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/برجر_ميكس_بيض_وجبنة637776765449651996.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش سوسيس كبير"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 70,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/سوسيس_كبير637776765626115472.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش سوسيس سوري"
+          },
+          "description": {
+            "ar": "سجق، بهارات وخبز بيتا سوري"
+          },
+          "price": 75,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/سوسيس_سوري637776765680870377.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش مكسيكان هوت دوج كبير"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 80,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/مكسيكان_هوت_دوج_كبير637776765738962402.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش مكسيكان هوت دوج سوري"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 85,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/مكسيكان_هوت_دوج_سوري637776765786629975.jpg?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "الدجاج"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "ساندوتش تشيكن بانيه كبير"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 80,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/تشيكن_بانية_كبير637776766134493699.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش تشيكن بانيه سوري"
+          },
+          "description": {
+            "ar": "صدور دجاج مسحب، بصل، فلفل وخبز بيتا سوري"
+          },
+          "price": 85,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/تشيكن_بانية_سورى637776766179401649.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش شيش طاووق كبير"
+          },
+          "description": {
+            "ar": "ساندوتش كبير مع شيش طاووق."
+          },
+          "price": 80,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/شيش_طاووق_كبير637776766253066732.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش شيش طاووق سوري"
+          },
+          "description": {
+            "ar": "Grilled chicken skewers wrapped in a soft pita bread, with aromatic spices and condiments."
+          },
+          "price": 85,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/شيش_طاووق_سورى637776766293477429.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش تشيكن فاهيتا كبير"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 80,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638413070588820575?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش تشيكن فاهيتا سوري"
+          },
+          "description": {
+            "ar": "ساندويتش مكون من فاهيتا الدجاج على الطريقة السورية."
+          },
+          "price": 85,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/تشيكن_فاهيتا_سورى637776766400229913.jpg?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "الشاورما"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "ساندوتش شاورما دجاج كبير"
+          },
+          "description": {
+            "ar": "ساندويتش كبير محشو بشاورما الدجاج."
+          },
+          "price": 80,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321314753473960?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ساندوتش شاورما دجاج سوري"
+          },
+          "description": {
+            "ar": "Sandwich featuring tender and marinated chicken shawarma, wrapped in warm bread, and accompanied by fresh vegetables and flavorful sauces."
+          },
+          "price": 85,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/شاورما_دجاج_سورى637776766841462444.jpg?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "الكريب"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "كريب بانيه"
+          },
+          "description": {
+            "ar": "A crepe filled with paneer, a type of Indian cheese."
+          },
+          "price": 90,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_بانيه637776767345684592.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب كرسبي"
+          },
+          "description": {
+            "ar": "Thin and lacy, filled with a variety of savory or sweet fillings"
+          },
+          "price": 90,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_كرسبي637776767401437250.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب شيش طاووق"
+          },
+          "description": {
+            "ar": "Made with tender chunks of chicken marinated in a blend of spices and yogurt, grilled to perfection, and wrapped in a warm crepe, it's a perfect meal for breakfast or lunch."
+          },
+          "price": 95,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_شيش_طاووك637776767466137772.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب فاهيتا دجاج"
+          },
+          "description": {
+            "ar": "Made with tender chicken, sauteed peppers & onions, wrapped in a warm crep, topped with sauce and cheese. It's a perfect meal for breakfast or lunch."
+          },
+          "price": 95,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_فاهيتا_دجاج637776767540870255.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب شاورما دجاج"
+          },
+          "description": {
+            "ar": "Experience the irresistible fusion of Middle Eastern and French cuisine with our delectable Chicken Shawarma Crepe, filled with tender, succulent chicken, fresh veggies, and tangy sauce, all wrapped in a thin and crispy crepe."
+          },
+          "price": 95,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_شاورما_دجاج637776767601850372.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب برجر لحم"
+          },
+          "description": {
+            "ar": "Made with juicy beef patty, topped with veggies and cheese, all wrapped in a thin and warm crepe."
+          },
+          "price": 70,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_برجر_لحم637776767869870362.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب هوت دوج مكسيكي"
+          },
+          "description": {
+            "ar": "هوت دوج، فلفل ألوان، جبنة مكسيكية، بصل و بهارات"
+          },
+          "price": 90,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_هوت_دوج_مكسيكي637776768091067104.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب ميكس مكسيكان وبانيه"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 99,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_ميكس_مكسيكان_و_بانيه637776768246664311.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب ميكس شيش وبانيه"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 99,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_ميكس_شيش_و_بانيه637776768321177170.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب ميكس برجر وبانيه"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 99,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_ميكس_برجر_و_بانيه637776768387464795.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب بطاطس"
+          },
+          "description": {
+            "ar": "Made with freshly cooked French fries, wrapped in a warm crepe and topped with your choice of sauce and cheese, it's a perfect meal for breakfast or lunch."
+          },
+          "price": 60,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_بطاطس637776768475337399.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب بطاطس جبنة رومي"
+          },
+          "description": {
+            "ar": "عجينة كريب، بطاطا مقلية، جبنة رومي وبهارات"
+          },
+          "price": 65,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/كريب_بطاطس_جبنة_رومي637776768500592837.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "كريب بسطرمة"
+          },
+          "description": {
+            "ar": "Made with tender slices of pastrami and cheese, all wrapped in a warm crepe, It's perfect meal for breakfast or lunch."
+          },
+          "price": 80,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "السلطات"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "سلطة بلدي"
+          },
+          "description": {
+            "ar": "Our fresh and vibrant Baladi Salad, featuring a colorful array of crisp veggies, tangy feta cheese, and zesty lemon dressing, is the perfect way to add a healthy and flavorful touch to your meal."
+          },
+          "price": 15,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/سلطة_بلدي637776769511497755.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "طماطم متبلة"
+          },
+          "description": {
+            "ar": "Experience the burst of tangy and savory flavors with our exquisite Marinated Tomatoes, guaranteed to tantalize your taste buds!"
+          },
+          "price": 20,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طماطم_متبلة637776769569952699.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "طحينة"
+          },
+          "description": {
+            "ar": "Thick paste made from ground sesame seeds"
+          },
+          "price": 25,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/طحينة637776769642243818.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "بابا غنوج"
+          },
+          "description": {
+            "ar": "Made with cooked and mashed eggplants, mixed with vegetables, perfect as a side dish."
+          },
+          "price": 20,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بابا_غنوج637776769714144796.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "جبنة بالطماطم"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 20,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/جبنة_بالطماطم1637776770325197069.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "باذنجان مخلل"
+          },
+          "description": {
+            "ar": "Savor the tangy, salty, and sour flavors in every bite of these mouth-watering Pickled Eggplants."
+          },
+          "price": 13,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/بائنجان_مخلل_صغير637776770445724328.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "مخلل مشكل"
+          },
+          "description": {
+            "ar": "A medley of crunchy and spicy pickled vegetables"
+          },
+          "price": 7,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/مخلل_كبير637776770642060215.jpg?width=172&amp;height=172"
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "الأصناف الجانبية"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "طبق أومليت أسباني"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 36,
+          "image": ""
+        },
+        {
+          "name": {
+            "ar": "طبق بيتزا أومليت"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 39,
+          "image": ""
+        },
+        {
+          "name": {
+            "ar": "طبق أومليت أباتشي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 39,
+          "image": ""
+        },
+        {
+          "name": {
+            "ar": "قرص طعمية مع شيدر"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 21,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638321333308978205?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "قرص طعمية مع كاري"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 21,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638323358601127586?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "قرص طعمية مع موزاريلا"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 21,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/mmw_638395913315454462?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "صوص شيدر "
+          },
+          "description": {
+            "ar": "Creamy Cheddar Sauce, Made with sharp cheddar cheese."
+          },
+          "price": 16,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/Cheddar_Cheese_Sauce_638386744472328205?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "تركي مدخن"
+          },
+          "description": {
+            "ar": "Turkey meat that has been smoked for added flavor."
+          },
+          "price": 25,
+          "image": ""
+        },
+        {
+          "name": {
+            "ar": "علبة فول سادة"
+          },
+          "description": {
+            "ar": "Creamy and spiced fava beans, served with fresh bread and a variety of toppings and condiments"
+          },
+          "price": 25,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_فول_سادة637776770786892393.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة فول محوج"
+          },
+          "description": {
+            "ar": "A boxed meal featuring foul (fava beans) with added flavors and toppings, served with accompaniments."
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_فول_محوج637776770901201859.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة فول زيت حار"
+          },
+          "description": {
+            "ar": "Boxed meal featuring foul beans with a drizzle of flaxseed oil."
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_فول_زيت_حار637776770970605754.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة فول زيت زيتون"
+          },
+          "description": {
+            "ar": "Foul with Olive Oil Box is a creamy fava beans, drizzled with olive oil and sprinkled with aromatic spices,"
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_فول_زيت_زيتون637776771034628342.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة فول سمنة"
+          },
+          "description": {
+            "ar": "طبق مصري تقليدي مصنوع من الفول والثوم والبهارات والسمن\n"
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_فول_سمنة637776771092353087.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة فول أسكندراني"
+          },
+          "description": {
+            "ar": "Creamy fava beans slow-cooked with aromatic spices, served with a selection of toppings and warm bread."
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_فول_أسكندراني637776771164367858.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة فول بالصلصة"
+          },
+          "description": {
+            "ar": "Traditional Middle Eastern dish of fava beans with tomato sauce."
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_فول_بالصلصة637776771223687777.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة فول بيض مقلي"
+          },
+          "description": {
+            "ar": "بيض مقلي، فول مدمس ، طماطم ، بصل ، ثوم ، كزبرة ، ملح ، فلفل ، كمون"
+          },
+          "price": 36,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_فول_بيض_مقلي637776771304065494.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة فول بيض مسلوق"
+          },
+          "description": {
+            "ar": "فول مدمس، بيض مسلوق و بهارات"
+          },
+          "price": 35,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/Foul_With_Boiled_Eggs_Box637811571421079129.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة عجينة طعمية"
+          },
+          "description": {
+            "ar": "Falafel mix box made of ground chickpeas, herbs, and spices served in pita bread with salad, hummus, and tahini sauce."
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_عجينة_طعمية637776771518228058.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة مسقعة"
+          },
+          "description": {
+            "ar": "Savor the Middle Eastern feast in our Mesakaa Box, a delightful assortment of grilled meats, flavorful rice, and mouthwatering sides, offering a culinary journey you'll crave for."
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_مسقعة637776771563723435.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "علبة بطاطس مهروسة"
+          },
+          "description": {
+            "ar": "Box with creamy and fluffy mashed potatoes."
+          },
+          "price": 31,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/علبة_بطاطس_مهروسة637776771635902232.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "3 قرص طعمية صغير"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 9,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/3قرص_طعمية_صغير637776771739551665.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "قرص طعمية كبير"
+          },
+          "description": {
+            "ar": "فول مدمس منقوع طوال الليل، بقدونس طازج، كزبرة طازجة، نعناع طازج، بصل أخضر، فصوص ثوم، بصل، ملح، فلفل أسود، كمون مطحون، كزبرة مطحونة، بيكنج باودر وزيت نباتي"
+          },
+          "price": 9,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/قرص_طعمية_كبير637776771793586556.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "قرص طعمية محشية"
+          },
+          "description": {
+            "ar": "طعمية محشوة بالجبن والبهارات والاعشاب"
+          },
+          "price": 13,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/قرص_طعمية_محشية637776771840521356.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "قرص عجة"
+          },
+          "description": {
+            "ar": "البيض والخضروات المفرومة والتوابل"
+          },
+          "price": 23,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/قرص_عجة637776771914533806.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "قرص طعمية عين كتكوت"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 23,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/قرص_طعمية_عين_كتكوت637776771977420048.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "صحن اومليت"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 35,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/312022_Talabat_Egypt_Fol_638288136036184830.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "صحن اومليت مع  رومي"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 40,
+          "image": ""
+        },
+        {
+          "name": {
+            "ar": "صحن اومليت بالبسطرمة"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 40,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/312022_Talabat_Egypt_Fol_638288137011468222.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "طبق أومليت مع سوسيس"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 40,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/2012022_Talabat_Egypt_Fou638288137291031911.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "طبق أومليت مع شيدر"
+          },
+          "description": {
+            "ar": ""
+          },
+          "price": 40,
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": {
+        "ar": "المشروبات"
+      },
+      "menuItems": [
+        {
+          "name": {
+            "ar": "بيبسي علب"
+          },
+          "description": {
+            "ar": "Carbonated soft drink"
+          },
+          "price": 18,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/Pepsi_250ml__Cans637776772218737626.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "سفن أب علب"
+          },
+          "description": {
+            "ar": "Non-caffeinated soft drink"
+          },
+          "price": 18,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/7up330ml637776772279513755.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "ميرندا علب"
+          },
+          "description": {
+            "ar": "Soft drink"
+          },
+          "price": 18,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/Mirinda_orange637776772354507793.jpg?width=172&amp;height=172"
+        },
+        {
+          "name": {
+            "ar": "مياه معدنية"
+          },
+          "description": {
+            "ar": "Stay hydrated and refreshed with our mineral water. "
+          },
+          "price": 9,
+          "image": "https://images.deliveryhero.io/image/talabat/Menuitems/Mineral_Water637776772421193133.jpg?width=172&amp;height=172"
+        }
+      ]
+    }
+  ]
+}

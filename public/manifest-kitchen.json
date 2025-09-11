@@ -1,0 +1,11 @@
+{
+  "name": "Jeemify Kitchen",
+  "short_name": "Kitchen",
+  "start_url": "/kitchen",
+  "display": "fullscreen",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "scope": "/kitchen",
+  "icons": []
+}
+
