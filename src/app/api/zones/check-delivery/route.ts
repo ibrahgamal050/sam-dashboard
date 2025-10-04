@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 import dbConnect from "@/lib/dbConnect"
-import DeliveryZoneLegacy from "@/models/delivery-zone-legacy"
+import DeliveryZoneLegacy, { type DeliveryZoneLegacyDocument } from "@/models/delivery-zone-legacy"
 import { serializeDeliveryZones } from "@/lib/delivery-zones/serialize"
 import { Types } from "mongoose"
 
@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
     const rawZones = await DeliveryZoneLegacy.find({
       restaurantId: new Types.ObjectId(restaurantId),
       is_active: true,
-    }).lean()
-    const zones = serializeDeliveryZones(rawZones)
+    }).lean<DeliveryZoneLegacyDocument[]>()
+    const zones = serializeDeliveryZones(rawZones as DeliveryZoneLegacyDocument[])
 
     const availableZones = zones.filter((zone) => {
       if (zone.zone_type === "circle" && zone.geometry.type === "Point") {

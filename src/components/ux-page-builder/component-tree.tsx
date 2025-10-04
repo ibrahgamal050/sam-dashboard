@@ -5,19 +5,39 @@ import { ChevronRight, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { SidebarElements } from './sidebar-elements'
-import { Component } from './types'
+import { Component, ComponentType } from './types'
 
 interface ComponentTreeProps {
-  components: any[]
+  components: Component[]
   selectedId: string | null
   onSelect: (id: string) => void
-  onAddComponent: (type: string) => void
+  onAddComponent: (preset: ComponentType) => void
 }
 
 export function ComponentTree({ components, selectedId, onSelect, onAddComponent }: ComponentTreeProps) {
   const [showElements, setShowElements] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
+
+  const mapLabelToPreset = (label: string): ComponentType | null => {
+    const key = label.toLowerCase()
+    switch (key) {
+      case 'row':
+        return { type: 'row' }
+      case 'section':
+      case 'slider':
+        return { type: 'banner', props: { text: `${label} banner` } }
+      case 'block':
+        return { type: 'text-box', props: { text: 'Content block' } }
+      case 'grid':
+        return { type: 'row' }
+      case 'button':
+        return { type: 'button', props: { text: 'Click me', variant: 'default' } }
+      case 'text':
+        return { type: 'text', props: { text: 'Paragraph text', variant: 'paragraph' } }
+      default:
+        return null
+    }
+  }
 
   if (showElements) {
     return (
@@ -54,7 +74,10 @@ export function ComponentTree({ components, selectedId, onSelect, onAddComponent
                     key={type}
                     className="flex flex-col items-center p-3 border rounded hover:border-blue-500 transition-colors"
                     onClick={() => {
-                      onAddComponent(type.toLowerCase())
+                      const preset = mapLabelToPreset(type)
+                      if (preset) {
+                        onAddComponent(preset)
+                      }
                       setShowElements(false)
                     }}
                   >
@@ -86,7 +109,10 @@ export function ComponentTree({ components, selectedId, onSelect, onAddComponent
                     key={type}
                     className="flex flex-col items-center p-3 border rounded hover:border-blue-500 transition-colors"
                     onClick={() => {
-                      onAddComponent(type.toLowerCase())
+                      const preset = mapLabelToPreset(type)
+                      if (preset) {
+                        onAddComponent(preset)
+                      }
                       setShowElements(false)
                     }}
                   >
@@ -132,7 +158,7 @@ export function ComponentTree({ components, selectedId, onSelect, onAddComponent
 }
 
 interface TreeItemProps {
-  component: any
+  component: Component
   selectedId: string | null
   onSelect: (id: string) => void
   level: number
@@ -183,7 +209,7 @@ function TreeItem({ component, selectedId, onSelect, level }: TreeItemProps) {
         <>
           {hasChildren && (
             <div className="mt-1">
-              {component.children.map((child: any) => (
+              {(component.children ?? []).map((child: Component) => (
                 <TreeItem
                   key={child.id}
                   component={child}
@@ -209,4 +235,3 @@ function TreeItem({ component, selectedId, onSelect, level }: TreeItemProps) {
     </div>
   )
 }
-

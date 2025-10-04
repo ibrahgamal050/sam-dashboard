@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { useDrop } from 'react-dnd'
 import { cn } from '@/lib/utils'
+import { Component, ComponentType, createComponentFromPreset } from './types'
 
 interface CanvasProps {
-  components: any[]
-  selectedComponent: any
-  onSelect: (component: any) => void
-  onChange: (components: any[]) => void
+  components: Component[]
+  selectedComponent: Component | null
+  onSelect: (component: Component) => void
+  onChange: (components: Component[]) => void
 }
 
 export function Canvas({ 
@@ -18,17 +19,10 @@ export function Canvas({
   const dropRef = React.useRef<HTMLDivElement | null>(null)
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'component',
-    drop: (item: any) => {
-      onChange([...components, {
-        id: Date.now().toString(),
-        type: item.type,
-        props: {
-          layout: { height: 450 },
-          slide: { effect: 'none' },
-          background: { color: '#1e3a8a', overlay: '#00000000' },
-          border: { top: 0, right: 0, bottom: 0, left: 0 }
-        }
-      }])
+    drop: (item: ComponentType) => {
+      const newComponent = createComponentFromPreset(item)
+
+      onChange([...components, newComponent])
     },
     collect: (monitor) => ({
       isOver: monitor.isOver()

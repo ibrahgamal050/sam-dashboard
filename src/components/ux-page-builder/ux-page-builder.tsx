@@ -5,7 +5,7 @@ import { ComponentTree } from './component-tree'
 import { PropertyPanel } from './property-panel'
 import { Canvas } from './canvas'
 import { Header } from './header'
-import { Component } from './types'
+import { Component, ComponentType, createComponentFromPreset } from './types'
 import { DefaultStyles } from './default-styles'
 
 // Mock pages data
@@ -85,27 +85,9 @@ export function UXPageBuilder() {
     return findComponent(components)
   }, [components, selectedId])
 
-  const handleAddComponent = (type: string) => {
-    const newComponent = {
-      id: Date.now().toString(),
-      type,
-      props: {},
-      children: type === 'row' ? [
-        {
-          id: `${Date.now()}-1`,
-          type: 'column',
-          props: { width: '6/12' },
-          children: []
-        },
-        {
-          id: `${Date.now()}-2`,
-          type: 'column',
-          props: { width: '6/12' },
-          children: []
-        }
-      ] : []
-    }
-    
+  const handleAddComponent = (preset: ComponentType) => {
+    const newComponent = createComponentFromPreset(preset)
+
     const newComponents = [...components, newComponent]
     setComponents(newComponents)
     addToHistory(newComponents)
@@ -147,10 +129,11 @@ export function UXPageBuilder() {
 
   const applyDefaultStyle = (styles: Record<string, any>) => {
     // Apply the styles to the root component or create a new style component
-    const newStyleComponent = {
+    const newStyleComponent: Component = {
       id: Date.now().toString(),
       type: 'style',
       props: styles,
+      children: [],
     }
     const newComponents = [newStyleComponent, ...components]
     setComponents(newComponents)
@@ -226,4 +209,3 @@ export function UXPageBuilder() {
     </div>
   )
 }
-

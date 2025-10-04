@@ -1,11 +1,8 @@
-import type { LeanDocument } from "mongoose"
-
 import type { DeliveryZoneLegacyDocument } from "@/models/delivery-zone-legacy"
 import type { DeliveryZone } from "@/types/delivery-zones"
 
 type DeliveryZoneInput =
   | DeliveryZoneLegacyDocument
-  | LeanDocument<DeliveryZoneLegacyDocument>
   | (Partial<DeliveryZoneLegacyDocument> & { _id?: unknown; createdAt?: unknown; updatedAt?: unknown })
   | null
   | undefined

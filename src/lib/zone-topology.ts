@@ -1,14 +1,17 @@
 import type { PolygonGeometry } from "@/types/delivery-zones"
 import difference from "@turf/difference"
 import area from "@turf/area"
-import { polygon as turfPolygon, type Feature } from "@turf/helpers"
+import { polygon as turfPolygon, featureCollection } from "@turf/helpers"
 import booleanIntersects from "@turf/boolean-intersects"
 import booleanContains from "@turf/boolean-contains"
+import type { Feature as TurfFeature, Polygon as GeoJSONPolygon, MultiPolygon } from "geojson"
 
 const MIN_AREA_THRESHOLD = 1e-6
 
-const polygonGeometryToFeature = (geometry: PolygonGeometry): Feature => {
-  return turfPolygon(geometry.coordinates as any)
+type PolygonFeature = TurfFeature<GeoJSONPolygon | MultiPolygon>
+
+const polygonGeometryToFeature = (geometry: PolygonGeometry): PolygonFeature => {
+  return turfPolygon(geometry.coordinates as any) as PolygonFeature
 }
 
 const hasSufficientPoints = (geometry: PolygonGeometry) => {
@@ -16,7 +19,7 @@ const hasSufficientPoints = (geometry: PolygonGeometry) => {
   return Array.isArray(ring) && ring.length >= 4
 }
 
-const hasSufficientFeatureArea = (feature: Feature | null) => {
+const hasSufficientFeatureArea = (feature: PolygonFeature | null) => {
   if (!feature || !feature.geometry) return false
   const geom = feature.geometry
 
@@ -30,19 +33,19 @@ const hasSufficientFeatureArea = (feature: Feature | null) => {
 }
 
 const attemptDifference = (
-  subject: Feature,
-  clip: Feature,
-): { feature: Feature | null; error: Error | null } => {
+  subject: PolygonFeature,
+  clip: PolygonFeature,
+): { feature: PolygonFeature | null; error: Error | null } => {
   try {
-    const diffResult = difference(subject as any, clip as any)
-    return { feature: diffResult as Feature | null, error: null }
+    const diffResult = difference(featureCollection([subject as any, clip as any]))
+    return { feature: diffResult as PolygonFeature | null, error: null }
   } catch (error) {
     console.error("[zone-topology] difference failed", error)
     return { feature: null, error: error as Error }
   }
 }
 
-const featureToPolygonGeometry = (feature: Feature | null): PolygonGeometry | null => {
+const featureToPolygonGeometry = (feature: PolygonFeature | null): PolygonGeometry | null => {
   if (!feature || !feature.geometry) return null
 
   if (feature.geometry.type === "Polygon") {
@@ -53,20 +56,22 @@ const featureToPolygonGeometry = (feature: Feature | null): PolygonGeometry | nu
   }
 
   if (feature.geometry.type === "MultiPolygon") {
-    let best: { coords: number[][][]; area: number } | null = null
+    let bestCoords: number[][][] | null = null
+    let bestArea = 0
 
     feature.geometry.coordinates.forEach((coords) => {
       const poly = turfPolygon(coords as any)
       const polyArea = area(poly)
-      if (!best || polyArea > best.area) {
-        best = { coords: coords as number[][][], area: polyArea }
+      if (!bestCoords || polyArea > bestArea) {
+        bestCoords = coords as number[][][]
+        bestArea = polyArea
       }
     })
 
-    if (best) {
+    if (bestCoords) {
       return {
         type: "Polygon",
-        coordinates: best.coords,
+        coordinates: bestCoords,
       }
     }
   }
@@ -82,7 +87,7 @@ export const subtractPolygonOverlaps = (
     return target
   }
 
-  let resultFeature: Feature | null = polygonGeometryToFeature(target)
+  let resultFeature: PolygonFeature | null = polygonGeometryToFeature(target)
 
   if (!hasSufficientFeatureArea(resultFeature)) {
     return target
@@ -112,7 +117,7 @@ export const subtractPolygonOverlaps = (
       continue
     }
 
-    const { feature: diff, error } = attemptDifference(resultFeature as Feature, blockerFeature)
+    const { feature: diff, error } = attemptDifference(resultFeature as PolygonFeature, blockerFeature)
 
     if (error) {
       // If difference fails, keep original to avoid runtime crash.
@@ -124,7 +129,7 @@ export const subtractPolygonOverlaps = (
       return target
     }
 
-    resultFeature = diff as Feature
+    resultFeature = diff as PolygonFeature
 
     if (!hasSufficientFeatureArea(resultFeature)) {
       return target

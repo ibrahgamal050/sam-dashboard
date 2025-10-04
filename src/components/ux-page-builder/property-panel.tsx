@@ -11,10 +11,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import { Component } from './types'
 
 interface PropertyPanelProps {
-  component: any
-  onChange: (updated: any) => void
+  component: Component | null
+  onChange: (updated: Component) => void
 }
 
 export function PropertyPanel({ component, onChange }: PropertyPanelProps) {
@@ -26,16 +27,19 @@ export function PropertyPanel({ component, onChange }: PropertyPanelProps) {
     )
   }
 
-  const handleChange = (section: string, key: string, value: any) => {
+  const handleChange = (section: string, key: string, value: unknown) => {
+    const currentProps = component.props ?? {}
+    const sectionProps = (currentProps as Record<string, any>)[section] ?? {}
+
     onChange({
       ...component,
       props: {
-        ...component.props,
+        ...currentProps,
         [section]: {
-          ...component.props[section],
-          [key]: value
-        }
-      }
+          ...sectionProps,
+          [key]: value,
+        },
+      },
     })
   }
 
@@ -176,4 +180,3 @@ export function PropertyPanel({ component, onChange }: PropertyPanelProps) {
     </div>
   )
 }
-

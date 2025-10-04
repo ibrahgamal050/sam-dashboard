@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { Types } from "mongoose"
 
 import dbConnect from "@/lib/dbConnect"
-import DeliveryZoneLegacy from "@/models/delivery-zone-legacy"
+import DeliveryZoneLegacy, { type DeliveryZoneLegacyDocument } from "@/models/delivery-zone-legacy"
 import { serializeDeliveryZone, serializeDeliveryZones } from "@/lib/delivery-zones/serialize"
 import type { CreateDeliveryZoneRequest } from "@/types/delivery-zones"
 
@@ -50,9 +50,9 @@ export async function GET(request: NextRequest) {
       ? { restaurantId: restaurantObjectId, is_active: true }
       : { restaurantId: restaurantObjectId }
 
-    const zones = await DeliveryZoneLegacy.find(filters).sort({ createdAt: -1 }).lean()
+    const zones = await DeliveryZoneLegacy.find(filters).sort({ createdAt: -1 }).lean<DeliveryZoneLegacyDocument[]>()
 
-    return NextResponse.json({ zones: serializeDeliveryZones(zones) })
+    return NextResponse.json({ zones: serializeDeliveryZones(zones as DeliveryZoneLegacyDocument[]) })
   } catch (error) {
     console.error("[v0] Unexpected error in GET /api/zones:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

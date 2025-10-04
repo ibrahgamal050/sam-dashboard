@@ -5,8 +5,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { ComponentType } from './types'
 
 const availableComponents: ComponentType[] = [
-  { type: 'heading', props: { text: 'New Heading', level: 'h2' } },
-  { type: 'paragraph', props: { text: 'New paragraph text' } },
+  { type: 'text', props: { text: 'New Heading', variant: 'heading', level: 'h2' } },
+  { type: 'text', props: { text: 'New paragraph text', variant: 'paragraph' } },
   { type: 'image', props: { src: '/placeholder.svg', alt: 'Placeholder image' } },
   { type: 'button', props: { text: 'Click me', variant: 'default' } },
 ]
@@ -34,6 +34,7 @@ interface DraggableComponentProps {
 }
 
 function DraggableComponent({ component, onAddComponent }: DraggableComponentProps) {
+  const dragRef = React.useRef<HTMLDivElement | null>(null)
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'component',
     item: component,
@@ -48,9 +49,11 @@ function DraggableComponent({ component, onAddComponent }: DraggableComponentPro
     }),
   }))
 
+  drag(dragRef)
+
   return (
     <div
-      ref={drag}
+      ref={dragRef}
       className={`mb-2 cursor-move ${isDragging ? 'opacity-50' : ''}`}
     >
       <Button variant="outline" className="w-full justify-start">
@@ -59,4 +62,3 @@ function DraggableComponent({ component, onAddComponent }: DraggableComponentPro
     </div>
   )
 }
-

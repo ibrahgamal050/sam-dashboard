@@ -90,10 +90,12 @@ export function useKdsRouting() {
 
         const newUrl = `${pathname}?${params.toString()}`
 
+        const navigationOptions = { scroll: options?.scroll ?? false }
+
         if (options?.replace) {
-          router.replace(newUrl, { scroll: options.scroll ?? false })
+          router.replace(newUrl, navigationOptions)
         } else {
-          router.push(newUrl, { scroll: options.scroll ?? false })
+          router.push(newUrl, navigationOptions)
         }
 
         console.log("[v0] Route updated:", { updates, newUrl })

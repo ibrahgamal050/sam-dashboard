@@ -28,6 +28,14 @@ const hashToken = (token: string) => crypto.createHash('sha256').update(token).d
 
 const generateToken = () => crypto.randomBytes(40).toString('hex')
 
+const stringifyObjectId = (value: unknown): string => {
+  if (typeof value === 'string') return value
+  if (value && typeof (value as { toString?: () => string }).toString === 'function') {
+    return (value as { toString: () => string }).toString()
+  }
+  return ''
+}
+
 const EMAIL_TOKEN_TTL_MS = 24 * 60 * 60 * 1000
 const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000
 
@@ -75,7 +83,7 @@ export async function registerUser(
   })
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'USER_REGISTERED',
     ipAddress: context.ipAddress,
     userAgent: context.userAgent,
@@ -111,7 +119,7 @@ export async function verifyEmail(token: string, context: RequestContext) {
   await record.save()
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'USER_EMAIL_VERIFIED',
     ipAddress: context.ipAddress,
     userAgent: context.userAgent,
@@ -134,7 +142,7 @@ export async function activateSecurityChecklist(userId: string, context: Request
   await user.save()
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'USER_SECURITY_ACTIVATED',
     ipAddress: context.ipAddress,
     userAgent: context.userAgent,
@@ -164,13 +172,19 @@ export async function loginUser(
   }
 
   if (user.status === 'DISABLED') {
-    await logAuditEvent({ userId: user._id, action: 'USER_LOGIN_FAILED', metadata: { reason: 'ACCOUNT_DISABLED' }, ipAddress: context.ipAddress, userAgent: context.userAgent })
+    await logAuditEvent({
+      userId: stringifyObjectId(user._id),
+      action: 'USER_LOGIN_FAILED',
+      metadata: { reason: 'ACCOUNT_DISABLED' },
+      ipAddress: context.ipAddress,
+      userAgent: context.userAgent,
+    })
     throw new Error('Account disabled')
   }
 
   if (typeof user.passwordHash !== 'string' || !user.passwordHash) {
     await logAuditEvent({
-      userId: user._id,
+      userId: stringifyObjectId(user._id),
       action: 'USER_LOGIN_FAILED',
       metadata: { reason: 'PASSWORD_NOT_SET' },
       ipAddress: context.ipAddress,
@@ -183,7 +197,7 @@ export async function loginUser(
   if (!passwordOk) {
     const { locked: nowLocked, remaining, lockedUntil: lockTime } = recordLoginFailure(normalizedEmail)
     await logAuditEvent({
-      userId: user._id,
+      userId: stringifyObjectId(user._id),
       action: 'USER_LOGIN_FAILED',
       metadata: { reason: 'INVALID_PASSWORD', remainingAttempts: remaining, lockUntil: lockTime },
       ipAddress: context.ipAddress,
@@ -202,7 +216,7 @@ export async function loginUser(
   const tokens = await issueNewSession(user, context)
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'USER_LOGIN_SUCCESS',
     metadata: { sessionId: tokens.session.id },
     ipAddress: context.ipAddress,
@@ -226,7 +240,7 @@ export async function refreshTokens(refreshToken: string, context: RequestContex
   const tokens = await rotateSession(session, user, refreshToken, context)
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'TOKEN_REFRESHED',
     metadata: { sessionId: tokens.session.id },
     ipAddress: context.ipAddress,
@@ -263,7 +277,7 @@ export async function requestPasswordReset(email: string, context: RequestContex
   })
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'PASSWORD_RESET_REQUESTED',
     ipAddress: context.ipAddress,
     userAgent: context.userAgent,
@@ -291,7 +305,7 @@ export async function resetPassword(token: string, newPassword: string, context:
   await SessionToken.updateMany({ userId: user._id }, { revokedAt: new Date() })
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'PASSWORD_RESET_COMPLETED',
     ipAddress: context.ipAddress,
     userAgent: context.userAgent,
@@ -320,7 +334,7 @@ export async function changePassword(
   await SessionToken.updateMany({ userId: user._id }, { revokedAt: new Date() })
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'PASSWORD_CHANGED',
     ipAddress: context.ipAddress,
     userAgent: context.userAgent,
@@ -337,7 +351,7 @@ export async function updateProfile(userId: string, updates: { firstName?: strin
   await user.save()
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'PROFILE_UPDATED',
     metadata: updates,
     ipAddress: context.ipAddress,
@@ -358,7 +372,7 @@ export async function disableAccount(userId: string, reason: string | undefined,
   await SessionToken.updateMany({ userId: user._id }, { revokedAt: new Date() })
 
   await logAuditEvent({
-    userId: user._id,
+    userId: stringifyObjectId(user._id),
     action: 'ACCOUNT_DISABLED',
     metadata: { reason },
     ipAddress: context.ipAddress,

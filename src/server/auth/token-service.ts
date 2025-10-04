@@ -53,11 +53,14 @@ const parseDurationToSeconds = (value: string) => {
   }
 }
 
-const createJwt = (payload: JwtContent, secret: string, expiresIn: string) =>
-  jwt.sign(payload, secret, {
-    expiresIn,
+const createJwt = (payload: JwtContent, secret: string, expiresIn: string) => {
+  const expiresInSeconds = parseDurationToSeconds(expiresIn)
+
+  return jwt.sign(payload, secret, {
+    expiresIn: expiresInSeconds,
     issuer: env.jwtIssuer,
   })
+}
 
 export const verifyAccessToken = (token: string): JwtContent => {
   const decoded = jwt.verify(token, env.jwtAccessSecret, { issuer: env.jwtIssuer }) as JwtContent

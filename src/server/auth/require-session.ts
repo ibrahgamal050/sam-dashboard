@@ -40,16 +40,16 @@ const resolveCallbackUrl = (option?: string) => option ?? '/dashboard'
 
 export async function requireServerAuth(options: RequireAuthOptions = {}): Promise<ServerSession> {
   const callbackUrl = resolveCallbackUrl(options.callbackUrl)
-  const redirectToLogin = () => {
+  const redirectToLogin = (): never => {
     const encoded = encodeURIComponent(callbackUrl)
-    redirect(`${LOGIN_ROUTE}?callbackUrl=${encoded}`)
+    return redirect(`${LOGIN_ROUTE}?callbackUrl=${encoded}`)
   }
 
   const cookieStore = cookies()
   const accessToken = cookieStore.get('rms.access')?.value
 
   if (!accessToken) {
-    redirectToLogin()
+    return redirectToLogin()
   }
 
   try {
@@ -57,16 +57,16 @@ export async function requireServerAuth(options: RequireAuthOptions = {}): Promi
     const decoded = verifyAccessToken(accessToken!)
     const user = await User.findById(decoded.sub)
     if (!user) {
-      redirectToLogin()
+      return redirectToLogin()
     }
 
     if (!user!.emailVerifiedAt || !user!.securityProfile.hardeningComplete || user!.status === 'DISABLED') {
-      redirectToLogin()
+      return redirectToLogin()
     }
 
     if (options.requiredRoles && options.requiredRoles.length) {
       if (!hasRequiredRole(user!.roles, options.requiredRoles)) {
-        redirectToLogin()
+        return redirectToLogin()
       }
     }
 
@@ -77,7 +77,7 @@ export async function requireServerAuth(options: RequireAuthOptions = {}): Promi
     }
   } catch (error) {
     console.error('requireServerAuth failed', error)
-    redirectToLogin()
+    return redirectToLogin()
   }
 }
 
