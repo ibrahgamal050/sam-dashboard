@@ -1,7 +1,7 @@
 'use client'
 import { useParams } from 'next/navigation'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   Table, 
   TableBody, 
@@ -18,9 +18,7 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogTrigger,
   DialogFooter,
-  DialogClose
 } from "@/components/ui/dialog"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, Pencil, Trash2 } from 'lucide-react'
@@ -42,38 +40,36 @@ interface BranchesData {
   branches: Branch[]
 }
 
-async function fetchApi(endpoint: string, method: string = 'GET', data?: any) {
-  const { subdomain } = useParams() as { subdomain: string }
-  const response = await fetch(`/api/${subdomain}/branches${endpoint}`, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: data ? JSON.stringify(data) : undefined,
-  })
-  if (!response.ok) {
-    throw new Error('An error occurred while communicating with the server')
-  }
-  return response.json()
-}
-
 export default function Branches() {
-  
+  const { subdomain } = useParams() as { subdomain: string }
   const [branchesData, setBranchesData] = useState<BranchesData | null>(null)
   const [editingBranch, setEditingBranch] = useState<Branch | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    fetchBranchesData()
-  }, [])
+  const fetchApi = useCallback(
+    async (endpoint: string, method: string = 'GET', data?: unknown) => {
+      const response = await fetch(`/api/${subdomain}/branches${endpoint}`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: data ? JSON.stringify(data) : undefined,
+      })
+      if (!response.ok) {
+        throw new Error('An error occurred while communicating with the server')
+      }
+      return response.json()
+    },
+    [subdomain],
+  )
 
-  const fetchBranchesData = async () => {
+  const fetchBranchesData = useCallback(async () => {
     setIsLoading(true)
     try {
       const data = await fetchApi('')
       setBranchesData(data)
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "Failed to fetch branch data",
@@ -82,7 +78,11 @@ export default function Branches() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [fetchApi])
+
+  useEffect(() => {
+    void fetchBranchesData()
+  }, [fetchBranchesData])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -122,7 +122,7 @@ export default function Branches() {
         setBranchesData(updatedData)
         setEditingBranch(null)
         setIsDialogOpen(false)
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: "Error",
           description: "Failed to save branch data",
@@ -153,7 +153,7 @@ export default function Branches() {
         })
         
         setBranchesData(updatedData)
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: "Error",
           description: "Failed to delete branch",
