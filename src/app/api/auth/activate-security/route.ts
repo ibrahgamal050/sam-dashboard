@@ -26,3 +26,7 @@ export const POST = withApiProtect(async ({ req }) => {
 export const GET = withApiProtect(async () => {
   return NextResponse.json({ ok: true })
 }, { allowUnauthenticated: true, requireCsrf: false })
+
+export const HEAD = withApiProtect(async () => {
+  return new NextResponse(null, { status: 204 })
+}, { allowUnauthenticated: true, requireCsrf: false })
