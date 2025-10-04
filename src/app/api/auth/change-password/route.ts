@@ -6,6 +6,14 @@ import { buildRequestContext } from '@/server/security/request'
 
 export const dynamic = 'force-dynamic'
 
+export async function GET() {
+  return NextResponse.json({ ok: true })
+}
+
+export async function HEAD() {
+  return new NextResponse(null, { status: 204 })
+}
+
 export const POST = withApiProtect(async ({ req, auth }) => {
   if (!auth) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
@@ -20,13 +28,3 @@ export const POST = withApiProtect(async ({ req, auth }) => {
     return NextResponse.json({ error: error.message ?? 'Unable to change password' }, { status: 400 })
   }
 }, { requiredRoles: ['USER'] })
-
-export const GET = withApiProtect(async () => NextResponse.json({ ok: true }), {
-  allowUnauthenticated: true,
-  requireCsrf: false,
-})
-
-export const HEAD = withApiProtect(async () => new NextResponse(null, { status: 204 }), {
-  allowUnauthenticated: true,
-  requireCsrf: false,
-})
