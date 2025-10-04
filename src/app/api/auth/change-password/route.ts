@@ -6,13 +6,15 @@ import { buildRequestContext } from '@/server/security/request'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-  return NextResponse.json({ ok: true })
-}
+export const GET = withApiProtect(async () => NextResponse.json({ ok: true }), {
+  allowUnauthenticated: true,
+  requireCsrf: false,
+})
 
-export async function HEAD() {
-  return new NextResponse(null, { status: 204 })
-}
+export const HEAD = withApiProtect(async () => new NextResponse(null, { status: 204 }), {
+  allowUnauthenticated: true,
+  requireCsrf: false,
+})
 
 export const POST = withApiProtect(async ({ req, auth }) => {
   if (!auth) {
