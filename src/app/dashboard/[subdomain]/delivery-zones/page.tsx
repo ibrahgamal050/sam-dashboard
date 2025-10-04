@@ -6,11 +6,11 @@ import Restaurant from "@/models/Restaurant"
 import { notFound } from "next/navigation"
 
 interface DeliveryZonesPageProps {
-  params: { subdomain: string }
+  params: Promise<{ subdomain: string }>
 }
 
 export default async function DeliveryZonesPage({ params }: DeliveryZonesPageProps) {
-  const { subdomain } = params
+  const { subdomain } = await params
 
   await dbConnect()
   const restaurant = await Restaurant.findOne({ subdomain }).select("_id")

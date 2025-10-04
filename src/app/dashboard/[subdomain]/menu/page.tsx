@@ -7,13 +7,13 @@ import RestaurantMenu from "@/models/RestaurantMenu"
 import type { IMenu } from "@/types/menu"
 
 type MenuPageProps = {
-  params: {
+  params: Promise<{
     subdomain?: string | string[]
-  }
+  }>
 }
 
 export default async function MenuPage({ params }: MenuPageProps) {
-  const rawSubdomain = params?.subdomain
+  const { subdomain: rawSubdomain } = await params
   const subdomain = Array.isArray(rawSubdomain) ? rawSubdomain[0] : rawSubdomain
 
   if (!subdomain) {

@@ -53,9 +53,9 @@ function resolveStatus(status: string | undefined): StatusMeta {
 export default async function OrderDetailsPage({
   params,
 }: {
-  params: { id: string; subdomain: string }
+  params: Promise<{ id: string; subdomain: string }>
 }) {
-  const { id, subdomain } = params
+  const { id, subdomain } = await params
 
   await dbConnect()
 

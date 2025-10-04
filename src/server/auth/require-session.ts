@@ -45,7 +45,7 @@ export async function requireServerAuth(options: RequireAuthOptions = {}): Promi
     return redirect(`${LOGIN_ROUTE}?callbackUrl=${encoded}`)
   }
 
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const accessToken = cookieStore.get('rms.access')?.value
 
   if (!accessToken) {

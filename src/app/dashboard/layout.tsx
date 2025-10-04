@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  const headerList = headers()
+  const headerList = await headers()
   const headerPath =
     headerList.get('x-pathname') ||
     headerList.get('x-invoke-path') ||
