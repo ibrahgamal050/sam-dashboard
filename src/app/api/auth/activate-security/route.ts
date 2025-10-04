@@ -22,3 +22,7 @@ export const POST = withApiProtect(async ({ req }) => {
     return NextResponse.json({ error: error.message ?? 'Activation failed' }, { status: 400 })
   }
 }, { allowUnauthenticated: true })
+
+export const GET = withApiProtect(async () => {
+  return NextResponse.json({ ok: true })
+}, { allowUnauthenticated: true, requireCsrf: false })
