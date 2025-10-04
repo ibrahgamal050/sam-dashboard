@@ -51,6 +51,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Latitude and longitude are required" }, { status: 400 })
     }
 
+    const latitude = lat as number
+    const longitude = lng as number
+
     if (!restaurantId || !Types.ObjectId.isValid(restaurantId)) {
       return NextResponse.json({ error: "Valid restaurantId is required" }, { status: 400 })
     }
@@ -67,13 +70,13 @@ export async function POST(request: NextRequest) {
       if (zone.zone_type === "circle" && zone.geometry.type === "Point") {
         const [zoneLng, zoneLat] = zone.geometry.coordinates as [number, number]
         const radius = zone.geometry?.properties?.radius ?? 1000
-        const distance = haversineDistance(lat, lng, zoneLat, zoneLng)
+        const distance = haversineDistance(latitude, longitude, zoneLat, zoneLng)
         return distance <= radius
       }
 
       if (zone.zone_type === "polygon" && zone.geometry.type === "Polygon") {
         const polygon = zone.geometry.coordinates[0] as number[][]
-        return isPointInPolygon(lat, lng, polygon)
+        return isPointInPolygon(latitude, longitude, polygon)
       }
 
       return false
@@ -88,7 +91,7 @@ export async function POST(request: NextRequest) {
       isDeliveryAvailable,
       zones: availableZones,
       lowestDeliveryFee: lowestFee,
-      location: { lat, lng },
+      location: { lat: latitude, lng: longitude },
     })
   } catch (error) {
     console.error("[v0] Unexpected error in POST /api/zones/check-delivery:", error)

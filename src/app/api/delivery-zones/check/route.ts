@@ -1,30 +1,10 @@
 import { ZodError } from "zod"
 
 import { checkPointSchema } from "@/lib/validation/delivery-zone"
-import type { DeliveryZoneCheckResponse } from "@/types/delivery-zone"
+import { deliveryZoneCheckInternals } from "./internals"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
-
-type ResolveDeliveryZoneFn = (
-  restaurantId: string,
-  lat: number,
-  lng: number,
-) => Promise<DeliveryZoneCheckResponse>
-
-export const deliveryZoneCheckInternals: {
-  dbConnect: () => Promise<unknown>
-  resolveDeliveryZone: ResolveDeliveryZoneFn
-} = {
-  dbConnect: async () => {
-    const module = await import("@/lib/dbConnect")
-    return module.default()
-  },
-  resolveDeliveryZone: async (restaurantId, lat, lng) => {
-    const module = await import("@/lib/delivery/resolve-zone")
-    return module.resolveDeliveryZone(restaurantId, lat, lng)
-  },
-}
 
 export async function POST(request: Request) {
   try {

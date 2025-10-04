@@ -5,7 +5,7 @@ import { Types } from "mongoose"
 import dbConnect from "@/lib/dbConnect"
 import DeliveryZoneLegacy from "@/models/delivery-zone-legacy"
 import { serializeDeliveryZone } from "@/lib/delivery-zones/serialize"
-import type { UpdateDeliveryZoneRequest } from "@/lib/types/delivery-zones"
+import type { UpdateDeliveryZoneRequest } from "@/types/delivery-zones"
 
 const INVALID_ZONE_TYPE_MESSAGE = 'Invalid zone_type. Must be "circle" or "polygon"'
 

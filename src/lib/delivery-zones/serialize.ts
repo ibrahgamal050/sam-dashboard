@@ -58,10 +58,9 @@ export function serializeDeliveryZone(zone: DeliveryZoneInput): DeliveryZone | n
     delivery_fee: (plain as { delivery_fee?: number }).delivery_fee ?? 0,
     color: (plain as { color?: string }).color || "#3B82F6",
     zone_type: (plain as { zone_type?: DeliveryZone["zone_type"] }).zone_type || "polygon",
-    geometry: (plain as { geometry?: DeliveryZone["geometry"] }).geometry || {
-      type: "Polygon",
-      coordinates: [],
-    },
+    geometry:
+      (plain as { geometry?: DeliveryZone["geometry"] }).geometry ||
+      ({ type: "Polygon", coordinates: [] } as DeliveryZone["geometry"]),
     is_active: (plain as { is_active?: boolean }).is_active ?? false,
     created_by: (plain as { created_by?: string | null }).created_by ?? undefined,
     created_at: toIsoString(createdAt),

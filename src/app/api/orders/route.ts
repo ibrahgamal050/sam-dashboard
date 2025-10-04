@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import mongoose from 'mongoose'
 import dbConnect from '@/lib/dbConnect'
 import Order from '@/models/Order'
+import DeliveryZone from '@/models/delivery-zone'
+import { resolveDeliveryZone } from '@/lib/delivery/resolve-zone'
+import type { IDeliveryZone } from '@/types/delivery-zone'
 import { emitOrderEvent } from '@/lib/orderEvents'
 
 export async function GET(req: NextRequest) {
@@ -162,7 +165,7 @@ export async function POST(req: NextRequest) {
       let zoneInfo: { id: string; fee: number; minOrder: number } | null = null
 
       if (appliedDeliveryZoneId) {
-        const zoneDoc = await DeliveryZone.findOne({ _id: appliedDeliveryZoneId, restaurantId }).lean()
+        const zoneDoc = await DeliveryZone.findOne({ _id: appliedDeliveryZoneId, restaurantId }).lean<IDeliveryZone | null>()
         if (zoneDoc) {
           zoneInfo = {
             id: String(zoneDoc._id),
@@ -179,7 +182,7 @@ export async function POST(req: NextRequest) {
 
       if (!zoneInfo && typeof lat === 'number' && typeof lng === 'number') {
         const resolved = await resolveDeliveryZone(String(restaurantId), lat, lng)
-        if (!resolved.inside) {
+        if (!resolved.inside || !resolved.zone) {
           return NextResponse.json({ error: 'Location outside delivery zones' }, { status: 400 })
         }
         zoneInfo = {

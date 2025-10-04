@@ -39,7 +39,7 @@ interface PageEditorProps {
   onSave: (pages: Page[]) => void
 }
 
-export default function PageEditor({ pages: initialPages = [], onSave }: PageEditorProps) {
+function PageEditor({ pages: initialPages = [], onSave }: PageEditorProps) {
   const [pages, setPages] = useState<Page[]>(initialPages)
   const [selectedPage, setSelectedPage] = useState<string | null>(null)
 
@@ -198,4 +198,15 @@ export default function PageEditor({ pages: initialPages = [], onSave }: PageEdi
       </Tabs>
     </div>
   )
+}
+
+export default function EditPagesOverview() {
+  const [pages, setPages] = useState<Page[]>([])
+
+  const handleSave = (nextPages: Page[]) => {
+    setPages(nextPages)
+    console.log("Persist page updates", nextPages)
+  }
+
+  return <PageEditor pages={pages} onSave={handleSave} />
 }

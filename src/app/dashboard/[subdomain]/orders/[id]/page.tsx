@@ -59,7 +59,9 @@ export default async function OrderDetailsPage({
 
   await dbConnect()
 
-  const restaurant = await Restaurant.findOne({ subdomain }).lean()
+  type RestaurantLean = { _id: mongoose.Types.ObjectId }
+
+  const restaurant = await Restaurant.findOne({ subdomain }).lean<RestaurantLean | null>()
   if (!restaurant) notFound()
 
   const matchCriteria: Array<Record<string, unknown>> = [{ orderId: id }]
@@ -67,7 +69,40 @@ export default async function OrderDetailsPage({
     matchCriteria.unshift({ _id: new mongoose.Types.ObjectId(id) })
   }
 
-  const order = await Order.findOne({ restaurantId: restaurant._id, $or: matchCriteria }).lean()
+  type OrderItemLean = {
+    _id?: mongoose.Types.ObjectId | string
+    productId?: mongoose.Types.ObjectId | string
+    name: string
+    quantity: number
+    price: number
+    notes?: string
+  }
+
+  type OrderLean = {
+    _id: mongoose.Types.ObjectId | string
+    orderId?: string
+    status?: string
+    createdAt?: Date
+    updatedAt?: Date
+    eta?: Date
+    subtotal?: number
+    totalPrice?: number
+    deliveryFee?: number
+    currency?: string
+    type?: string
+    paymentMethod?: string
+    payment?: { method?: string; status?: string }
+    paymentStatus?: string
+    items?: OrderItemLean[]
+    customer?: {
+      name?: string
+      phone?: string
+      address?: string
+      email?: string
+    }
+  }
+
+  const order = await Order.findOne({ restaurantId: restaurant._id, $or: matchCriteria }).lean<OrderLean>()
   if (!order) notFound()
 
   const statusInfo = resolveStatus(order.status)
@@ -82,6 +117,7 @@ export default async function OrderDetailsPage({
 
   const items = Array.isArray(order.items) ? order.items : []
   const customer = order.customer ?? {}
+  const orderReference = order.orderId ?? String(order._id)
 
   const timeline = [
     { label: "Order placed", value: createdAt },
@@ -99,7 +135,7 @@ export default async function OrderDetailsPage({
               Back to orders
             </Link>
             <span className="h-1 w-1 rounded-full bg-slate-300" />
-            <span>Order #{order.orderId || order._id}</span>
+            <span>Order #{orderReference}</span>
           </div>
           <div className="flex items-center gap-3">
             <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">{customer.name || "Guest"}</h1>

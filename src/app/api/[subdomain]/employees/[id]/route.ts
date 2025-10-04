@@ -12,14 +12,19 @@ export async function PATCH(req: NextRequest, { params }: { params: { subdomain:
   try {
     const body = await req.json()
     await dbConnect()
-    const rest = await Restaurant.findOne({ subdomain: params.subdomain }).lean()
-    if (!rest) return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
+    const rest = await Restaurant.findOne({ subdomain: params.subdomain }).lean<{ _id?: string }>()
+    if (!rest?._id) return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
+    const restaurantId = String(rest._id)
     const update: any = {}
     if (typeof body.name === 'string') update.name = body.name
     if (typeof body.role === 'string') update.role = body.role
     if (typeof body.active === 'boolean') update.active = body.active
     if (body.pin) update.pinHash = hashPin(String(body.pin))
-    const updated = await Employee.findOneAndUpdate({ _id: params.id, restaurantId: rest._id }, { $set: update }, { new: true })
+    const updated = await Employee.findOneAndUpdate(
+      { _id: params.id, restaurantId },
+      { $set: update },
+      { new: true },
+    ) as unknown as { toObject?: () => Record<string, unknown> }
     if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     const { pinHash, ...safe } = (updated.toObject ? updated.toObject() : updated) as any
     return NextResponse.json(safe)
@@ -32,13 +37,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { subdomain:
 export async function DELETE(_req: NextRequest, { params }: { params: { subdomain: string; id: string } }) {
   try {
     await dbConnect()
-    const rest = await Restaurant.findOne({ subdomain: params.subdomain }).lean()
-    if (!rest) return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
-    const res = await Employee.deleteOne({ _id: params.id, restaurantId: rest._id })
+    const rest = await Restaurant.findOne({ subdomain: params.subdomain }).lean<{ _id?: string }>()
+    if (!rest?._id) return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
+    const restaurantId = String(rest._id)
+    const res = await Employee.deleteOne({ _id: params.id, restaurantId })
     return NextResponse.json({ deletedCount: res.deletedCount })
   } catch (e) {
     console.error('DELETE /api/[subdomain]/employees/:id error', e)
     return NextResponse.json({ error: 'Failed to delete' }, { status: 500 })
   }
 }
-

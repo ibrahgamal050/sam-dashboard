@@ -29,8 +29,13 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'No pages found for this restaurant' }, { status: 404 });
     }
 
-    const pageDocument = pagesDocument.pages.id(id);
-    const page = pageDocument ? (pageDocument.toObject() as IPage) : null;
+    const pageDocument = pagesDocument.pages.find(
+      (page) => page && (page as unknown as { _id?: mongoose.Types.ObjectId })._id?.toString() === id,
+    ) as (IPage & { toObject?: () => unknown }) | undefined
+
+    const page = pageDocument
+      ? ((pageDocument.toObject ? pageDocument.toObject() : pageDocument) as IPage)
+      : null
 
     if (!page) {
       return NextResponse.json({ success: false, error: 'Page not found' }, { status: 404 });
@@ -68,12 +73,12 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'No pages found for this restaurant' }, { status: 404 })
     }
 
-    const pageToDelete = pagesDocument.pages.id(id)
-    if (!pageToDelete) {
+    const initialLength = pagesDocument.pages.length
+    pagesDocument.pages = pagesDocument.pages.filter((page: any) => page._id?.toString() !== id) as any
+
+    if (pagesDocument.pages.length === initialLength) {
       return NextResponse.json({ success: false, error: 'Page not found' }, { status: 404 })
     }
-
-    pageToDelete.deleteOne()
     pagesDocument.markModified('pages')
     await pagesDocument.save()
 

@@ -1,5 +1,12 @@
 import type { GeoJSON } from "geojson"
 
+export type DeliveryZoneGeometry = GeoJSON.Geometry & {
+  properties?: {
+    radius?: number
+    [key: string]: unknown
+  }
+}
+
 export interface DeliveryZone {
   id: string
   restaurantId: string
@@ -9,7 +16,7 @@ export interface DeliveryZone {
   color: string
   is_active: boolean
   zone_type: "circle" | "polygon"
-  geometry: GeoJSON.Geometry
+  geometry: DeliveryZoneGeometry
   created_at: string
   updated_at: string
   created_by?: string
@@ -22,7 +29,7 @@ export interface CreateDeliveryZoneRequest {
   delivery_fee: number
   color: string
   zone_type: "circle" | "polygon"
-  geometry: GeoJSON.Geometry
+  geometry: DeliveryZoneGeometry
   is_active?: boolean
 }
 

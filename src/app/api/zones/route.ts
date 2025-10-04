@@ -5,7 +5,7 @@ import { Types } from "mongoose"
 import dbConnect from "@/lib/dbConnect"
 import DeliveryZoneLegacy from "@/models/delivery-zone-legacy"
 import { serializeDeliveryZone, serializeDeliveryZones } from "@/lib/delivery-zones/serialize"
-import type { CreateDeliveryZoneRequest } from "@/lib/types/delivery-zones"
+import type { CreateDeliveryZoneRequest } from "@/types/delivery-zones"
 
 function validatePayload(body: CreateDeliveryZoneRequest) {
   if (!body.restaurantId || !Types.ObjectId.isValid(body.restaurantId)) {

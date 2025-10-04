@@ -62,10 +62,15 @@ export default function EditMenuItem({ open, onOpenChange, item, onSave }: EditM
 
   const handleInputChange = (field: string, value: any, language?: string) => {
     if (language) {
+      const currentValue = formData[field as keyof MenuItemProps]
+      const nextValue = (typeof currentValue === 'object' && currentValue !== null)
+        ? currentValue
+        : {}
+
       setFormData({
         ...formData,
         [field]: {
-          ...formData[field as keyof MenuItemProps],
+          ...(nextValue as Record<string, unknown>),
           [language]: value,
         },
       })
@@ -199,7 +204,7 @@ export default function EditMenuItem({ open, onOpenChange, item, onSave }: EditM
                     <Button
                       key={tag}
                       type="button"
-                      variant={formData.dietary?.includes(tag) ? "default" : "outline-solid"}
+                      variant={formData.dietary?.includes(tag) ? "default" : "outline"}
                       size="sm"
                       onClick={() => handleDietaryToggle(tag)}
                       className="capitalize"
@@ -350,4 +355,3 @@ export default function EditMenuItem({ open, onOpenChange, item, onSave }: EditM
     </Dialog>
   )
 }
-
