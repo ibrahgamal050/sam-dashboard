@@ -1,9 +1,16 @@
-import { MenuManager } from '@/components/menu-manager'
+'use client'
 
-export default function Home() {
+import { useSearchParams } from 'next/navigation'
+
+import { MenuManager } from '@/components/menu/menu-manager'
+
+export default function MenuManagerPage() {
+  const searchParams = useSearchParams()
+  const subdomain = searchParams.get('subdomain') ?? 'default'
+
   return (
     <main className="min-h-screen bg-background">
-      <MenuManager />
+      <MenuManager subdomain={subdomain} />
     </main>
   )
 }
