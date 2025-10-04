@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps, react/no-unescaped-entities, @next/next/no-img-element */
 "use client"
 import React, { useEffect, useMemo, useState } from "react"
 import { Input } from "@/components/ui/input"

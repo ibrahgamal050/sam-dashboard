@@ -325,10 +325,11 @@ export function PageEditorComponent() {
                     </div>
                   </TabsContent>
                 </ScrollArea>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
       {showToast && (
         <Toast
           title={toastMessage.includes('successfully') ? 'Success' : 'Error'}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"

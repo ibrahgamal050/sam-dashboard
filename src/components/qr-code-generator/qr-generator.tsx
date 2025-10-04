@@ -29,9 +29,7 @@ const TEXT_COLORS = [
   { value: "#FFFFFF", label: "White" },
 ]
 
-const TEMPLATE_IDS = ["minimal", "rounded", "banner", "pocket", "wave", "arc", "frame"] as const
-
-type TemplateId = (typeof TEMPLATE_IDS)[number]
+type TemplateId = "minimal" | "rounded" | "banner" | "pocket" | "wave" | "arc" | "frame"
 
 interface QRGeneratorProps {
   subdomain: string

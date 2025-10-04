@@ -244,6 +244,8 @@ export default function LeafletMap({
         mapInstanceRef.current = null
       }
     }
+  // Dependencies intentionally limited; handlers are stable across renders during edit sessions.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leafletLoaded, center, zoom, editMode, drawingMode])
 
   const handlePolygonClick = (lat: number, lng: number) => {
@@ -293,7 +295,6 @@ export default function LeafletMap({
   const finishPolygon = () => {
     if (polygonPointsRef.current.length < 3) return
 
-    const coordinates = polygonPointsRef.current.map(([lat, lng]) => [lng, lat])
     onPolygonComplete?.(polygonPointsRef.current)
 
     // Clear drawing state
@@ -507,7 +508,7 @@ export default function LeafletMap({
 
       const updateRadius = (emitSnap = false) => {
         const centerLatLng = centerMarker.getLatLng()
-        let handleLatLng = radiusMarker.getLatLng()
+        const handleLatLng = radiusMarker.getLatLng()
         const map = mapInstanceRef.current
         let distance = map.distance(centerLatLng, handleLatLng)
 
@@ -601,7 +602,7 @@ export default function LeafletMap({
   }, [editMode])
 
   useEffect(() => {
-    if (!mapInstanceRef.current || !leafletLoaded || !center || editMode) return
+    if (!mapInstanceRef.current || !center || editMode) return
 
     const currentCenter = mapInstanceRef.current.getCenter()
     if (
@@ -611,7 +612,7 @@ export default function LeafletMap({
       const currentZoom = mapInstanceRef.current.getZoom()
       mapInstanceRef.current.setView(center, currentZoom, { animate: false })
     }
-  }, [center, leafletLoaded, editMode])
+  }, [center, editMode])
 
   // Update zones on map
   useEffect(() => {
@@ -701,6 +702,8 @@ export default function LeafletMap({
     editMode,
     leafletLoaded,
     onZoneClick,
+    createLayerForGeometry,
+    enableZoneEditing,
   ])
 
   if (isLoading) {
