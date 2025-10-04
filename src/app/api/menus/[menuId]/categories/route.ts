@@ -3,9 +3,14 @@ import { Types } from "mongoose"
 
 import dbConnect from "@/lib/dbConnect"
 import RestaurantMenu from "@/models/RestaurantMenu"
+import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
 
-export async function POST(request: Request, { params }: { params: { menuId: string } }) {
-  const { menuId } = params
+export async function POST(request: Request, context: RouteHandlerContext) {
+  const { menuId } = await getRouteParams<{ menuId?: string }>(context)
+
+  if (!menuId) {
+    return NextResponse.json({ error: "Invalid menu id" }, { status: 400 })
+  }
 
   if (!Types.ObjectId.isValid(menuId)) {
     return NextResponse.json({ error: "Invalid menu id" }, { status: 400 })

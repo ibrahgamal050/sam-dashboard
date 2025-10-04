@@ -5,6 +5,7 @@ import dbConnect from '@/lib/dbConnect'
 import Pages from '@/models/page'
 import Restaurant from '@/models/Restaurant'
 import type { IPage } from '@/types/page'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 
 const serializePage = (page: IPage) => ({
   ...page,
@@ -13,11 +14,14 @@ const serializePage = (page: IPage) => ({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { subdomain: string; id: string } }
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
-    const { subdomain, id } = params;
+    const { subdomain, id } = await getRouteParams<{ subdomain?: string; id?: string }>(context);
+    if (!subdomain || !id) {
+      return NextResponse.json({ success: false, error: 'Page not found' }, { status: 404 });
+    }
 
     const restaurant = await Restaurant.findOne({ subdomain });
     if (!restaurant) {
@@ -57,11 +61,14 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { subdomain: string; id: string } }
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
-    const { subdomain, id } = params
+    const { subdomain, id } = await getRouteParams<{ subdomain?: string; id?: string }>(context)
+    if (!subdomain || !id) {
+      return NextResponse.json({ success: false, error: 'Page not found' }, { status: 404 })
+    }
 
     const restaurant = await Restaurant.findOne({ subdomain })
     if (!restaurant) {

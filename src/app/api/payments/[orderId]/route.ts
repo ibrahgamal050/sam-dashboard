@@ -1,11 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/dbConnect'
 import Order from '@/models/Order'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ orderId: string }> }) {
+export async function POST(req: Request, context: RouteHandlerContext) {
   try {
     const { method, amount, split } = await req.json()
-    const { orderId } = await params
+    const { orderId } = await getRouteParams<{ orderId?: string }>(context)
+    if (!orderId) {
+      return NextResponse.json({ error: 'orderId is required' }, { status: 400 })
+    }
     if (!method || typeof amount !== 'number') {
       return NextResponse.json({ error: 'method and amount are required' }, { status: 400 })
     }

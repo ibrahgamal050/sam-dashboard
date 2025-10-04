@@ -5,6 +5,7 @@ import dbConnect from '@/lib/dbConnect'
 import Pages from '@/models/page'
 import Restaurant from '@/models/Restaurant'
 import type { IPage } from '@/types/page'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 
 type IncomingPage = Partial<IPage> & {
   _id?: string
@@ -66,11 +67,14 @@ function serializePagesResponse(pages: IPage[]) {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { subdomain: string } }
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
-    const { subdomain } = params;
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context);
+    if (!subdomain) {
+      return NextResponse.json({ success: false, error: 'Subdomain is required' }, { status: 400 });
+    }
 
     const restaurant = await Restaurant.findOne({ subdomain });
     if (!restaurant) {
@@ -145,11 +149,14 @@ export async function POST(
 }
 export async function GET(
   request: NextRequest,
-  { params }: { params: { subdomain: string } }
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
-    const { subdomain } = params;
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context);
+    if (!subdomain) {
+      return NextResponse.json({ success: false, error: 'Subdomain is required' }, { status: 400 });
+    }
 
     const restaurant = await Restaurant.findOne({ subdomain });
     if (!restaurant) {

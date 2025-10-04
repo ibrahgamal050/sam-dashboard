@@ -6,6 +6,7 @@ import dbConnect from "@/lib/dbConnect"
 import DeliveryZoneLegacy from "@/models/delivery-zone-legacy"
 import { serializeDeliveryZone } from "@/lib/delivery-zones/serialize"
 import type { UpdateDeliveryZoneRequest } from "@/types/delivery-zones"
+import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
 
 const INVALID_ZONE_TYPE_MESSAGE = 'Invalid zone_type. Must be "circle" or "polygon"'
 
@@ -24,9 +25,12 @@ function buildUpdatePayload(body: Partial<UpdateDeliveryZoneRequest>) {
 }
 
 // GET /api/zones/[id] - Fetch a specific delivery zone
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: RouteHandlerContext) {
   try {
-    const { id } = params
+    const { id } = await getRouteParams<{ id?: string }>(context)
+    if (!id) {
+      return NextResponse.json({ error: "Zone id is required" }, { status: 400 })
+    }
     const restaurantId = request.nextUrl.searchParams.get("restaurantId")
 
     if (!restaurantId || !Types.ObjectId.isValid(restaurantId)) {
@@ -57,9 +61,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT /api/zones/[id] - Update a delivery zone
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: RouteHandlerContext) {
   try {
-    const { id } = params
+    const { id } = await getRouteParams<{ id?: string }>(context)
+    if (!id) {
+      return NextResponse.json({ error: "Zone id is required" }, { status: 400 })
+    }
     const restaurantId = request.nextUrl.searchParams.get("restaurantId")
     if (!restaurantId || !Types.ObjectId.isValid(restaurantId)) {
       return NextResponse.json({ error: "Valid restaurantId is required" }, { status: 400 })
@@ -110,9 +117,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/zones/[id] - Delete a delivery zone
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: RouteHandlerContext) {
   try {
-    const { id } = params
+    const { id } = await getRouteParams<{ id?: string }>(context)
+    if (!id) {
+      return NextResponse.json({ error: "Zone id is required" }, { status: 400 })
+    }
     const restaurantId = request.nextUrl.searchParams.get("restaurantId")
     if (!restaurantId || !Types.ObjectId.isValid(restaurantId)) {
       return NextResponse.json({ error: "Valid restaurantId is required" }, { status: 400 })

@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 import dbConnect from '@/lib/dbConnect'
 import Employee from '@/models/Employee'
 import Restaurant from '@/models/Restaurant'
@@ -8,11 +9,16 @@ function hashPin(pin: string) {
   return crypto.createHash('sha256').update(`pospin:${pin}`).digest('hex')
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { subdomain: string; id: string } }) {
+export async function PATCH(req: Request, context: RouteHandlerContext) {
   try {
     const body = await req.json()
     await dbConnect()
-    const rest = await Restaurant.findOne({ subdomain: params.subdomain }).lean<{ _id?: string }>()
+    const { subdomain, id } = await getRouteParams<{ subdomain?: string; id?: string }>(context)
+    if (!subdomain || !id) {
+      return NextResponse.json({ error: 'Missing route parameters' }, { status: 400 })
+    }
+
+    const rest = await Restaurant.findOne({ subdomain }).lean<{ _id?: string }>()
     if (!rest?._id) return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     const restaurantId = String(rest._id)
     const update: any = {}
@@ -21,7 +27,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { subdomain:
     if (typeof body.active === 'boolean') update.active = body.active
     if (body.pin) update.pinHash = hashPin(String(body.pin))
     const updated = await Employee.findOneAndUpdate(
-      { _id: params.id, restaurantId },
+      { _id: id, restaurantId },
       { $set: update },
       { new: true },
     ) as unknown as { toObject?: () => Record<string, unknown> }
@@ -34,13 +40,18 @@ export async function PATCH(req: NextRequest, { params }: { params: { subdomain:
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { subdomain: string; id: string } }) {
+export async function DELETE(_req: Request, context: RouteHandlerContext) {
   try {
     await dbConnect()
-    const rest = await Restaurant.findOne({ subdomain: params.subdomain }).lean<{ _id?: string }>()
+    const { subdomain, id } = await getRouteParams<{ subdomain?: string; id?: string }>(context)
+    if (!subdomain || !id) {
+      return NextResponse.json({ error: 'Missing route parameters' }, { status: 400 })
+    }
+
+    const rest = await Restaurant.findOne({ subdomain }).lean<{ _id?: string }>()
     if (!rest?._id) return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     const restaurantId = String(rest._id)
-    const res = await Employee.deleteOne({ _id: params.id, restaurantId })
+    const res = await Employee.deleteOne({ _id: id, restaurantId })
     return NextResponse.json({ deletedCount: res.deletedCount })
   } catch (e) {
     console.error('DELETE /api/[subdomain]/employees/:id error', e)

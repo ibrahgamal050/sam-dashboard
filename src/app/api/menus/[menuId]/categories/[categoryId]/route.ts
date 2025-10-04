@@ -3,9 +3,14 @@ import { Types } from "mongoose"
 
 import dbConnect from "@/lib/dbConnect"
 import RestaurantMenu from "@/models/RestaurantMenu"
+import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
 
-export async function PUT(request: Request, { params }: { params: { menuId: string; categoryId: string } }) {
-  const { menuId, categoryId } = params
+export async function PUT(request: Request, context: RouteHandlerContext) {
+  const { menuId, categoryId } = await getRouteParams<{ menuId?: string; categoryId?: string }>(context)
+
+  if (!menuId || !categoryId) {
+    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+  }
 
   if (!Types.ObjectId.isValid(menuId) || !Types.ObjectId.isValid(categoryId)) {
     return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
@@ -45,9 +50,13 @@ export async function PUT(request: Request, { params }: { params: { menuId: stri
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { menuId: string; categoryId: string } },
+  context: RouteHandlerContext,
 ) {
-  const { menuId, categoryId } = params
+  const { menuId, categoryId } = await getRouteParams<{ menuId?: string; categoryId?: string }>(context)
+
+  if (!menuId || !categoryId) {
+    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+  }
 
   if (!Types.ObjectId.isValid(menuId) || !Types.ObjectId.isValid(categoryId)) {
     return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })

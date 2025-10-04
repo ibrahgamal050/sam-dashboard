@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 import dbConnect from '@/lib/dbConnect'
 import Employee from '@/models/Employee'
 import Restaurant from '@/models/Restaurant'
@@ -8,10 +9,15 @@ function hashPin(pin: string) {
   return crypto.createHash('sha256').update(`pospin:${pin}`).digest('hex')
 }
 
-export async function GET(_req: NextRequest, { params }: { params: { subdomain: string } }) {
+export async function GET(_req: Request, context: RouteHandlerContext) {
   try {
     await dbConnect()
-    const rest = await Restaurant.findOne({ subdomain: params.subdomain }).lean<{ _id?: string }>()
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context)
+    if (!subdomain) {
+      return NextResponse.json({ error: 'Missing route parameters' }, { status: 400 })
+    }
+
+    const rest = await Restaurant.findOne({ subdomain }).lean<{ _id?: string }>()
     if (!rest?._id) return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     const restaurantId = String(rest._id)
     const staff = await Employee.find({ restaurantId }).select({ pinHash: 0 }).sort({ role: 1, name: 1 }).lean()
@@ -22,12 +28,17 @@ export async function GET(_req: NextRequest, { params }: { params: { subdomain: 
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { subdomain: string } }) {
+export async function POST(req: Request, context: RouteHandlerContext) {
   try {
     const { name, role, pin, active = true } = await req.json()
     if (!name || !role || !pin) return NextResponse.json({ error: 'name, role, pin required' }, { status: 400 })
     await dbConnect()
-    const rest = await Restaurant.findOne({ subdomain: params.subdomain }).lean<{ _id?: string }>()
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context)
+    if (!subdomain) {
+      return NextResponse.json({ error: 'Missing route parameters' }, { status: 400 })
+    }
+
+    const rest = await Restaurant.findOne({ subdomain }).lean<{ _id?: string }>()
     if (!rest?._id) return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     const restaurantId = String(rest._id)
     const doc = await Employee.create({ restaurantId, name, role, pinHash: hashPin(String(pin)), active })

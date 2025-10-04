@@ -1,17 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/dbConnect'
 import Order from '@/models/Order'
 import mongoose from 'mongoose'
 import { emitOrderEvent } from '@/lib/orderEvents'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 
-export async function PATCH(req: NextRequest, { params }: { params: { orderId: string, index: string } }) {
+export async function PATCH(req: Request, context: RouteHandlerContext) {
   try {
-    const idx = parseInt(params.index, 10)
+    const { orderId, index } = await getRouteParams<{ orderId?: string; index?: string }>(context)
+    if (!orderId || index === undefined) {
+      return NextResponse.json({ error: 'Missing route parameters' }, { status: 400 })
+    }
+
+    const idx = parseInt(index, 10)
     if (isNaN(idx)) return NextResponse.json({ error: 'Invalid item index' }, { status: 400 })
     const body = await req.json()
     const { state, qty, notes } = body as { state?: string; qty?: number; notes?: string }
     await dbConnect()
-    const order = await Order.findById(params.orderId)
+    const order = await Order.findById(orderId)
     if (!order) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     if (!order.items[idx]) return NextResponse.json({ error: 'Item not found' }, { status: 404 })
     if (state) (order.items[idx] as any).state = state

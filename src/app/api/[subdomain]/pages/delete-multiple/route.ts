@@ -1,17 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
 import dbConnect from '@/lib/dbConnect'
 import Pages from '@/models/page'
 import Restaurant from '@/models/Restaurant'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
+  request: Request,
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
 
-    const { subdomain } = params
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context)
+    if (!subdomain) {
+      return NextResponse.json({ success: false, error: 'Subdomain is required' }, { status: 400 })
+    }
     const { ids } = await request.json()
 
     if (!Array.isArray(ids) || ids.length === 0) {

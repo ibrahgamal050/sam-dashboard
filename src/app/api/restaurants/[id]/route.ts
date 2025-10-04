@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import dbConnect from '@/lib/dbConnect'
 import Restaurant from '@/models/Restaurant'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 
 const DEFAULT_FULFILLMENT_SETTINGS = {
   allowDelivery: true,
@@ -14,11 +15,16 @@ const DEFAULT_FULFILLMENT_SETTINGS = {
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+export async function GET(_request: Request, context: RouteHandlerContext) {
   try {
     await dbConnect()
 
-    const restaurant = await Restaurant.findOne({ subdomain: params.id }).lean()
+    const { id } = await getRouteParams<{ id?: string }>(context)
+    if (!id) {
+      return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
+    }
+
+    const restaurant = await Restaurant.findOne({ subdomain: id }).lean()
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
@@ -30,13 +36,18 @@ export async function GET(_request: Request, { params }: { params: { id: string 
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, context: RouteHandlerContext) {
   try {
     await dbConnect()
 
     const payload = await request.json()
 
-    const restaurant = await Restaurant.findOne({ subdomain: params.id })
+    const { id } = await getRouteParams<{ id?: string }>(context)
+    if (!id) {
+      return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
+    }
+
+    const restaurant = await Restaurant.findOne({ subdomain: id })
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
@@ -51,10 +62,14 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_request: Request, context: RouteHandlerContext) {
   try {
     await dbConnect()
-    const restaurant = await Restaurant.findOneAndDelete({ subdomain: params.id })
+    const { id } = await getRouteParams<{ id?: string }>(context)
+    if (!id) {
+      return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
+    }
+    const restaurant = await Restaurant.findOneAndDelete({ subdomain: id })
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }

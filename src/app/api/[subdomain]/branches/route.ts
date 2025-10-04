@@ -1,17 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 import Branches from '@/models/branches';
 import Restaurant from '@/models/Restaurant';
 import connectDB from '@/lib/dbConnect';
 
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
-) {
+export async function POST(request: Request, context: RouteHandlerContext) {
   try {
     await connectDB();
-    const { subdomain } = params;
-    
+    const { subdomain } = (await getRouteParams<{ subdomain?: string }>(context));
+
     // Validate subdomain
     if (!subdomain) {
       return NextResponse.json({ error: 'Subdomain is required' }, { status: 400 });
@@ -67,13 +65,10 @@ export async function POST(
     }, { status: 500 });
   }
 }
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
-) {
+export async function GET(_request: Request, context: RouteHandlerContext) {
   try {
     await connectDB();
-    const { subdomain } = params;
+    const { subdomain } = (await getRouteParams<{ subdomain?: string }>(context));
     const restaurant = await Restaurant.findOne({ subdomain });
 
     if (!restaurant) {
@@ -93,13 +88,10 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
-) {
+export async function PUT(request: Request, context: RouteHandlerContext) {
   try {
     await connectDB();
-    const { subdomain } = params;
+    const { subdomain } = (await getRouteParams<{ subdomain?: string }>(context));
     const restaurant = await Restaurant.findOne({ subdomain });
 
     if (!restaurant) {
@@ -120,13 +112,10 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
-) {
+export async function DELETE(request: Request, context: RouteHandlerContext) {
   try {
     await connectDB();
-    const { subdomain } = params;
+    const { subdomain } = (await getRouteParams<{ subdomain?: string }>(context));
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug');
 

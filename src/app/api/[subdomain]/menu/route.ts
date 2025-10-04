@@ -1,15 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/dbConnect'
 import RestaurantMenu from '@/models/RestaurantMenu'
 import Restaurant from '@/models/Restaurant'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
+  request: Request,
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
-    const { subdomain } = params
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context)
+    if (!subdomain) {
+      return NextResponse.json({ error: 'Subdomain is required' }, { status: 400 })
+    }
 
     const restaurant = await Restaurant.findOne({ subdomain })
     if (!restaurant) {
@@ -48,12 +52,15 @@ export async function POST(
 }
 
 export async function PUT(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
+  request: Request,
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
-    const { subdomain } = params
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context)
+    if (!subdomain) {
+      return NextResponse.json({ message: 'Subdomain is required' }, { status: 400 })
+    }
 
     const restaurant = await Restaurant.findOne({ subdomain: { $regex: new RegExp(`^${subdomain}$`, 'i') } })
 
@@ -88,12 +95,15 @@ export async function PUT(
 }
 
 export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
+  request: Request,
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
-    const { subdomain } = params
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context)
+    if (!subdomain) {
+      return NextResponse.json({ message: 'Subdomain is required' }, { status: 400 })
+    }
 
     const restaurant = await Restaurant.findOne({ subdomain: { $regex: new RegExp(`^${subdomain}$`, 'i') } })
 
@@ -126,12 +136,15 @@ export async function PATCH(
 }
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { subdomain: string } }
+  _request: Request,
+  context: RouteHandlerContext
 ) {
   try {
     await dbConnect()
-    const { subdomain } = params
+    const { subdomain } = await getRouteParams<{ subdomain?: string }>(context)
+    if (!subdomain) {
+      return NextResponse.json({ success: false, error: 'Subdomain is required' }, { status: 400 })
+    }
 
     const restaurant = await Restaurant.findOne({ subdomain })
     if (!restaurant) {

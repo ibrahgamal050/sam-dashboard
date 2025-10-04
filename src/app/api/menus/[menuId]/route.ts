@@ -3,13 +3,17 @@ import { Types } from "mongoose"
 
 import dbConnect from "@/lib/dbConnect"
 import RestaurantMenu from "@/models/RestaurantMenu"
+import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
 
 export async function GET(
   _request: Request,
-  { params }: { params: { menuId: string } },
+  context: RouteHandlerContext,
 ) {
   try {
-    const { menuId } = params
+    const { menuId } = await getRouteParams<{ menuId?: string }>(context)
+    if (!menuId) {
+      return NextResponse.json({ error: "Invalid menu id" }, { status: 400 })
+    }
 
     if (!Types.ObjectId.isValid(menuId)) {
       return NextResponse.json({ error: "Invalid menu id" }, { status: 400 })
@@ -31,9 +35,13 @@ export async function GET(
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { menuId: string } }) {
+export async function PUT(request: Request, context: RouteHandlerContext) {
   try {
-    const { menuId } = params
+    const { menuId } = await getRouteParams<{ menuId?: string }>(context)
+
+    if (!menuId) {
+      return NextResponse.json({ error: "Invalid menu id" }, { status: 400 })
+    }
 
     if (!Types.ObjectId.isValid(menuId)) {
       return NextResponse.json({ error: "Invalid menu id" }, { status: 400 })

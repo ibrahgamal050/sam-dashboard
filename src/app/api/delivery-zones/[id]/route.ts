@@ -7,19 +7,19 @@ import { updateZoneSchema } from "@/lib/validation/delivery-zone"
 import { requireRestaurantAdmin } from "@/lib/auth/permissions"
 import { closePolygonRings } from "@/lib/geo/normalize-polygon"
 import { serializeZone } from "@/lib/delivery/serialize-zone"
+import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
 
-type RouteContext = {
-  params: {
-    id: string
-  }
-}
+type Params = { id?: string }
 
-export async function PATCH(request: Request, context: RouteContext) {
+export async function PATCH(request: Request, context: RouteHandlerContext) {
   try {
-    const zoneId = context.params.id
+    const { id: zoneId } = await getRouteParams<Params>(context)
+    if (!zoneId) {
+      return NextResponse.json({ error: "Delivery zone not found" }, { status: 404 })
+    }
 
     await dbConnect()
     const zone = await DeliveryZone.findById(zoneId)
@@ -59,9 +59,12 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 }
 
-export async function DELETE(request: Request, context: RouteContext) {
+export async function DELETE(request: Request, context: RouteHandlerContext) {
   try {
-    const zoneId = context.params.id
+    const { id: zoneId } = await getRouteParams<Params>(context)
+    if (!zoneId) {
+      return NextResponse.json({ error: "Delivery zone not found" }, { status: 404 })
+    }
     await dbConnect()
 
     const zone = await DeliveryZone.findById(zoneId)

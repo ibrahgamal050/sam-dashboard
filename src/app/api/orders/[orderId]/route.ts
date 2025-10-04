@@ -5,10 +5,14 @@ import Order from '@/models/Order'
 import { PatchOneSchema } from '@/lib/orderEnums'
 import { emitOrderEvent } from '@/lib/orderEvents'
 import { assertTenantOrThrow } from '@/lib/auth'
+import { getRouteParams, type RouteHandlerContext } from '@/lib/route-params'
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ orderId: string }> }) {
+export async function GET(req: NextRequest, context: RouteHandlerContext) {
   try {
-    const { orderId: id } = await params
+    const { orderId: id } = await getRouteParams<{ orderId?: string }>(context)
+    if (!id) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
     await dbConnect()
     const byObjectId = mongoose.Types.ObjectId.isValid(id) ? await Order.findById(id).lean() : null
     const order = byObjectId || await Order.findOne({ orderId: id }).lean()
@@ -22,9 +26,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ orde
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ orderId: string }> }) {
+export async function PATCH(req: NextRequest, context: RouteHandlerContext) {
   try {
-    const { orderId: id } = await params
+    const { orderId: id } = await getRouteParams<{ orderId?: string }>(context)
+    if (!id) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
     const body = await req.json()
     const parsed = PatchOneSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
