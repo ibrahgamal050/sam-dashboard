@@ -12,6 +12,10 @@ interface IRestaurant extends Document {
   logo: string;
   coverImage: string;
   hotline: string;
+  contactEmail?: string;
+  website?: string;
+  description?: string;
+  settings?: Record<string, unknown>;
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -88,6 +92,22 @@ const restaurantSchema = new Schema({
     logo: {
         type: String,
         default: '/placeholder.svg?height=100&width=100'
+    },
+    contactEmail: {
+        type: String,
+        default: ''
+    },
+    website: {
+        type: String,
+        default: ''
+    },
+    description: {
+        type: String,
+        default: ''
+    },
+    settings: {
+        type: Schema.Types.Mixed,
+        default: {}
     },
     hotline: {
         type: String,
