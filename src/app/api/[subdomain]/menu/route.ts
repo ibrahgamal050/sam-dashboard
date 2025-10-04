@@ -24,15 +24,17 @@ export async function POST(
 
     let restaurantMenu = await RestaurantMenu.findOne({ restaurantId: restaurant._id })
 
+    const restaurantName = restaurant.name?.ar || restaurant.name?.en || restaurant.subdomain
+
     if (restaurantMenu) {
-      restaurantMenu.name = restaurant.nameAr
+      restaurantMenu.name = restaurantName
       restaurantMenu.categories = categories
       restaurantMenu.menuImages = menuImages
       await restaurantMenu.save()
     } else {
       restaurantMenu = await RestaurantMenu.create({
         restaurantId: restaurant._id,
-        name: restaurant.nameAr,
+        name: restaurantName,
         categories,
         menuImages,
       })
@@ -147,4 +149,3 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch restaurant menu' }, { status: 500 })
   }
 }
-

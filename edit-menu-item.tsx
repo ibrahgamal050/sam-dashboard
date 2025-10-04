@@ -199,7 +199,7 @@ export default function EditMenuItem({ open, onOpenChange, item, onSave }: EditM
                     <Button
                       key={tag}
                       type="button"
-                      variant={formData.dietary?.includes(tag) ? "default" : "outline"}
+                      variant={formData.dietary?.includes(tag) ? "default" : "outline-solid"}
                       size="sm"
                       onClick={() => handleDietaryToggle(tag)}
                       className="capitalize"

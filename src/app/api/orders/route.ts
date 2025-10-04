@@ -74,6 +74,8 @@ export async function GET(req: NextRequest) {
         totalPrice: 1,
         subtotal: 1,
         deliveryFee: 1,
+        deliveryZoneId: 1,
+        deliveryLocation: 1,
         currency: 1,
         payment: 1,
         paymentStatus: 1,
@@ -106,6 +108,9 @@ export async function GET(req: NextRequest) {
       table: o.table,
       eta: o.eta,
       notes: o.notes,
+      deliveryFee: o.deliveryFee ?? 0,
+      deliveryZoneId: o.deliveryZoneId ? o.deliveryZoneId.toString() : null,
+      deliveryLocation: o.deliveryLocation ?? null,
       createdAt: o.createdAt,
     }))
 
@@ -123,18 +128,87 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { restaurantId, items, subtotal, deliveryFee = 0, total, currency = 'USD', payment, status = 'in_progress', type = 'delivery', table, eta, notes, userId, customer } = body
+    const {
+      restaurantId,
+      items,
+      subtotal,
+      deliveryFee = 0,
+      total,
+      currency = 'USD',
+      payment,
+      status = 'in_progress',
+      type = 'delivery',
+      table,
+      eta,
+      notes,
+      userId,
+      customer,
+      deliveryZoneId,
+      deliveryLocation,
+    } = body
+
     if (!restaurantId || !Array.isArray(items) || typeof subtotal !== 'number' || typeof total !== 'number') {
       return NextResponse.json({ error: 'restaurantId and items are required' }, { status: 400 })
     }
+
     await dbConnect()
-    const doc = await Order.create({
+
+    let appliedDeliveryFee = Number(deliveryFee) || 0
+    let appliedTotal = Number(total) || subtotal
+    let appliedDeliveryZoneId: string | undefined = typeof deliveryZoneId === 'string' ? deliveryZoneId : undefined
+    const normalizedType = typeof type === 'string' ? type.toLowerCase() : 'delivery'
+
+    if (normalizedType === 'delivery') {
+      let zoneInfo: { id: string; fee: number; minOrder: number } | null = null
+
+      if (appliedDeliveryZoneId) {
+        const zoneDoc = await DeliveryZone.findOne({ _id: appliedDeliveryZoneId, restaurantId }).lean()
+        if (zoneDoc) {
+          zoneInfo = {
+            id: String(zoneDoc._id),
+            fee: zoneDoc.fee,
+            minOrder: zoneDoc.minOrder,
+          }
+        } else {
+          appliedDeliveryZoneId = undefined
+        }
+      }
+
+      const lat = deliveryLocation?.lat
+      const lng = deliveryLocation?.lng
+
+      if (!zoneInfo && typeof lat === 'number' && typeof lng === 'number') {
+        const resolved = await resolveDeliveryZone(String(restaurantId), lat, lng)
+        if (!resolved.inside) {
+          return NextResponse.json({ error: 'Location outside delivery zones' }, { status: 400 })
+        }
+        zoneInfo = {
+          id: resolved.zone.id,
+          fee: resolved.zone.fee,
+          minOrder: resolved.zone.minOrder,
+        }
+        appliedDeliveryZoneId = resolved.zone.id
+      }
+
+      if (!zoneInfo) {
+        return NextResponse.json({ error: 'Delivery zone validation failed' }, { status: 400 })
+      }
+
+      if (subtotal < zoneInfo.minOrder) {
+        return NextResponse.json({ error: 'Order does not meet delivery minimum' }, { status: 400 })
+      }
+
+      appliedDeliveryFee = zoneInfo.fee
+      appliedTotal = (Number(total) || subtotal) - (Number(deliveryFee) || 0) + zoneInfo.fee
+    }
+
+    const orderPayload: any = {
       restaurantId,
       userId,
       items,
       subtotal,
-      deliveryFee,
-      totalPrice: total,
+      deliveryFee: appliedDeliveryFee,
+      totalPrice: appliedTotal,
       currency,
       payment,
       status,
@@ -143,7 +217,21 @@ export async function POST(req: NextRequest) {
       eta,
       notes,
       customer,
-    })
+    }
+
+    if (normalizedType === 'delivery') {
+      if (appliedDeliveryZoneId) {
+        orderPayload.deliveryZoneId = appliedDeliveryZoneId
+      }
+      if (deliveryLocation && typeof deliveryLocation.lat === 'number' && typeof deliveryLocation.lng === 'number') {
+        orderPayload.deliveryLocation = {
+          lat: deliveryLocation.lat,
+          lng: deliveryLocation.lng,
+        }
+      }
+    }
+
+    const doc = await Order.create(orderPayload)
 
     emitOrderEvent(String(restaurantId), 'order.created', { orderId: String(doc._id) })
     return NextResponse.json({ orderId: String(doc._id) })

@@ -18,6 +18,8 @@ import {
   Package,
   Clock,
   CheckCircle,
+  AlertTriangle,
+  Map,
 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 
@@ -104,6 +106,50 @@ export default function POSPage() {
 
   async function submit() {
     if (!restaurantId || cart.items.length === 0) return
+
+    if (cart.type === "delivery") {
+      const location = cart.deliveryLocation || {}
+      if (location.lat == null || location.lng == null) {
+        toast({ title: "Set delivery location", variant: "destructive" })
+        return
+      }
+
+      let zone = cart.deliveryZone
+      if (!zone) {
+        try {
+          const res = await fetch("/api/delivery-zones/check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ restaurantId, lat: location.lat, lng: location.lng }),
+          })
+          if (!res.ok) throw new Error("Zone check failed")
+          const data = await res.json()
+          if (!data.inside) {
+            toast({ title: "Outside delivery zone", variant: "destructive" })
+            return
+          }
+          const fetched = data.zone
+          cart.setDeliveryZone({ id: fetched.id, name: fetched.name, fee: fetched.fee, minOrder: fetched.minOrder })
+          zone = fetched
+        } catch (error) {
+          console.error("Failed to resolve delivery zone", error)
+          toast({ title: "Delivery zone lookup failed", variant: "destructive" })
+          return
+        }
+      }
+
+      const snapshot = cart.getSnapshot()
+      const appliedZone = snapshot.deliveryZone
+      if (appliedZone && snapshot.totals.subtotal < appliedZone.minOrder) {
+        toast({
+          title: "Below minimum order",
+          description: `Minimum ${appliedZone.minOrder.toFixed(2)} required for ${appliedZone.name}`,
+          variant: "destructive",
+        })
+        return
+      }
+    }
+
     const payload = cart.toPayload(restaurantId)
     try {
       const res = await fetch("/api/orders", {
@@ -165,11 +211,11 @@ export default function POSPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <div className="mx-auto max-w-full px-4 py-8 sm:px-6 lg:px-8">
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-linear-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
               <ShoppingCart className="h-5 w-5 text-white" aria-hidden="true" />
             </div>
             <div>
@@ -216,7 +262,14 @@ export default function POSPage() {
           </main>
 
           <aside className="md:sticky md:top-8 md:h-fit lg:sticky lg:top-8 lg:h-fit" role="complementary" aria-label="Shopping cart">
-            <CartSidebar cart={cart} onSubmit={submit} onHold={hold} onRecall={recall} onPayCash={payCash} />
+            <CartSidebar
+              cart={cart}
+              restaurantId={restaurantId}
+              onSubmit={submit}
+              onHold={hold}
+              onRecall={recall}
+              onPayCash={payCash}
+            />
           </aside>
         </div>
       </div>
@@ -242,7 +295,7 @@ function SearchAndFilters({
         />
         <Input
           placeholder="Search products by name or category..."
-          className="pl-12 h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500 dark:focus:border-emerald-400 text-base"
+          className="pl-12 h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-xs focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500 dark:focus:border-emerald-400 text-base"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search products"
@@ -250,7 +303,7 @@ function SearchAndFilters({
       </div>
 
       <div className="flex flex-wrap gap-4">
-        <div className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm border border-slate-200 dark:border-slate-700">
+        <div className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-3 shadow-xs border border-slate-200 dark:border-slate-700">
           <Package className="h-5 w-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
           <Select value={cart.type} onValueChange={(v) => cart.setType(v as any)}>
             <SelectTrigger className="w-36 h-10 border-0 bg-transparent focus:ring-0">
@@ -264,7 +317,7 @@ function SearchAndFilters({
           </Select>
         </div>
 
-        <div className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm border border-slate-200 dark:border-slate-700">
+        <div className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl p-3 shadow-xs border border-slate-200 dark:border-slate-700">
           <Users className="h-5 w-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
           <Input
             placeholder="Table #"
@@ -291,12 +344,12 @@ function CategoryTabs({
   return (
     <div className="mb-8">
       <Tabs value={activeCat} onValueChange={setActiveCat}>
-        <TabsList className="h-14 w-full justify-start overflow-x-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl p-2">
+        <TabsList className="h-14 w-full justify-start overflow-x-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs rounded-xl p-2">
           {categories.map((c) => (
             <TabsTrigger
               key={c}
               value={c}
-              className="px-6 py-3 text-sm font-semibold whitespace-nowrap rounded-lg transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
+              className="px-6 py-3 text-sm font-semibold whitespace-nowrap rounded-lg transition-all duration-200 data-[state=active]:bg-linear-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
             >
               {c}
             </TabsTrigger>
@@ -468,7 +521,7 @@ function ProductGrid({
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4">
         <div className="text-center space-y-6">
-          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl flex items-center justify-center shadow-inner">
+          <div className="w-20 h-20 mx-auto bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl flex items-center justify-center shadow-inner">
             <Search className="h-10 w-10 text-slate-400 dark:text-slate-500" aria-hidden="true" />
           </div>
           <div className="space-y-2">
@@ -522,12 +575,12 @@ const ProductCard = React.memo(function ProductCard({
       <CardContent className="p-0">
         <button
           onClick={() => onAddToCart(product)}
-          className="w-full h-full text-left focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:ring-offset-2 rounded-xl"
+          className="w-full h-full text-left focus:outline-hidden focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:ring-offset-2 rounded-xl"
           aria-label={`Add ${name} to cart for $${priceNumber.toFixed(2)}`}
         >
           <div className="p-5 space-y-4">
             {product.image && (
-              <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-xl overflow-hidden">
+              <div className="aspect-square bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-xl overflow-hidden">
                 <img
                   src={product.image || "/placeholder.svg"}
                   alt={name}
@@ -549,7 +602,7 @@ const ProductCard = React.memo(function ProductCard({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-slate-900 dark:text-slate-100">${priceNumber.toFixed(2)}</span>
-                <div className="w-9 h-9 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center group-hover:from-emerald-600 group-hover:to-teal-700 transition-all duration-200 shadow-lg group-hover:shadow-xl">
+                <div className="w-9 h-9 bg-linear-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center group-hover:from-emerald-600 group-hover:to-teal-700 transition-all duration-200 shadow-lg group-hover:shadow-xl">
                   <Plus className="h-4 w-4 text-white" aria-hidden="true" />
                 </div>
               </div>
@@ -563,12 +616,14 @@ const ProductCard = React.memo(function ProductCard({
 
 function CartSidebar({
   cart,
+  restaurantId,
   onSubmit,
   onHold,
   onRecall,
   onPayCash,
 }: {
   cart: any
+  restaurantId?: string | null
   onSubmit: () => void
   onHold: () => void
   onRecall: () => void
@@ -576,12 +631,12 @@ function CartSidebar({
 }) {
   return (
     <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-xl rounded-2xl overflow-hidden">
-      <CardHeader className="pb-6 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border-b border-slate-200 dark:border-slate-600">
+      <CardHeader className="pb-6 bg-linear-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border-b border-slate-200 dark:border-slate-600">
         <CardTitle className="flex items-center justify-between text-xl">
           <span className="text-slate-900 dark:text-slate-100 font-bold">Shopping Cart</span>
           <Badge
             variant="outline"
-            className="gap-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700 font-semibold"
+            className="gap-2 px-4 py-2 bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700 font-semibold"
           >
             <ShoppingCart className="h-4 w-4" aria-hidden="true" />
             <span>{cart.items.length} items</span>
@@ -591,6 +646,9 @@ function CartSidebar({
 
       <CardContent className="p-6 space-y-6">
         <CartItems cart={cart} />
+        {cart.type === "delivery" && (
+          <DeliveryDetails cart={cart} restaurantId={restaurantId} />
+        )}
         <CartTotals cart={cart} />
         <CartActions cart={cart} onSubmit={onSubmit} onHold={onHold} onRecall={onRecall} onPayCash={onPayCash} />
       </CardContent>
@@ -598,11 +656,131 @@ function CartSidebar({
   )
 }
 
+function DeliveryDetails({ cart, restaurantId }: { cart: any; restaurantId?: string | null }) {
+  const { toast: pushToast } = useToast()
+  const [checking, setChecking] = useState(false)
+
+  const latValue = cart.deliveryLocation?.lat ?? null
+  const lngValue = cart.deliveryLocation?.lng ?? null
+
+  const handleLatChange = (value: string) => {
+    const parsed = value === "" ? null : Number(value)
+    cart.setDeliveryLocation(isFiniteNumber(parsed) ? parsed : null, lngValue)
+  }
+
+  const handleLngChange = (value: string) => {
+    const parsed = value === "" ? null : Number(value)
+    cart.setDeliveryLocation(latValue, isFiniteNumber(parsed) ? parsed : null)
+  }
+
+  const checkCoverage = async () => {
+    if (!restaurantId) {
+      pushToast({ title: "Missing restaurant", variant: "destructive" })
+      return
+    }
+    if (latValue == null || lngValue == null) {
+      pushToast({ title: "Set location", description: "Please enter latitude and longitude", variant: "destructive" as any })
+      return
+    }
+    setChecking(true)
+    try {
+      const res = await fetch("/api/delivery-zones/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurantId, lat: latValue, lng: lngValue }),
+      })
+      if (!res.ok) {
+        throw new Error("check failed")
+      }
+      const data = await res.json()
+      if (!data.inside) {
+        cart.setDeliveryZone(null)
+        pushToast({
+          title: "Outside coverage",
+          description: "Selected location is outside delivery zones",
+          variant: "destructive" as any,
+        })
+        return
+      }
+      const zone = data.zone
+      cart.setDeliveryZone({ id: zone.id, name: zone.name, fee: zone.fee, minOrder: zone.minOrder })
+      pushToast({
+        title: `Zone matched: ${zone.name}`,
+        description: `Fee ${zone.fee.toFixed(2)} / Minimum ${zone.minOrder.toFixed(2)}`,
+      })
+    } catch (error) {
+      console.error("Failed to check delivery zone", error)
+      pushToast({ title: "Zone check failed", variant: "destructive" })
+    } finally {
+      setChecking(false)
+    }
+  }
+
+  const zone = cart.deliveryZone
+  const needsMinOrder = zone && cart.totals.subtotal < zone.minOrder
+
+  return (
+    <div className="space-y-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50/60 dark:bg-slate-700/40 p-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Delivery Details</h3>
+        <Badge variant="outline" className="text-xs">
+          {zone ? zone.name : "No zone"}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium text-slate-500 dark:text-slate-300 uppercase tracking-wide">Latitude</label>
+          <Input
+            type="number"
+            step="any"
+            value={latValue ?? ""}
+            onChange={(e) => handleLatChange(e.target.value)}
+            placeholder="24.7136"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-500 dark:text-slate-300 uppercase tracking-wide">Longitude</label>
+          <Input
+            type="number"
+            step="any"
+            value={lngValue ?? ""}
+            onChange={(e) => handleLngChange(e.target.value)}
+            placeholder="46.6753"
+          />
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <Button type="button" variant="outline" onClick={checkCoverage} disabled={checking} className="flex-1">
+          {checking ? "Checking…" : "Check Coverage"}
+        </Button>
+        {zone && (
+          <Button type="button" variant="ghost" onClick={() => cart.setDeliveryZone(null)} className="text-sm">
+            Clear
+          </Button>
+        )}
+      </div>
+      {zone && (
+        <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+          <p>
+            Fee: <span className="font-semibold">{zone.fee.toFixed(2)}</span>
+          </p>
+          <p>
+            Min order: <span className="font-semibold">{zone.minOrder.toFixed(2)}</span>
+          </p>
+          {needsMinOrder && (
+            <p className="text-amber-600 dark:text-amber-400 font-medium">Subtotal below minimum</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function CartItems({ cart }: { cart: any }) {
   if (cart.items.length === 0) {
     return (
       <div className="py-16 text-center">
-        <div className="w-20 h-20 mx-auto bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+        <div className="w-20 h-20 mx-auto bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
           <ShoppingCart className="h-10 w-10 text-slate-400 dark:text-slate-500" aria-hidden="true" />
         </div>
         <div className="space-y-2">
@@ -625,7 +803,7 @@ function CartItems({ cart }: { cart: any }) {
 
 const CartItem = React.memo(function CartItem({ item, cart }: { item: any; cart: any }) {
   return (
-    <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-slate-50 to-white dark:from-slate-700/50 dark:to-slate-600/50 rounded-xl border border-slate-200/50 dark:border-slate-600/50">
+    <div className="flex items-center gap-4 p-4 bg-linear-to-r from-slate-50 to-white dark:from-slate-700/50 dark:to-slate-600/50 rounded-xl border border-slate-200/50 dark:border-slate-600/50">
       <div className="flex-1 min-w-0">
         <h4 className="font-semibold text-slate-900 dark:text-slate-100 truncate text-sm">{item.name}</h4>
         <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
@@ -663,6 +841,9 @@ const CartItem = React.memo(function CartItem({ item, cart }: { item: any; cart:
 })
 
 function CartTotals({ cart }: { cart: any }) {
+  const zone = cart.deliveryZone
+  const belowMin = zone && cart.totals.subtotal < zone.minOrder
+
   return (
     <div className="space-y-4 pt-6 border-t border-slate-200 dark:border-slate-700">
       <div className="space-y-3 text-sm">
@@ -701,7 +882,30 @@ function CartTotals({ cart }: { cart: any }) {
         )}
       </div>
 
-      <div className="flex justify-between text-xl font-bold text-slate-900 dark:text-slate-100 pt-4 border-t border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-700/30 dark:to-slate-600/30 -mx-6 px-6 py-4 rounded-xl">
+      {cart.type === "delivery" && zone && (
+        <div className="rounded-xl border border-emerald-100 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-900/30 p-4 text-sm text-emerald-700 dark:text-emerald-200">
+          <div className="flex items-center gap-2 font-semibold">
+            <Map className="h-4 w-4" aria-hidden="true" />
+            <span>{zone.name}</span>
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
+            <div>
+              Fee: <span className="font-semibold">{zone.fee.toFixed(2)}</span>
+            </div>
+            <div>
+              Minimum: <span className="font-semibold">{zone.minOrder.toFixed(2)}</span>
+            </div>
+          </div>
+          {belowMin && (
+            <div className="mt-2 flex items-center gap-2 text-amber-600 dark:text-amber-300">
+              <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+              <span>Subtotal below delivery minimum</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="flex justify-between text-xl font-bold text-slate-900 dark:text-slate-100 pt-4 border-t border-slate-200 dark:border-slate-700 bg-linear-to-r from-slate-50 to-white dark:from-slate-700/30 dark:to-slate-600/30 -mx-6 px-6 py-4 rounded-xl">
         <span>Total</span>
         <span className="text-emerald-600 dark:text-emerald-400">
           {cart.currency} {cart.totals.total.toFixed(2)}
@@ -725,6 +929,8 @@ function CartActions({
   onPayCash: () => void
 }) {
   const hasItems = cart.items.length > 0
+  const belowDeliveryMin =
+    cart.type === "delivery" && cart.deliveryZone && cart.totals.subtotal < cart.deliveryZone.minOrder
 
   return (
     <div className="space-y-4">
@@ -753,8 +959,8 @@ function CartActions({
 
         <Button
           onClick={onSubmit}
-          disabled={!hasItems}
-          className="gap-2 h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 dark:from-emerald-600 dark:to-teal-600 dark:hover:from-emerald-700 dark:hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 font-semibold"
+          disabled={!hasItems || belowDeliveryMin}
+          className="gap-2 h-12 bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 dark:from-emerald-600 dark:to-teal-600 dark:hover:from-emerald-700 dark:hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 font-semibold"
           aria-label="Submit order"
         >
           <CheckCircle className="h-4 w-4" aria-hidden="true" />
@@ -765,7 +971,7 @@ function CartActions({
       <Button
         onClick={onPayCash}
         disabled={!cart.lastOrderId}
-        className="w-full h-14 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 dark:from-green-600 dark:to-emerald-600 dark:hover:from-green-700 dark:hover:to-emerald-700 text-white gap-3 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+        className="w-full h-14 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 dark:from-green-600 dark:to-emerald-600 dark:hover:from-green-700 dark:hover:to-emerald-700 text-white gap-3 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
         aria-label="Process cash payment"
       >
         <DollarSign className="h-5 w-5" aria-hidden="true" />
@@ -775,7 +981,7 @@ function CartActions({
       <div className="text-center pt-2">
         <button
           onClick={onRecall}
-          className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-200 underline focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-lg px-3 py-2 font-medium transition-colors"
+          className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-200 underline focus:outline-hidden focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-lg px-3 py-2 font-medium transition-colors"
           aria-label="Recall last held order"
         >
           <Clock className="h-4 w-4 inline mr-2" aria-hidden="true" />
@@ -784,4 +990,8 @@ function CartActions({
       </div>
     </div>
   )
+}
+
+function isFiniteNumber(value: number | null): value is number {
+  return typeof value === "number" && Number.isFinite(value)
 }

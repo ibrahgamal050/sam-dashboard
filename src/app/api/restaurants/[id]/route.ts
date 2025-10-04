@@ -3,17 +3,27 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/dbConnect'
 import Restaurant from '@/models/Restaurant'
 
+const DEFAULT_FULFILLMENT_SETTINGS = {
+  allowDelivery: true,
+  allowPickup: true,
+  allowDineIn: true,
+  autoCompleteAfterMinutes: 0,
+  sendReadyNotification: true,
+} as const
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(_request: Request, { params }: { params: { id: string } }) {
   try {
     await dbConnect()
 
-    const restaurant = await Restaurant.findOne({ subdomain: params.id })
-
+    const restaurant = await Restaurant.findOne({ subdomain: params.id }).lean()
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
 
-    return NextResponse.json(mapRestaurantToClient(restaurant.toObject()))
+    return NextResponse.json(mapRestaurantToClient(restaurant))
   } catch (error) {
     console.error('Error fetching restaurant:', error)
     return NextResponse.json({ error: 'Failed to fetch restaurant' }, { status: 500 })
@@ -25,8 +35,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     await dbConnect()
 
     const payload = await request.json()
-    const restaurant = await Restaurant.findOne({ subdomain: params.id })
 
+    const restaurant = await Restaurant.findOne({ subdomain: params.id })
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
@@ -44,7 +54,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
   try {
     await dbConnect()
-    const restaurant = await Restaurant.findByIdAndDelete(params.id)
+    const restaurant = await Restaurant.findOneAndDelete({ subdomain: params.id })
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
@@ -56,126 +66,102 @@ export async function DELETE(_request: Request, { params }: { params: { id: stri
 }
 
 function mapRestaurantToClient(restaurant: any) {
-  if (!restaurant) return null
-
   return {
-    _id: restaurant._id,
+    _id: restaurant._id?.toString?.() ?? restaurant._id,
     name: {
-      en: restaurant.nameEn ?? '',
-      ar: restaurant.nameAr ?? '',
+      en: restaurant.name?.en ?? '',
+      ar: restaurant.name?.ar ?? '',
     },
     subdomain: restaurant.subdomain ?? '',
     logo: restaurant.logo ?? '',
     coverImage: restaurant.coverImage ?? '',
     description: restaurant.description ?? '',
-    cuisine: {
-      en: restaurant.cuisineEn ?? '',
-      ar: restaurant.cuisineAr ?? '',
-    },
-    location: {
-      en: restaurant.locationEn ?? '',
-      ar: restaurant.locationAr ?? '',
-    },
-    phones: buildPhonesFromRestaurant(restaurant),
     social: restaurant.social ?? {},
-    branches: restaurant.branches ?? [],
-    hours: restaurant.hours ?? [],
-    isPublished: restaurant.active ?? false,
+    branches: Array.isArray(restaurant.branches) ? restaurant.branches : [],
+    isPublished: restaurant.isPublished ?? false,
+    phones: Array.isArray(restaurant.phones) ? restaurant.phones : [],
+    fulfillmentSettings: {
+      ...DEFAULT_FULFILLMENT_SETTINGS,
+      ...(restaurant.fulfillmentSettings ?? {}),
+    },
     createdAt: restaurant.createdAt ?? null,
     updatedAt: restaurant.updatedAt ?? null,
   }
 }
 
-function buildPhonesFromRestaurant(restaurant: any): string[] {
-  if (Array.isArray(restaurant.phones) && restaurant.phones.length > 0) {
-    return restaurant.phones
-  }
-
-  if (typeof restaurant.hotline === 'string' && restaurant.hotline.trim()) {
-    return [restaurant.hotline.trim()]
-  }
-
-  return []
-}
-
 function applyRestaurantUpdates(restaurant: any, payload: any) {
   if (!payload || typeof payload !== 'object') return
+
+  if (!restaurant.name) {
+    restaurant.name = { ar: '', en: '' }
+  }
 
   if (payload.name) {
     if (payload.name.en !== undefined) {
       const trimmed = String(payload.name.en ?? '').trim()
-      restaurant.nameEn = trimmed || restaurant.nameEn || restaurant.nameAr || restaurant.subdomain || 'Restaurant'
+      restaurant.name.en = trimmed || restaurant.name.en || 'Restaurant'
     }
     if (payload.name.ar !== undefined) {
       const trimmed = String(payload.name.ar ?? '').trim()
-      restaurant.nameAr = trimmed || restaurant.nameAr || restaurant.nameEn || restaurant.subdomain || 'مطعم'
+      restaurant.name.ar = trimmed || restaurant.name.ar || 'مطعم'
     }
-  }
-
-  if (payload.cuisine) {
-    if (payload.cuisine.en !== undefined) {
-      const trimmed = String(payload.cuisine.en ?? '').trim()
-      restaurant.cuisineEn = trimmed || restaurant.cuisineEn || 'Cuisine'
-    }
-    if (payload.cuisine.ar !== undefined) {
-      const trimmed = String(payload.cuisine.ar ?? '').trim()
-      restaurant.cuisineAr = trimmed || restaurant.cuisineAr || 'مطبخ'
-    }
-  }
-
-  if (payload.location) {
-    if (payload.location.en !== undefined) {
-      const trimmed = String(payload.location.en ?? '').trim()
-      restaurant.locationEn = trimmed || restaurant.locationEn || 'Location'
-    }
-    if (payload.location.ar !== undefined) {
-      const trimmed = String(payload.location.ar ?? '').trim()
-      restaurant.locationAr = trimmed || restaurant.locationAr || 'الموقع'
-    }
+    restaurant.markModified?.('name')
   }
 
   if (payload.description !== undefined) {
-    restaurant.description = payload.description === null ? '' : String(payload.description)
+    restaurant.description = payload.description === null ? restaurant.description : String(payload.description)
   }
 
   if (payload.logo !== undefined) {
-    restaurant.logo = payload.logo === null ? '' : String(payload.logo)
+    const trimmed = String(payload.logo ?? '').trim()
+    if (trimmed) {
+      restaurant.logo = trimmed
+    }
   }
 
   if (payload.coverImage !== undefined) {
-    restaurant.coverImage = payload.coverImage === null ? '' : String(payload.coverImage)
-  }
-
-  if (payload.subdomain !== undefined && typeof payload.subdomain === 'string') {
-    restaurant.subdomain = payload.subdomain.toLowerCase()
-  }
-
-  if (payload.phones) {
-    const cleanedPhones = Array.isArray(payload.phones)
-      ? payload.phones.map((phone: any) => String(phone ?? '').trim()).filter(Boolean)
-      : []
-    if (cleanedPhones.length > 0) {
-      restaurant.hotline = cleanedPhones[0]
+    const trimmed = String(payload.coverImage ?? '').trim()
+    if (trimmed) {
+      restaurant.coverImage = trimmed
     }
-    if (Array.isArray(payload.phones)) {
-      restaurant.phones = cleanedPhones
+  }
+
+  if (payload.subdomain !== undefined && typeof payload.subdomain === 'string' && payload.subdomain.trim()) {
+    restaurant.subdomain = payload.subdomain.trim().toLowerCase()
+  }
+
+  if (Array.isArray(payload.phones)) {
+    const cleaned = payload.phones.map((phone: any) => String(phone ?? '').trim()).filter(Boolean)
+    if (cleaned.length) {
+      restaurant.phones = cleaned
     }
   }
 
   if (payload.social && typeof payload.social === 'object') {
-    restaurant.social = { ...payload.social }
+    restaurant.social = {
+      ...restaurant.social,
+      ...(payload.social ?? {}),
+    }
+    restaurant.markModified?.('social')
   }
 
-  if (payload.branches) {
+  if (payload.fulfillmentSettings && typeof payload.fulfillmentSettings === 'object') {
+    const current = restaurant.fulfillmentSettings || {}
+    restaurant.fulfillmentSettings = {
+      ...DEFAULT_FULFILLMENT_SETTINGS,
+      ...current,
+      ...payload.fulfillmentSettings,
+    }
+    restaurant.markModified?.('fulfillmentSettings')
+  }
+
+  if (Array.isArray(payload.branches)) {
     restaurant.branches = payload.branches
-  }
-
-  if (payload.hours) {
-    restaurant.hours = payload.hours
+    restaurant.markModified?.('branches')
   }
 
   if (payload.isPublished !== undefined) {
-    restaurant.active = Boolean(payload.isPublished)
+    restaurant.isPublished = Boolean(payload.isPublished)
   }
 
   restaurant.updatedAt = new Date()

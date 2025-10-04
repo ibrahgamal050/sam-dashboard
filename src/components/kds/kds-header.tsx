@@ -23,11 +23,11 @@ export function KdsHeader({
       <h1 className="text-2xl font-bold">Expediter</h1>
 
       <div className="flex items-center gap-3">
-        <Button variant={showAllDine ? "default" : "outline"} size="sm" onClick={onToggleAllDine}>
+        <Button variant={showAllDine ? "default" : "outline-solid"} size="sm" onClick={onToggleAllDine}>
           Show All Dine View
         </Button>
 
-        <Button variant={showRecentlyFulfilled ? "default" : "outline"} size="sm" onClick={onToggleRecentlyFulfilled}>
+        <Button variant={showRecentlyFulfilled ? "default" : "outline-solid"} size="sm" onClick={onToggleRecentlyFulfilled}>
           Show Recently Fulfilled
         </Button>
 

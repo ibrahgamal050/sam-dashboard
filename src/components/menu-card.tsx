@@ -45,7 +45,7 @@ export function MenuCard({
 
   return (
     <Card
-      className={`transition-all duration-200 ${isHovered ? "shadow-md" : "shadow-sm"} ${!isActive ? "opacity-70" : ""}`}
+      className={`transition-all duration-200 ${isHovered ? "shadow-md" : "shadow-xs"} ${!isActive ? "opacity-70" : ""}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -54,7 +54,7 @@ export function MenuCard({
           <div>
             <h3 className="text-xl font-semibold">{title}</h3>
             <div className="flex items-center gap-2 mt-1">
-              <Badge variant={isActive ? "default" : "outline"} className="text-xs">
+              <Badge variant={isActive ? "default" : "outline-solid"} className="text-xs">
                 {isActive ? "Active" : "Inactive"}
               </Badge>
               <TooltipProvider>
@@ -109,7 +109,7 @@ export function MenuCard({
       </CardHeader>
       <CardContent className="pb-2">
         <div className="flex gap-4 flex-col sm:flex-row">
-          <div className="w-full sm:w-[200px] h-[140px] flex-shrink-0 rounded-lg border bg-muted/10 overflow-hidden">
+          <div className="w-full sm:w-[200px] h-[140px] shrink-0 rounded-lg border bg-muted/10 overflow-hidden">
             {thumbnail ? (
               <img
                 src={thumbnail || "/placeholder.svg"}

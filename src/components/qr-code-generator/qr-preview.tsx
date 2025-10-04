@@ -1,27 +1,24 @@
 'use client'
 
 import * as React from 'react'
+import { Download } from "lucide-react"
 import { QRCodeSVG } from 'qrcode.react'
+
 import { cn } from "@/lib/utils"
 import { templates } from './qr-template-styles'
 
 interface QRPreviewProps {
   url: string
   title: string
+  description: string
   backgroundColor: string
   textColor: string
   showLogo: boolean
   template: string
+  hideWebsite?: boolean
 }
 
-export function QRPreview({
-  url,
-  title,
-  backgroundColor,
-  textColor,
-  showLogo,
-  template
-}: QRPreviewProps) {
+export function QRPreview({ url, title, description, backgroundColor, textColor, showLogo, template, hideWebsite }: QRPreviewProps) {
   const previewRef = React.useRef<HTMLDivElement>(null)
   const selectedTemplate = templates.find(t => t.id === template) || templates[0]
   
@@ -67,58 +64,58 @@ export function QRPreview({
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div
-        ref={previewRef}
-        className={cn(
-          "bg-white",
-          selectedTemplate.className,
-          selectedTemplate.beforeClass,
-          selectedTemplate.afterClass
-        )}
-        style={style}
-      >
-        {selectedTemplate.headerClass && (
-          <div className={selectedTemplate.headerClass} style={{ color: textColor }}>
-            Table
-          </div>
-        )}
-        <div className={cn("flex flex-col items-center gap-4", selectedTemplate.qrWrapperClass)}>
-          <h2 className="text-xl font-semibold" style={{ color: textColor }}>
-            Scan me
-          </h2>
-          <QRCodeSVG
-            value={url}
-            size={200}
-            level="H"
-            includeMargin
-            fgColor={textColor}
-            bgColor="transparent"
-          />
-          <p className="text-lg" style={{ color: textColor }}>
-            {title}
-          </p>
-          {showLogo && (
-            <div className="flex items-center gap-2 text-sm" style={{ color: textColor }}>
-              Powered by
-              <svg width="16" height="16" viewBox="0 0 24 24">
-                <path
-                  fill={textColor}
-                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                />
-              </svg>
-              upmenu
-            </div>
+    <div className="flex flex-col items-center gap-6">
+      <div className="w-full rounded-3xl bg-white p-6 shadow-xl">
+        <div
+          ref={previewRef}
+          className={cn(
+            "relative mx-auto flex max-w-sm flex-col items-center rounded-[32px] bg-white px-10 py-12 text-center shadow-[0_12px_40px_-20px_rgba(15,23,42,0.35)]",
+            selectedTemplate.className,
+            selectedTemplate.beforeClass,
+            selectedTemplate.afterClass
           )}
+          style={style}
+        >
+          <div className="absolute inset-3 rounded-[28px] border-[3px]" style={{ borderColor: backgroundColor }} />
+          <div className="relative z-10 flex flex-col items-center gap-6">
+            <span className="text-lg font-semibold" style={{ color: textColor }}>
+              {description || "Scan me"}
+            </span>
+            <div className={cn("flex flex-col items-center", selectedTemplate.qrWrapperClass)}>
+              <QRCodeSVG
+                value={url}
+                size={220}
+                level="H"
+                includeMargin
+                fgColor={textColor}
+                bgColor="transparent"
+              />
+            </div>
+            <p className="text-lg font-medium" style={{ color: textColor }}>
+              {title}
+            </p>
+            {!hideWebsite && (
+              <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <span className="font-semibold">Powered by</span>
+                <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">upmenu</span>
+              </div>
+            )}
+            {showLogo && (
+              <div className="text-[11px] text-muted-foreground">
+                Brand logo appears here
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <button
+        type="button"
         onClick={downloadQR}
-        className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90"
+        className="inline-flex items-center gap-2 rounded-full border border-primary/40 px-5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
       >
-        Download QR Code
+        <Download className="h-4 w-4" />
+        Download
       </button>
     </div>
   )
 }
-

@@ -1,5 +1,7 @@
-export default {
+// postcss.config.cjs
+module.exports = {
   plugins: {
-    "@tailwindcss/postcss": {}
-  }
-};
+    '@tailwindcss/postcss': {}, // ✅ بدل tailwindcss: {}
+    // autoprefixer: {}  // (اختياري) Next بيضيفه تلقائيًا؛ سيبه فاضي لو عايز
+  },
+}

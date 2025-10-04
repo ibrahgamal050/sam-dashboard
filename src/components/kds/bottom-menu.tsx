@@ -75,7 +75,7 @@ export function BottomMenu({ readyCount = 0, fulfilledCount = 0, className }: Bo
       role="navigation"
       aria-label="Kitchen Display System Navigation"
     >
-      <div className="flex items-center justify-around max-w-screen-xl mx-auto">
+      <div className="flex items-center justify-around max-w-(--breakpoint-xl) mx-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
@@ -87,7 +87,7 @@ export function BottomMenu({ readyCount = 0, fulfilledCount = 0, className }: Bo
               className={cn(
                 "flex flex-col items-center justify-center min-w-0 px-1 py-2 rounded-lg transition-colors",
                 "hover:bg-gray-100 active:bg-gray-200",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+                "focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
                 "md:px-3 md:py-2",
                 isActive && "bg-blue-50 text-blue-600",
               )}

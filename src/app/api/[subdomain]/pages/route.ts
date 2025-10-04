@@ -1,17 +1,67 @@
 import { NextRequest, NextResponse } from 'next/server'
-import mongoose from 'mongoose'
-import Pages, { IPage, IPages } from '@/models/Pagenew'
-import Restaurant from '@/models/Restaurant'
+import mongoose, { Types } from 'mongoose'
 
-const connectDB = async () => {
-  if (mongoose.connections[0].readyState) return
-  try {
-    await mongoose.connect(process.env.MONGODB_URI as string)
-    console.log('MongoDB connected successfully')
-  } catch (error) {
-    console.error('MongoDB connection error:', error)
-    throw new Error('Failed to connect to the database')
+import dbConnect from '@/lib/dbConnect'
+import Pages from '@/models/page'
+import Restaurant from '@/models/Restaurant'
+import type { IPage } from '@/types/page'
+
+type IncomingPage = Partial<IPage> & {
+  _id?: string
+}
+
+function buildNewPage(pageData: IncomingPage): IPage {
+  const now = new Date()
+
+  if (!pageData.name || !pageData.slug || !pageData.language || !pageData.seo || !pageData.components) {
+    throw new Error('Missing required page fields')
   }
+
+  return {
+    _id: new Types.ObjectId(),
+    name: pageData.name,
+    slug: pageData.slug.toLowerCase(),
+    language: pageData.language,
+    template: Boolean(pageData.template),
+    isPublished: Boolean(pageData.isPublished),
+    headerImage: pageData.headerImage || '/placeholder.svg?height=400&width=800',
+    seo: pageData.seo,
+    components: pageData.components,
+    metadata: {
+      created_at: pageData.metadata?.created_at ? new Date(pageData.metadata.created_at) : now,
+      updated_at: now,
+      published_at: pageData.isPublished ? (pageData.metadata?.published_at ? new Date(pageData.metadata.published_at) : now) : undefined,
+    },
+  }
+}
+
+function updateExistingPage(existingPage: IPage, pageData: IncomingPage) {
+  const now = new Date()
+
+  if (pageData.name) existingPage.name = pageData.name
+  if (pageData.slug) existingPage.slug = pageData.slug.toLowerCase()
+  if (pageData.language) existingPage.language = pageData.language
+  if (typeof pageData.template === 'boolean') existingPage.template = pageData.template
+  if (typeof pageData.isPublished === 'boolean') existingPage.isPublished = pageData.isPublished
+  if (pageData.headerImage) existingPage.headerImage = pageData.headerImage
+  if (pageData.seo) existingPage.seo = pageData.seo
+  if (pageData.components) existingPage.components = pageData.components
+
+  existingPage.metadata = existingPage.metadata || { created_at: now, updated_at: now }
+  existingPage.metadata.updated_at = now
+
+  if (existingPage.isPublished) {
+    existingPage.metadata.published_at = existingPage.metadata.published_at || now
+  } else {
+    delete existingPage.metadata.published_at
+  }
+}
+
+function serializePagesResponse(pages: IPage[]) {
+  return pages.map((page) => ({
+    ...page,
+    _id: page._id?.toString(),
+  }))
 }
 
 export async function POST(
@@ -19,7 +69,7 @@ export async function POST(
   { params }: { params: { subdomain: string } }
 ) {
   try {
-    await connectDB();
+    await dbConnect()
     const { subdomain } = params;
 
     const restaurant = await Restaurant.findOne({ subdomain });
@@ -39,57 +89,41 @@ export async function POST(
     if (!pagesDocument) {
       pagesDocument = new Pages({
         restaurantId: restaurant._id,
-        name: restaurant.nameAr,
-        pages: []
+        subdomain,
+        pages: [],
       });
+    } else if (pagesDocument.subdomain !== subdomain) {
+      pagesDocument.subdomain = subdomain;
     }
 
-    for (const pageData of pages) {
-      const { name, slug, language, template, isPublished, seo, headerImage, components } = pageData;
-
-      const existingPageIndex = pagesDocument.pages.findIndex(
-        p => p.slug === slug && p.language === language
-      );
-
-      const newPage: IPage = {
-        _id: new mongoose.Types.ObjectId(), // إضافة _id هنا
-        name,
-        slug,
-        language,
-        template: template || false,
-        isPublished: isPublished || false,
-        seo,
-        headerImage: headerImage || '/placeholder.svg?height=400&width=800',
-        components,
-        metadata: {
-          created_at: new Date(),
-          updated_at: new Date(),
-          published_at: isPublished ? new Date() : undefined
+    for (const pageData of pages as IncomingPage[]) {
+      const identifier = pageData._id?.toString();
+      const existingPage = pagesDocument.pages.find((p) => {
+        if (identifier && p._id) {
+          return p._id.toString() === identifier;
         }
-      };
+        return p.slug === pageData.slug && p.language === pageData.language;
+      });
 
-      if (existingPageIndex !== -1) {
-        // Update existing page
-        pagesDocument.pages[existingPageIndex] = {
-          ...pagesDocument.pages[existingPageIndex],
-          ...newPage,
-          metadata: {
-            ...pagesDocument.pages[existingPageIndex].metadata,
-            updated_at: new Date()
-          }
-        };
+      if (existingPage) {
+        updateExistingPage(existingPage, pageData);
       } else {
-        // Add new page
+        const newPage = buildNewPage(pageData);
         pagesDocument.pages.push(newPage);
       }
     }
 
+    pagesDocument.markModified('pages');
     await pagesDocument.save();
 
     return NextResponse.json({
       success: true,
       message: 'Pages created/updated successfully',
-      data: pagesDocument
+      data: {
+        restaurantId: pagesDocument.restaurantId,
+        subdomain: pagesDocument.subdomain,
+        pages: serializePagesResponse(pagesDocument.pages),
+      }
     }, { status: 200 });
 
   } catch (error) {
@@ -114,7 +148,7 @@ export async function GET(
   { params }: { params: { subdomain: string } }
 ) {
   try {
-    await connectDB();
+    await dbConnect()
     const { subdomain } = params;
 
     const restaurant = await Restaurant.findOne({ subdomain });
@@ -122,9 +156,16 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'Restaurant not found' }, { status: 404 });
     }
 
-    const pagesDocument = await Pages.findOne({ restaurantId: restaurant._id });
+    const pagesDocument = await Pages.findOne({ restaurantId: restaurant._id }).lean();
     if (!pagesDocument) {
-      return NextResponse.json({ success: false, error: 'No pages found for this restaurant' }, { status: 404 });
+      return NextResponse.json({
+        success: true,
+        data: {
+          restaurantId: restaurant._id,
+          subdomain,
+          pages: [],
+        }
+      }, { status: 200 });
     }
 
     // Parse query parameters
@@ -132,7 +173,7 @@ export async function GET(
     const language = url.searchParams.get('language');
     const isPublished = url.searchParams.get('isPublished');
 
-    let filteredPages = pagesDocument.pages;
+    let filteredPages = pagesDocument.pages || [];
 
     // Apply filters if provided
     if (language) {
@@ -147,8 +188,8 @@ export async function GET(
       success: true,
       data: {
         restaurantId: pagesDocument.restaurantId,
-        name: pagesDocument.name,
-        pages: filteredPages,
+        subdomain: pagesDocument.subdomain,
+        pages: serializePagesResponse(filteredPages as unknown as IPage[]),
       }
     }, { status: 200 });
 
@@ -160,4 +201,3 @@ export async function GET(
     }, { status: 500 });
   }
 }
-

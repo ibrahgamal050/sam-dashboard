@@ -49,7 +49,7 @@ export default function EntryPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-linear-to-br from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-slate-800">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader>
           <div className="flex items-center gap-3">

@@ -30,6 +30,11 @@ export interface IOrder extends Document {
   items: IOrderItem[]
   subtotal: number
   deliveryFee?: number
+  deliveryZoneId?: mongoose.Types.ObjectId
+  deliveryLocation?: {
+    lat?: number
+    lng?: number
+  }
   totalPrice: number
   currency?: string
   payment?: { method: 'cod' | 'card'; status: 'unpaid' | 'paid' | 'failed' }
@@ -73,6 +78,11 @@ const OrderSchema = new Schema<IOrder>(
     items: { type: [OrderItemSchema], required: true },
     subtotal: { type: Number, required: true },
     deliveryFee: { type: Number, default: 0 },
+    deliveryZoneId: { type: Schema.Types.ObjectId, ref: 'DeliveryZone', required: false },
+    deliveryLocation: {
+      lat: { type: Number },
+      lng: { type: Number },
+    },
     totalPrice: { type: Number, required: true },
     currency: { type: String, default: 'USD' },
     payment: {

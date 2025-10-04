@@ -179,7 +179,7 @@ export default function HistoryPage() {
         <BottomMenu />
 
         {state.error && (
-          <div className="fixed bottom-6 right-6 bg-destructive text-destructive-foreground px-4 py-2 rounded shadow">
+          <div className="fixed bottom-6 right-6 bg-destructive text-destructive-foreground px-4 py-2 rounded shadow-sm">
             {state.error}
           </div>
         )}

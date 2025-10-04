@@ -53,7 +53,7 @@ export function TemplateGallery() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {templates.map((template) => (
           <div key={template.id} className="group relative">
-            <div className="relative aspect-[3/2] overflow-hidden rounded-lg border">
+            <div className="relative aspect-3/2 overflow-hidden rounded-lg border">
               <Image
                 src={template.image}
                 alt={template.name}

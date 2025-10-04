@@ -2,6 +2,7 @@
 
 import type { Order } from "@/types/order"
 import { OrderCard } from "./order-card"
+import { Timer } from "lucide-react"
 
 interface BoardProps {
   orders: Order[]
@@ -22,13 +23,22 @@ export function Board({
 }: BoardProps) {
   if (orders.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground">
-        <div className="text-center">
-          <div className="text-4xl mb-2">📋</div>
-          <p className="text-lg">No orders to display</p>
-          <p className="text-sm">Orders will appear here when they're ready</p>
+    
+    <div className="col-span-full flex flex-col items-center justify-center py-20 px-4">
+      <div className="text-center space-y-6 max-w-md">
+        <div className="w-20 h-20 mx-auto bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center shadow-lg border border-blue-200 dark:border-blue-700">
+          <Timer className="h-10 w-10 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3">No active orders</h3>
+          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+           
+               All caught up! New orders will appear here automatically when they come in
+             
+          </p>
         </div>
       </div>
+    </div>
     )
   }
 

@@ -1,148 +1,72 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, type Document } from "mongoose"
 
-interface IRestaurant extends Document {
-  nameEn: string;
-  nameAr: string;
-  subdomain: string;
-  cuisineEn: string;
-  cuisineAr: string;
-  locationEn: string;
-  locationAr: string;
-  url: string;
-  logo: string;
-  coverImage: string;
-  hotline: string;
-  contactEmail?: string;
-  website?: string;
-  description?: string;
-  settings?: Record<string, unknown>;
-  active: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+import type { IRestaurant } from "@/types/restaurant"
+
+const FulfillmentSettingsSchema = new Schema(
+  {
+    allowDelivery: { type: Boolean, default: true },
+    allowPickup: { type: Boolean, default: true },
+    allowDineIn: { type: Boolean, default: true },
+    autoCompleteAfterMinutes: { type: Number, default: 0, min: 0, max: 240 },
+    sendReadyNotification: { type: Boolean, default: true },
+  },
+  { _id: false },
+)
+
+const BranchSchema = new Schema(
+  {
+    name: {
+      ar: { type: String, required: true },
+      en: { type: String, required: true },
+    },
+    location: {
+      address: {
+        ar: { type: String, required: true },
+        en: { type: String, required: true },
+      },
+      latitude: { type: Number },
+      longitude: { type: Number },
+    },
+    phone: { type: String },
+    workingHours: { type: String },
+    isMainBranch: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+)
+
+const RestaurantSchema: Schema = new Schema(
+  {
+    name: {
+      ar: { type: String, required: true },
+      en: { type: String, required: true },
+    },
+    subdomain: { type: String, required: true, unique: true },
+    logo: { type: String, required: true },
+    coverImage: { type: String, required: true },
+    description: { type: String, required: true },
+
+    social: {
+      facebook: { type: String },
+      instagram: { type: String },
+      tiktok: { type: String },
+      twitter: { type: String },
+    },
+    branches: [BranchSchema],
+    isPublished: { type: Boolean, default: false },
+    phones: [{ type: String, required: true }],
+    fulfillmentSettings: {
+      type: FulfillmentSettingsSchema,
+      default: () => ({}),
+    },
+  },
+  { timestamps: true },
+)
+
+RestaurantSchema.index({ name: "text", description: "text" })
+
+RestaurantSchema.methods.getPageMeta = function (pageSlug: string) {
+  if (!this.pages) return null
+  return this.pages.find((page: any) => page.slug === pageSlug)
 }
 
-const generateUniqueUrl = async function(name: string): Promise<string> {
-    const baseUrl = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
-    let uniqueUrl = baseUrl;
-    let counter = 1;
-
-    while (await mongoose.models.Restaurant.findOne({ url: uniqueUrl })) {
-        uniqueUrl = `${baseUrl}-${counter++}`;
-    }
-    
-    return uniqueUrl;
-};
-
-const generateUniqueSubdomain = async function(name: string): Promise<string> {
-    const baseSubdomain = name.toLowerCase().replace(/\s+/g, '').replace(/[^\w]+/g, '');
-    let uniqueSubdomain = baseSubdomain;
-    let counter = 1;
-
-    while (await mongoose.models.Restaurant.findOne({ subdomain: uniqueSubdomain })) {
-        uniqueSubdomain = `${baseSubdomain}${counter++}`;
-    }
-    
-    return uniqueSubdomain;
-};
-
-const restaurantSchema = new Schema({
-    nameEn: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    nameAr: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    subdomain: { 
-        type: String, 
-        required: true, 
-        unique: true,
-        lowercase: true,
-        trim: true
-    },
-    cuisineEn: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    cuisineAr: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    locationEn: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    locationAr: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    url: {
-        type: String,
-        unique: true,
-        lowercase: true,
-        trim: true
-    },
-    logo: {
-        type: String,
-        default: '/placeholder.svg?height=100&width=100'
-    },
-    contactEmail: {
-        type: String,
-        default: ''
-    },
-    website: {
-        type: String,
-        default: ''
-    },
-    description: {
-        type: String,
-        default: ''
-    },
-    settings: {
-        type: Schema.Types.Mixed,
-        default: {}
-    },
-    hotline: {
-        type: String,
-        default: '55555'
-    },
-    themeColor: {
-        type: String,
-        default: '#000000'
-    },
-    active: {
-        type: Boolean,
-        default: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    }
-}, {
-    timestamps: true
-});
-
-restaurantSchema.pre<IRestaurant>('save', async function(next) {
-    if (!this.url) {
-        this.url = await generateUniqueUrl(this.nameEn);
-    }
-    if (!this.subdomain) {
-        this.subdomain = await generateUniqueSubdomain(this.nameEn);
-    }
-    next();
-});
-
-const Restaurant = mongoose.models.Restaurant || mongoose.model<IRestaurant>('Restaurant', restaurantSchema);
-
-export default Restaurant;
+export default mongoose.models.Restaurant || mongoose.model<IRestaurant & Document>("Restaurant", RestaurantSchema)

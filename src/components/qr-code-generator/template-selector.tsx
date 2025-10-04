@@ -1,9 +1,10 @@
 'use client'
 
 import * as React from 'react'
+import { QRCodeSVG } from 'qrcode.react'
+
 import { cn } from "@/lib/utils"
 import { templates } from './qr-template-styles'
-import { QRCodeSVG } from 'qrcode.react'
 
 interface TemplateSelectorProps {
   selectedTemplate: string
@@ -12,32 +13,31 @@ interface TemplateSelectorProps {
   onSelect: (templateId: string) => void
 }
 
-export function TemplateSelector({ 
-  selectedTemplate, 
-  backgroundColor,
-  textColor,
-  onSelect 
-}: TemplateSelectorProps) {
+export function TemplateSelector({ selectedTemplate, backgroundColor, textColor, onSelect }: TemplateSelectorProps) {
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {templates.map((template) => {
         const style = {
           '--qr-accent-color': backgroundColor,
           '--qr-text-color': textColor,
         } as React.CSSProperties
 
+        const isSelected = selectedTemplate === template.id
+
         return (
           <button
             key={template.id}
-            className={cn(
-              "p-2 rounded-lg border-2 hover:border-primary transition-colors",
-              selectedTemplate === template.id ? "border-primary" : "border-border"
-            )}
+            type="button"
             onClick={() => onSelect(template.id)}
+            className={cn(
+              "group relative flex h-32 w-full flex-col items-center justify-center rounded-xl border-2 bg-white/80 p-4 text-xs font-medium transition-all",
+              "hover:border-primary/70 hover:shadow-lg",
+              isSelected ? "border-primary shadow-lg ring-2 ring-primary/30" : "border-border shadow-sm"
+            )}
           >
-            <div 
+            <div
               className={cn(
-                "aspect-square w-full bg-white rounded-md flex flex-col items-center justify-center",
+                "relative flex h-full w-full flex-col items-center justify-center gap-1 overflow-hidden rounded-lg bg-white",
                 template.className,
                 template.beforeClass,
                 template.afterClass
@@ -45,29 +45,32 @@ export function TemplateSelector({
               style={style}
             >
               {template.headerClass && (
-                <div className={template.headerClass} style={{ color: textColor }}>
+                <div className={cn("text-[10px] uppercase tracking-wide", template.headerClass)} style={{ color: textColor }}>
                   Table
                 </div>
               )}
-              <div className={template.qrWrapperClass}>
+              <div className={cn("relative z-10 flex flex-col items-center gap-1", template.qrWrapperClass)}>
                 <QRCodeSVG
                   value="https://example.com"
-                  size={48}
+                  size={42}
                   level="M"
                   fgColor={textColor}
                   bgColor="transparent"
                 />
+                <span className="text-[11px]" style={{ color: textColor }}>
+                  Scan here
+                </span>
               </div>
               {template.footerClass && (
-                <div className={template.footerClass} style={{ color: textColor }}>
+                <div className={cn("text-[10px] uppercase tracking-wide", template.footerClass)} style={{ color: textColor }}>
                   Scan here
                 </div>
               )}
             </div>
+            {isSelected && <span className="absolute -bottom-2 text-[11px] font-semibold text-primary">Selected</span>}
           </button>
         )
       })}
     </div>
   )
 }
-

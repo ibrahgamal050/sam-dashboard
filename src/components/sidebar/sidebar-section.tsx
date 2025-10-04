@@ -20,7 +20,7 @@ export function SidebarSection({ icon: Icon, label, children, defaultOpen = fals
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-3">
-          <Icon className="h-4 w-4 flex-shrink-0" />
+          <Icon className="h-4 w-4 shrink-0" />
           <span>{label}</span>
         </div>
         <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />

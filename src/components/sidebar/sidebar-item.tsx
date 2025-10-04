@@ -25,7 +25,7 @@ export function SidebarItem({ icon: Icon, label, href, badge, indent = false }: 
       )}
     >
       <div className="flex items-center gap-3">
-        {Icon && <Icon className="h-4 w-4 flex-shrink-0" />}
+        {Icon && <Icon className="h-4 w-4 shrink-0" />}
         <span className="truncate">{label}</span>
       </div>
       {badge && (

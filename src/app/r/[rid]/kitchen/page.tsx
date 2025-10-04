@@ -120,7 +120,7 @@ export default function KitchenPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
       <RegisterSW />
       <RegisterKitchenManifest />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -154,14 +154,14 @@ function Header({ connection, includeReady, setIncludeReady }: { connection: "op
 
   return (
     <header className="mb-10">
-      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg shadow-slate-900/5 p-6">
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xs rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg shadow-slate-900/5 p-6">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+              <div className="p-2 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
                 <ChefHat className="h-6 w-6 text-white" aria-hidden="true" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-slate-100 dark:via-blue-100 dark:to-indigo-100 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-linear-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-slate-100 dark:via-blue-100 dark:to-indigo-100 bg-clip-text text-transparent">
                 Kitchen Dashboard
               </h1>
             </div>
@@ -179,7 +179,7 @@ function Header({ connection, includeReady, setIncludeReady }: { connection: "op
               </time>
             </div>
             <Button
-              variant={includeReady ? 'secondary' : 'outline'}
+              variant={includeReady ? 'secondary' : 'outline-solid'}
               size="sm"
               onClick={() => setIncludeReady(!includeReady)}
               className="h-10 px-4 font-semibold border-2"
@@ -203,21 +203,21 @@ function ConnectionStatus({ connection }: { connection: "open" | "closed" | "con
       label: "Connected",
       variant: "default" as const,
       className:
-        "border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-800 dark:border-emerald-700 dark:from-emerald-900/20 dark:to-green-900/20 dark:text-emerald-300 shadow-emerald-100/50 dark:shadow-emerald-900/20",
+        "border-emerald-200 bg-linear-to-r from-emerald-50 to-green-50 text-emerald-800 dark:border-emerald-700 dark:from-emerald-900/20 dark:to-green-900/20 dark:text-emerald-300 shadow-emerald-100/50 dark:shadow-emerald-900/20",
     },
     connecting: {
       icon: Wifi,
       label: "Connecting...",
       variant: "secondary" as const,
       className:
-        "border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-800 dark:border-amber-700 dark:from-amber-900/20 dark:to-yellow-900/20 dark:text-amber-300 shadow-amber-100/50 dark:shadow-amber-900/20",
+        "border-amber-200 bg-linear-to-r from-amber-50 to-yellow-50 text-amber-800 dark:border-amber-700 dark:from-amber-900/20 dark:to-yellow-900/20 dark:text-amber-300 shadow-amber-100/50 dark:shadow-amber-900/20",
     },
     closed: {
       icon: WifiOff,
       label: "Disconnected",
       variant: "destructive" as const,
       className:
-        "border-red-200 bg-gradient-to-r from-red-50 to-rose-50 text-red-800 dark:border-red-700 dark:from-red-900/20 dark:to-rose-900/20 dark:text-red-300 shadow-red-100/50 dark:shadow-red-900/20",
+        "border-red-200 bg-linear-to-r from-red-50 to-rose-50 text-red-800 dark:border-red-700 dark:from-red-900/20 dark:to-rose-900/20 dark:text-red-300 shadow-red-100/50 dark:shadow-red-900/20",
     },
   }
 
@@ -252,25 +252,25 @@ function OrderCard({
     pending: {
       label: "Pending",
       color:
-        "bg-gradient-to-r from-slate-100 to-gray-100 text-slate-800 dark:from-slate-800 dark:to-gray-800 dark:text-slate-200 border-slate-200 dark:border-slate-600",
+        "bg-linear-to-r from-slate-100 to-gray-100 text-slate-800 dark:from-slate-800 dark:to-gray-800 dark:text-slate-200 border-slate-200 dark:border-slate-600",
       cardBorder: "border-slate-200 dark:border-slate-700",
     },
     queued: {
       label: "Queued",
       color:
-        "bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 dark:from-blue-900/30 dark:to-cyan-900/30 dark:text-blue-200 border-blue-200 dark:border-blue-700",
+        "bg-linear-to-r from-blue-100 to-cyan-100 text-blue-800 dark:from-blue-900/30 dark:to-cyan-900/30 dark:text-blue-200 border-blue-200 dark:border-blue-700",
       cardBorder: "border-blue-200 dark:border-blue-700",
     },
     in_progress: {
       label: "In Progress",
       color:
-        "bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 dark:from-amber-900/30 dark:to-orange-900/30 dark:text-amber-200 border-amber-200 dark:border-amber-700",
+        "bg-linear-to-r from-amber-100 to-orange-100 text-amber-800 dark:from-amber-900/30 dark:to-orange-900/30 dark:text-amber-200 border-amber-200 dark:border-amber-700",
       cardBorder: "border-amber-200 dark:border-amber-700",
     },
     ready: {
       label: "Ready",
       color:
-        "bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 dark:from-emerald-900/30 dark:to-green-900/30 dark:text-emerald-200 border-emerald-200 dark:border-emerald-700",
+        "bg-linear-to-r from-emerald-100 to-green-100 text-emerald-800 dark:from-emerald-900/30 dark:to-green-900/30 dark:text-emerald-200 border-emerald-200 dark:border-emerald-700",
       cardBorder: "border-emerald-200 dark:border-emerald-700",
     },
   }
@@ -283,10 +283,10 @@ function OrderCard({
         relative transition-all duration-300 hover:shadow-2xl hover:shadow-slate-900/10 hover:-translate-y-1 group
         ${
           urgent
-            ? "ring-2 ring-red-400 shadow-xl shadow-red-100 dark:shadow-red-900/30 bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-950/50 dark:to-rose-950/50"
+            ? "ring-2 ring-red-400 shadow-xl shadow-red-100 dark:shadow-red-900/30 bg-linear-to-br from-red-50 to-rose-50 dark:from-red-950/50 dark:to-rose-950/50"
             : late
-              ? "ring-2 ring-orange-400 shadow-xl shadow-orange-100 dark:shadow-orange-900/30 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/50 dark:to-amber-950/50"
-              : "hover:shadow-slate-200 dark:hover:shadow-slate-800/50 bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/80"
+              ? "ring-2 ring-orange-400 shadow-xl shadow-orange-100 dark:shadow-orange-900/30 bg-linear-to-br from-orange-50 to-amber-50 dark:from-orange-950/50 dark:to-amber-950/50"
+              : "hover:shadow-slate-200 dark:hover:shadow-slate-800/50 bg-linear-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/80"
         }
         ${currentStatus.cardBorder} border-2
       `}
@@ -306,7 +306,7 @@ function OrderCard({
             <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-mono">#{o.orderId.slice(-6)}</h3>
             <Badge
               variant="outline"
-              className={`${currentStatus.color} shadow-sm font-semibold px-3 py-1`}
+              className={`${currentStatus.color} shadow-xs font-semibold px-3 py-1`}
               aria-label={`Status: ${currentStatus.label}`}
             >
               {currentStatus.label}
@@ -353,10 +353,10 @@ const TimerBadge = React.memo(function TimerBadge({
         flex items-center gap-2 px-3 py-2 font-mono text-sm min-w-[80px] justify-center shadow-lg font-bold
         ${
           urgent
-            ? "border-red-300 bg-gradient-to-r from-red-100 to-rose-100 text-red-700 dark:border-red-600 dark:from-red-900/40 dark:to-rose-900/40 dark:text-red-300"
+            ? "border-red-300 bg-linear-to-r from-red-100 to-rose-100 text-red-700 dark:border-red-600 dark:from-red-900/40 dark:to-rose-900/40 dark:text-red-300"
             : late
-              ? "border-orange-300 bg-gradient-to-r from-orange-100 to-amber-100 text-orange-700 dark:border-orange-600 dark:from-orange-900/40 dark:to-amber-900/40 dark:text-orange-300"
-              : "border-slate-300 bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 dark:border-slate-600 dark:from-slate-700 dark:to-gray-700 dark:text-slate-300"
+              ? "border-orange-300 bg-linear-to-r from-orange-100 to-amber-100 text-orange-700 dark:border-orange-600 dark:from-orange-900/40 dark:to-amber-900/40 dark:text-orange-300"
+              : "border-slate-300 bg-linear-to-r from-slate-100 to-gray-100 text-slate-700 dark:border-slate-600 dark:from-slate-700 dark:to-gray-700 dark:text-slate-300"
         }
       `}
       role="timer"
@@ -385,7 +385,7 @@ function OrderItems({ items }: { items: { name: string; quantity: number }[] }) 
             key={i}
             className="flex items-start gap-3 text-sm text-slate-900 dark:text-slate-100 leading-relaxed p-2 rounded-lg bg-slate-50/80 dark:bg-slate-700/30 border border-slate-200/60 dark:border-slate-600/40"
           >
-            <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg">
+            <span className="shrink-0 w-7 h-7 bg-linear-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg">
               {item.quantity}
             </span>
             <span className="break-words font-medium pt-0.5">{item.name}</span>
@@ -407,7 +407,7 @@ function EmptyState({ connection }: { connection: "open" | "closed" | "connectin
   return (
     <div className="col-span-full flex flex-col items-center justify-center py-20 px-4">
       <div className="text-center space-y-6 max-w-md">
-        <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center shadow-lg border border-blue-200 dark:border-blue-700">
+        <div className="w-20 h-20 mx-auto bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center shadow-lg border border-blue-200 dark:border-blue-700">
           <Timer className="h-10 w-10 text-blue-600 dark:text-blue-400" aria-hidden="true" />
         </div>
         <div>
@@ -433,13 +433,13 @@ function FullscreenToggle() {
 
   return (
     <Button
-      variant={fs ? "secondary" : "outline"}
+      variant={fs ? "secondary" : "outline-solid"}
       size="sm"
       onClick={() => (fs ? document.exitFullscreen() : document.documentElement.requestFullscreen())}
       className={`gap-2 h-10 px-4 font-semibold shadow-lg transition-all duration-200 ${
         fs
-          ? "bg-gradient-to-r from-slate-100 to-gray-100 hover:from-slate-200 hover:to-gray-200 dark:from-slate-700 dark:to-gray-700 dark:hover:from-slate-600 dark:hover:to-gray-600"
-          : "bg-gradient-to-r from-white to-slate-50 hover:from-slate-50 hover:to-slate-100 dark:from-slate-800 dark:to-slate-700 dark:hover:from-slate-700 dark:hover:to-slate-600 border-2 border-slate-200 dark:border-slate-600"
+          ? "bg-linear-to-r from-slate-100 to-gray-100 hover:from-slate-200 hover:to-gray-200 dark:from-slate-700 dark:to-gray-700 dark:hover:from-slate-600 dark:hover:to-gray-600"
+          : "bg-linear-to-r from-white to-slate-50 hover:from-slate-50 hover:to-slate-100 dark:from-slate-800 dark:to-slate-700 dark:hover:from-slate-700 dark:hover:to-slate-600 border-2 border-slate-200 dark:border-slate-600"
       }`}
       aria-label={fs ? "Exit fullscreen mode" : "Enter fullscreen mode"}
     >

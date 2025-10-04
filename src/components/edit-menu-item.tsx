@@ -294,7 +294,7 @@ export default function EditMenuItem({
                             <TooltipTrigger asChild>
                               <Button
                                 type="button"
-                                variant={form.getValues("dietary")?.includes(option.id) ? "default" : "outline"}
+                                variant={form.getValues("dietary")?.includes(option.id) ? "default" : "outline-solid"}
                                 size="sm"
                                 onClick={() => handleDietaryToggle(option.id)}
                                 className="capitalize"

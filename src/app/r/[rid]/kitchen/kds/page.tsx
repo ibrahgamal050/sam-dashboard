@@ -367,13 +367,7 @@ const { rid } = useParams() as { rid?: string }
     <div className="min-h-screen bg-background flex flex-col">
     
 
-      <KdsHeader
-        showAllDine={showAllDine}
-        showRecentlyFulfilled={showRecentlyFulfilled}
-        readyCount={readyCount}
-        onToggleAllDine={() => toggleView("all-dine")}
-        onToggleRecentlyFulfilled={() => toggleView("fulfilled")}
-      />
+    
 
      
       <div className="flex-1 pb-20">

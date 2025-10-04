@@ -1,323 +1,202 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
-import { useParams } from 'next/navigation'
+"use client"
 
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { useToast } from '@/components/ui/use-toast'
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+import { Loader2, Save } from "lucide-react"
 
-const restaurantSchema = z.object({
-  nameEn: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  nameAr: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  subdomain: z.string().min(2, { message: 'Subdomain must be at least 2 characters.' }),
-  cuisineEn: z.string(),
-  cuisineAr: z.string(),
-  locationEn: z.string(),
-  locationAr: z.string(),
-  logo: z.string(),
-  hotline: z.string(),
-  themeColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: 'Must be a valid hex color.' }),
-  active: z.boolean(),
-})
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useToast } from "@/components/ui/use-toast"
 
-type RestaurantFormValues = z.infer<typeof restaurantSchema>
+import { GeneralSection } from "@/components/dashboard/settings/general-section"
+import { FulfillmentSection } from "@/components/dashboard/settings/fulfillment-section"
+import type { IRestaurant } from "@/types/restaurant"
 
-const fetchRestaurant = async (subdomain: string) => {
-  try {
-    console.time('fetchRestaurant')
-    const response = await fetch(`/api/restaurants/${subdomain}`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch data')
-    }
-    const data = await response.json()
-    console.timeEnd('fetchRestaurant')
-    return data
-  } catch (error) {
-    console.error('Failed to fetch restaurant:', error)
-    throw error
-  }
-}
+const DEFAULT_FULFILLMENT_SETTINGS = {
+  allowDelivery: true,
+  allowPickup: true,
+  allowDineIn: true,
+  autoCompleteAfterMinutes: 0,
+  sendReadyNotification: true,
+} as const
 
-export default function EditRestaurantPage() {
-  const router = useRouter()
+export default function SettingsPage() {
+  const params = useParams()
+  const subdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : params?.subdomain ?? ""
   const { toast } = useToast()
+
+  const [activeTab, setActiveTab] = useState("general")
+  const [restaurant, setRestaurant] = useState<IRestaurant | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  
-  // Use useParams to fetch dynamic params like subdomain
-  const { subdomain } = useParams<{ subdomain: string }>() 
-  
-  const form = useForm<RestaurantFormValues>({
-    resolver: zodResolver(restaurantSchema),
-    defaultValues: {
-      nameEn: '',
-      nameAr: '',
-      subdomain: '',
-      cuisineEn: '',
-      cuisineAr: '',
-      locationEn: '',
-      locationAr: '',
-      logo: '',
-      hotline: '',
-      themeColor: '',
-      active: false,
-    },
-  })
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchRestaurantData = async () => {
-      if (subdomain) {
-        try {
-          const data = await fetchRestaurant(subdomain)
-          form.reset(data)
-        } catch (error) {
-          console.error('Failed to fetch restaurant:', error)
-          toast({
-            title: 'Error',
-            description: 'Failed to load restaurant data. Please try again.',
-            variant: 'destructive',
-          })
-        } finally {
+    let isMounted = true
+
+    const loadSettings = async () => {
+      if (!subdomain) {
+        setIsLoading(false)
+        return
+      }
+
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const response = await fetch(`/api/restaurants/${subdomain}`, { cache: "no-store" })
+        if (!response.ok) {
+          throw new Error("Failed to load restaurant settings")
+        }
+
+        const restaurant = (await response.json()) as IRestaurant
+        if (!isMounted) return
+
+        setRestaurant(restaurant)
+      } catch (loadError) {
+        console.error(loadError)
+        if (!isMounted) return
+        setError("Unable to load settings from the server. Showing defaults.")
+        toast({
+          title: "Unable to load settings",
+          description: "Using default values for now. Try again once the connection is restored.",
+          variant: "destructive",
+        })
+       
+      } finally {
+        if (isMounted) {
           setIsLoading(false)
         }
       }
     }
 
-    fetchRestaurantData()
-  }, [subdomain, form, toast])
-  const mockUpdateRestaurant = async (subdomain: string, data: RestaurantFormValues) => {
-    try {
-      const response = await fetch(`/api/restaurants/${subdomain}`, {
-        method: 'PUT', // or 'PATCH' depending on your API
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-      
-      if (!response.ok) {
-        throw new Error('Failed to update restaurant')
+    loadSettings()
+
+    return () => {
+      isMounted = false
+    }
+  }, [subdomain, toast])
+
+  const handleRestaurantChange = (updates: Partial<IRestaurant>) => {
+    setRestaurant((previous) => {
+      if (!previous) return previous
+
+      const next: IRestaurant = { ...previous, ...updates }
+
+      if (updates.name) {
+        next.name = { ...previous.name, ...updates.name }
       }
-  
-      return await response.json() // Return the updated data if needed
-    } catch (error) {
-      console.error('Error updating restaurant:', error)
-      throw error
-    }
-  }
-  
-  const onSubmit = async (data: RestaurantFormValues) => {
-    try {
-      setIsLoading(true)
-      await mockUpdateRestaurant(subdomain, data)
-      toast({
-        title: 'Success',
-        description: 'Restaurant information updated successfully.',
-      })
-      router.push('/dashboard')
-    } catch (error) {
-      console.error('Failed to update restaurant:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to update restaurant information. Please try again.',
-        variant: 'destructive',
-      })
-    } finally {
-      setIsLoading(false)
-    }
+
+      if (updates.social) {
+        next.social = { ...(previous.social ?? {}), ...updates.social }
+      }
+
+      if (updates.fulfillmentSettings) {
+        next.fulfillmentSettings = {
+          ...DEFAULT_FULFILLMENT_SETTINGS,
+          ...(previous.fulfillmentSettings ?? {}),
+          ...updates.fulfillmentSettings,
+        }
+      }
+
+      if (updates.branches) {
+        next.branches = updates.branches
+      }
+
+      if (updates.phones) {
+        next.phones = updates.phones
+      }
+
+      return next
+    })
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
+  const handleSave = async () => {
+    if (!subdomain) {
+      toast({
+        title: "Subdomain missing",
+        description: "We could not determine which restaurant to update.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!restaurant) {
+      toast({
+        title: "Restaurant not loaded",
+        description: "Please wait for the settings to finish loading before saving.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSaving(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/api/restaurants/${subdomain}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(restaurant),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to save settings")
+      }
+
+      const updatedRestaurant = (await response.json()) as IRestaurant
+      setRestaurant(updatedRestaurant)
+      toast({
+        title: "Settings saved",
+        description: "Your changes were saved successfully.",
+      })
+    } catch (saveError) {
+      console.error(saveError)
+      setError("We couldn't save your changes. Please try again.")
+      toast({
+        title: "Save failed",
+        description: "Please review your changes and try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="mb-8 text-3xl font-bold">Edit Restaurant Information</h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid gap-6 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="nameEn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name (English)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter restaurant name in English" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="nameAr"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name (Arabic)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter restaurant name in Arabic" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+          <p className="text-muted-foreground">Configure your restaurant settings and preferences</p>
+        </div>
+        <Button onClick={handleSave} disabled={isSaving || isLoading || !restaurant}>
+          {isSaving ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="mr-2 h-4 w-4" />
+          )}
+          {isSaving ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
 
-          <FormField
-            control={form.control}
-            name="subdomain"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Subdomain</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter subdomain" {...field} />
-                </FormControl>
-                <FormDescription>This will be used for your restaurant&apos;s URL.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="fulfillment">Fulfillment</TabsTrigger>
+        </TabsList>
+        <TabsContent value="general" className="space-y-6">
+          <GeneralSection
+            restaurant={restaurant}
+            onChange={handleRestaurantChange}
           />
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="cuisineEn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Cuisine (English)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter cuisine type in English" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="cuisineAr"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Cuisine (Arabic)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter cuisine type in Arabic" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="locationEn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location (English)</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Enter location in English" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="locationAr"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location (Arabic)</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Enter location in Arabic" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="logo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Logo URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter logo URL" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="hotline"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>hotline</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter cover image URL" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="themeColor"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Theme Color</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter theme color" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="active"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Active</FormLabel>
-                <FormControl>
-                  <input type="checkbox" checked={field.value} onChange={field.onChange} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Save Changes'}
-          </Button>
-        </form>
-      </Form>
+        </TabsContent>
+        <TabsContent value="fulfillment" className="space-y-6">
+          <FulfillmentSection restaurant={restaurant} onChange={handleRestaurantChange} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

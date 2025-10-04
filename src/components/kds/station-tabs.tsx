@@ -31,7 +31,7 @@ export function StationTabs({ stations, activeStation, onStationChange, totalCou
             onKeyDown={(e) => handleKeyDown(e, station.name)}
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-              "focus:outline-none focus:ring-2 focus:ring-primary/20",
+              "focus:outline-hidden focus:ring-2 focus:ring-primary/20",
               activeStation === station.name ? "bg-primary text-primary-foreground" : "hover:bg-muted focus:bg-muted",
             )}
             role="tab"
