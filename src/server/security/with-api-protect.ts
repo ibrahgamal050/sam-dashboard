@@ -43,14 +43,13 @@ export function withApiProtect(handler: Handler, options: ApiProtectOptions = {}
       }
     }
 
-    await dbConnect()
-
     const bearer = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
     const cookieToken = req.cookies.get('rms.access')?.value
     const tokenCandidate = bearer || cookieToken
 
     if (tokenCandidate) {
       try {
+        await dbConnect()
         const decoded = verifyAccessToken(tokenCandidate)
         const user = await User.findById(decoded.sub)
         if (!user) {
