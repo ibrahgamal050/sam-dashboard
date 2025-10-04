@@ -1,6 +1,6 @@
 "use client"
 
-import type { DeliveryZone } from "@/lib/types/delivery-zones"
+import type { DeliveryZone } from "@/types/delivery-zones"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Eye, EyeOff } from "lucide-react"

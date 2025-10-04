@@ -7,10 +7,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { z } from "zod"
-import { useState } from "react"
-import type { MenuItem } from "@/lib/types"
+import { useState, useEffect } from "react"
+import type { IMenuItem } from "@/types/menu"
 import { Trash } from "lucide-react"
 
 const formSchema = z.object({
@@ -38,7 +38,7 @@ const formSchema = z.object({
 interface MenuItemFormProps {
   restaurantId: string
   categoryId: string
-  menuItem?: MenuItem
+  menuItem?: IMenuItem
 }
 
 export function MenuItemForm({ restaurantId, categoryId, menuItem }: MenuItemFormProps) {
@@ -53,7 +53,7 @@ export function MenuItemForm({ restaurantId, categoryId, menuItem }: MenuItemFor
     menuItem?.sizes?.map((size) => ({
       nameEn: size.name.en,
       nameAr: size.name.ar,
-      price: size.price.toString(),
+      price: size.price != null ? size.price.toString() : "",
     })) || []
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,15 +63,22 @@ export function MenuItemForm({ restaurantId, categoryId, menuItem }: MenuItemFor
       nameAr: menuItem?.name.ar || "",
       descriptionEn: menuItem?.description?.en || "",
       descriptionAr: menuItem?.description?.ar || "",
-      price: menuItem?.price !== null ? menuItem.price.toString() : "",
+      price: menuItem?.price != null ? menuItem.price.toString() : "",
       image: menuItem?.image || "",
       sizes: defaultSizes.length > 0 ? defaultSizes : [{ nameEn: "", nameAr: "", price: "" }],
     },
   })
 
-  const { fields, append, remove } = form.control._fields.sizes
-    ? form.control._fields.sizes
-    : { fields: [], append: () => {}, remove: () => {} }
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "sizes",
+  })
+
+  useEffect(() => {
+    if (hasVariablePricing && fields.length === 0) {
+      append({ nameEn: "", nameAr: "", price: "" })
+    }
+  }, [hasVariablePricing, fields, append])
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)

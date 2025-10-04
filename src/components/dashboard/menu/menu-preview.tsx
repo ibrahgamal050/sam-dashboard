@@ -6,7 +6,7 @@ import type { ICategory, IMenu } from "@/types/menu"
 
 interface MenuPreviewProps {
   categories: ICategory[]
-  menu: IMenu
+  menu: IMenu | null
   currentLanguage: "en" | "ar"
 }
 

@@ -15,6 +15,7 @@ export function Canvas({
   onSelect, 
   onChange 
 }: CanvasProps) {
+  const dropRef = React.useRef<HTMLDivElement | null>(null)
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'component',
     drop: (item: any) => {
@@ -34,12 +35,14 @@ export function Canvas({
     })
   }))
 
+  drop(dropRef)
+
   const styleComponent = components.find(comp => comp.type === 'style')
   const contentComponents = components.filter(comp => comp.type !== 'style')
 
   return (
-    <div 
-      ref={drop}
+    <div
+      ref={dropRef}
       className={cn(
         "flex-1 p-8 bg-[#121212] overflow-auto",
         isOver && "bg-gray-800/50"
@@ -115,4 +118,3 @@ function ComponentRenderer({
 
   return null
 }
-

@@ -10,20 +10,13 @@ import { Label } from "@/components/ui/label"
 import { toast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { RestaurantsTable } from '@/components/dashboard/restaurants-table'
-
-interface Restaurant {
-  id: string
-  nameEn: string
-  nameAr: string
-  coverImage: string
-  subdomain: string
-}
+import type { IRestaurant } from '@/types/restaurant'
 
 export default function RestaurantDashboard() {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+  const [restaurants, setRestaurants] = useState<IRestaurant[]>([])
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [editingRestaurant, setEditingRestaurant] = useState<Restaurant | null>(null)
+  const [editingRestaurant, setEditingRestaurant] = useState<IRestaurant | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

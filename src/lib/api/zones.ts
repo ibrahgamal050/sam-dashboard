@@ -1,5 +1,5 @@
 import { withAuthHeaders } from "@/lib/auth/client"
-import type { CreateDeliveryZoneRequest, DeliveryZone, UpdateDeliveryZoneRequest } from "@/lib/types/delivery-zones"
+import type { CreateDeliveryZoneRequest, DeliveryZone, UpdateDeliveryZoneRequest } from "@/types/delivery-zones"
 
 const API_BASE = "/api/zones"
 

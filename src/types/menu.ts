@@ -46,6 +46,7 @@ export interface ICategory {
   }
   image?: string
   menuItems: IMenuItem[]
+  visible?: boolean
   createdAt?: Date
   updatedAt?: Date
 }

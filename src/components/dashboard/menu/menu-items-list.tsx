@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { MenuItem } from "@/lib/types"
+import type { IMenuItem } from "@/types/menu"
 import { Edit, Eye, MoreHorizontal, Search, Trash, Utensils } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 interface MenuItemsListProps {
-  items: MenuItem[]
+  items: IMenuItem[]
   restaurantId: string
   categoryId: string
 }
@@ -36,17 +36,24 @@ interface MenuItemsListProps {
 export function MenuItemsList({ items, restaurantId, categoryId }: MenuItemsListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [itemToDelete, setItemToDelete] = useState<MenuItem | null>(null)
+  const [itemToDelete, setItemToDelete] = useState<IMenuItem | null>(null)
 
-  const filteredItems = items.filter(
-    (item) =>
-      item.name.en.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.name.ar.includes(searchQuery) ||
-      (item.description?.en?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-      (item.description?.ar || "").includes(searchQuery),
-  )
+  const filteredItems = items.filter((item) => {
+    const nameEn = item.name.en ?? ""
+    const nameAr = item.name.ar ?? ""
+    const descEn = item.description?.en ?? ""
+    const descAr = item.description?.ar ?? ""
+    const queryLower = searchQuery.toLowerCase()
 
-  const handleDeleteClick = (item: MenuItem) => {
+    return (
+      nameEn.toLowerCase().includes(queryLower) ||
+      nameAr.includes(searchQuery) ||
+      descEn.toLowerCase().includes(queryLower) ||
+      descAr.includes(searchQuery)
+    )
+  })
+
+  const handleDeleteClick = (item: IMenuItem) => {
     setItemToDelete(item)
     setDeleteDialogOpen(true)
   }
@@ -106,15 +113,15 @@ export function MenuItemsList({ items, restaurantId, categoryId }: MenuItemsList
                 </TableCell>
               </TableRow>
             ) : (
-              filteredItems.map((item) => (
-                <TableRow key={item._id}>
+              filteredItems.map((item, index) => (
+                <TableRow key={item._id ? String(item._id) : `${item.name.en ?? "item"}-${index}`}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       <div className="h-10 w-10 rounded-md bg-muted">
                         {item.image ? (
                           <img
                             src={item.image || "/placeholder.svg"}
-                            alt={item.name.en}
+                            alt={item.name.en || "Menu item image"}
                             className="h-10 w-10 rounded-md object-cover"
                           />
                         ) : (
@@ -124,8 +131,8 @@ export function MenuItemsList({ items, restaurantId, categoryId }: MenuItemsList
                         )}
                       </div>
                       <div>
-                        <div>{item.name.en}</div>
-                        <div className="text-xs text-muted-foreground">{item.name.ar}</div>
+                        <div>{item.name.en || "Untitled"}</div>
+                        <div className="text-xs text-muted-foreground">{item.name.ar || "—"}</div>
                       </div>
                     </div>
                   </TableCell>
@@ -137,7 +144,7 @@ export function MenuItemsList({ items, restaurantId, categoryId }: MenuItemsList
                     )}
                   </TableCell>
                   <TableCell>
-                    {item.price !== null ? <div>{item.price} EGP</div> : <Badge variant="outline">Variable</Badge>}
+                    {item.price != null ? <div>{item.price} EGP</div> : <Badge variant="outline">Variable</Badge>}
                   </TableCell>
                   <TableCell>
                     {item.sizes && item.sizes.length > 0 ? (

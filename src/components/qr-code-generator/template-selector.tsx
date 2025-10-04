@@ -39,8 +39,8 @@ export function TemplateSelector({ selectedTemplate, backgroundColor, textColor,
               className={cn(
                 "relative flex h-full w-full flex-col items-center justify-center gap-1 overflow-hidden rounded-lg bg-white",
                 template.className,
-                template.beforeClass,
-                template.afterClass
+                'beforeClass' in template ? template.beforeClass ?? '' : '',
+                'afterClass' in template ? template.afterClass ?? '' : ''
               )}
               style={style}
             >

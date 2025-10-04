@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Plus, Edit3, Trash2, Circle, BoldIcon as Polygon, ChevronDown, Euro, Eye, EyeOff } from "lucide-react"
-import type { DeliveryZone } from "@/app/page"
+import type { DeliveryZone } from "@/types/delivery-zones"
 import { cn } from "@/lib/utils"
 
 interface DeliveryZonesSidebarProps {
@@ -15,7 +15,12 @@ interface DeliveryZonesSidebarProps {
   selectedZone: DeliveryZone | null
   onZoneSelect: (zone: DeliveryZone | null) => void
   onZoneUpdate: (zone: DeliveryZone) => void
-  onZoneCreate: (zone: Omit<DeliveryZone, "id">) => void
+  onZoneCreate: (zone: Omit<DeliveryZone, "id" | "created_at" | "updated_at" | "created_by"> & {
+    coordinates?: Array<{ lat: number; lng: number }>
+    radius?: number
+    isActive?: boolean
+    shape?: "circle" | "custom"
+  }) => void
   onZoneDelete: (zoneId: string) => void
   isEditing: boolean
   onEditingChange: (editing: boolean) => void
@@ -44,9 +49,9 @@ export function DeliveryZonesSidebar({
   const handleEditZone = (zone: DeliveryZone) => {
     setEditForm({
       name: zone.name,
-      deliveryFee: zone.deliveryFee,
+      deliveryFee: zone.delivery_fee,
       color: zone.color,
-      shape: zone.shape,
+      shape: zone.zone_type === "circle" ? "circle" : "custom",
     })
     onZoneSelect(zone)
     onEditingChange(true)
@@ -56,14 +61,41 @@ export function DeliveryZonesSidebar({
     if (selectedZone) {
       onZoneUpdate({
         ...selectedZone,
-        ...editForm,
+        name: editForm.name,
+        color: editForm.color,
+        delivery_fee: editForm.deliveryFee,
+        zone_type: editForm.shape === "circle" ? "circle" : "polygon",
       })
     } else {
+      const fallbackZone = zones.length > 0 ? zones[0] : undefined
+      const mockRestaurantId = fallbackZone?.restaurantId ?? ""
+
       onZoneCreate({
-        ...editForm,
-        coordinates: [{ lat: 52.3676, lng: 4.9041 }],
-        radius: editForm.shape === "circle" ? 2000 : undefined,
-        isActive: true,
+        restaurantId: mockRestaurantId,
+        name: editForm.name,
+        delivery_fee: editForm.deliveryFee,
+        color: editForm.color,
+        zone_type: editForm.shape === "circle" ? "circle" : "polygon",
+        is_active: true,
+        geometry:
+          editForm.shape === "circle"
+            ? {
+                type: "Point",
+                coordinates: [52.3676, 4.9041],
+                properties: { radius: 2000 },
+              }
+            : {
+                type: "Polygon",
+                coordinates: [
+                  [
+                    [4.9041, 52.3676],
+                    [4.9141, 52.3676],
+                    [4.9141, 52.3776],
+                    [4.9041, 52.3776],
+                    [4.9041, 52.3676],
+                  ],
+                ],
+              },
       })
     }
     onEditingChange(false)
@@ -84,7 +116,7 @@ export function DeliveryZonesSidebar({
   const toggleZoneVisibility = (zone: DeliveryZone) => {
     onZoneUpdate({
       ...zone,
-      isActive: !zone.isActive,
+      is_active: !zone.is_active,
     })
   }
 
@@ -128,7 +160,7 @@ export function DeliveryZonesSidebar({
                           toggleZoneVisibility(zone)
                         }}
                       >
-                        {zone.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                        {zone.is_active ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
                       </Button>
                       <Button
                         variant="ghost"
@@ -154,12 +186,12 @@ export function DeliveryZonesSidebar({
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
-                      {zone.shape === "circle" ? <Circle className="h-3 w-3" /> : <Polygon className="h-3 w-3" />}
-                      <span className="capitalize">{zone.shape}</span>
+                      {zone.zone_type === "circle" ? <Circle className="h-3 w-3" /> : <Polygon className="h-3 w-3" />}
+                      <span className="capitalize">{zone.zone_type}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Euro className="h-3 w-3" />
-                      <span>{zone.deliveryFee.toFixed(2)}</span>
+                      <span>{zone.delivery_fee.toFixed(2)}</span>
                     </div>
                   </div>
                 </CardContent>

@@ -71,8 +71,8 @@ export function QRPreview({ url, title, description, backgroundColor, textColor,
           className={cn(
             "relative mx-auto flex max-w-sm flex-col items-center rounded-[32px] bg-white px-10 py-12 text-center shadow-[0_12px_40px_-20px_rgba(15,23,42,0.35)]",
             selectedTemplate.className,
-            selectedTemplate.beforeClass,
-            selectedTemplate.afterClass
+            'beforeClass' in selectedTemplate ? selectedTemplate.beforeClass : "",
+            'afterClass' in selectedTemplate ? selectedTemplate.afterClass ?? "" : ""
           )}
           style={style}
         >

@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import type { MenuCategory } from "@/lib/types"
+import type { ICategory } from "@/types/menu"
 import { Edit, MoreHorizontal, Trash, Utensils } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -28,17 +28,17 @@ import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 
 interface MenuCategoriesListProps {
-  categories: MenuCategory[]
+  categories: ICategory[]
   restaurantId: string
 }
 
 export function MenuCategoriesList({ categories, restaurantId }: MenuCategoriesListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [categoryToDelete, setCategoryToDelete] = useState<MenuCategory | null>(null)
+  const [categoryToDelete, setCategoryToDelete] = useState<ICategory | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const router = useRouter()
 
-  const handleDeleteClick = (category: MenuCategory) => {
+  const handleDeleteClick = (category: ICategory) => {
     setCategoryToDelete(category)
     setDeleteDialogOpen(true)
   }
@@ -97,7 +97,7 @@ export function MenuCategoriesList({ categories, restaurantId }: MenuCategoriesL
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {categories.map((category) => (
-        <Card key={category._id} className="overflow-hidden">
+        <Card key={category._id ? String(category._id) : category.name.en} className="overflow-hidden">
           <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
             <div>
               <CardTitle className="text-base">{category.name.en}</CardTitle>

@@ -30,19 +30,23 @@ interface ImageUploadProps {
   subdomain?: string
 }
 
-export function ImageUpload({
-  onImageUpload,
-  className,
- 
-}: ImageUploadProps) {
+const normaliseSubdomain = (value: string | string[] | undefined): string | undefined => {
+  if (!value) return undefined
+  const raw = Array.isArray(value) ? value[0] : value
+  if (typeof raw !== "string") return undefined
+  const trimmed = raw.trim()
+  return trimmed ? trimmed.toLowerCase() : undefined
+}
+
+export function ImageUpload({ onImageUpload, className, subdomain: propSubdomain }: ImageUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [altText, setAltText] = useState("")
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
-const params = useParams(); 
-  const subdomain = params.subdomain; 
+  const params = useParams()
+  const routeSubdomain = params?.subdomain as string | string[] | undefined
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -67,7 +71,8 @@ const params = useParams();
     setIsUploading(true)
     setUploadProgress(0)
 
-    const resolvedSubdomain = subdomain?.trim().toLowerCase() || "default"
+    const resolvedSubdomain =
+      normaliseSubdomain(propSubdomain) ?? normaliseSubdomain(routeSubdomain) ?? "default"
     let progressInterval: ReturnType<typeof setInterval> | null = null
 
     try {

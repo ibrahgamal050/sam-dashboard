@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useState } from "react"
-import type { MenuCategory } from "@/lib/types"
+import type { ICategory } from "@/types/menu"
 
 const formSchema = z.object({
   nameEn: z.string().min(2, {
@@ -23,7 +23,7 @@ const formSchema = z.object({
 
 interface MenuCategoryFormProps {
   restaurantId: string
-  category?: MenuCategory
+  category?: ICategory
 }
 
 export function MenuCategoryForm({ restaurantId, category }: MenuCategoryFormProps) {

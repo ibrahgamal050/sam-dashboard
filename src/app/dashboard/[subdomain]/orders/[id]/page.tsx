@@ -93,6 +93,7 @@ export default async function OrderDetailsPage({
     paymentMethod?: string
     payment?: { method?: string; status?: string }
     paymentStatus?: string
+    notes?: string
     items?: OrderItemLean[]
     customer?: {
       name?: string

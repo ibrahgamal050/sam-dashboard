@@ -14,7 +14,7 @@ import ComponentEditor from '@/components/ComponentEditor'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Layout, Settings, FileText, Share2, Menu, Save, AlertCircle } from 'lucide-react'
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Toast } from "@/components/ui/toast"
+import { Toast, ToastDescription } from "@/components/ui/toast"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface Image {
@@ -333,10 +333,13 @@ export function PageEditorComponent() {
       {showToast && (
         <Toast
           title={toastMessage.includes('successfully') ? 'Success' : 'Error'}
-          description={toastMessage}
-          icon={toastMessage.includes('successfully') ? <Save className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-          onClose={() => setShowToast(false)}
-        />
+          onOpenChange={setShowToast}
+        >
+          <div className="flex items-center gap-2">
+            {toastMessage.includes('successfully') ? <Save className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+            <ToastDescription>{toastMessage}</ToastDescription>
+          </div>
+        </Toast>
       )}
     </div>
   )

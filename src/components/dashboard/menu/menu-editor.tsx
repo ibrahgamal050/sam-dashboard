@@ -569,7 +569,13 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
 
         <div className="mt-8">
           {activeView === "preview" ? (
-            <MenuPreview menu={menu} categories={categories} currentLanguage={currentLanguage} />
+            menu ? (
+              <MenuPreview menu={menu} categories={categories} currentLanguage={currentLanguage} />
+            ) : (
+              <div className="rounded-3xl bg-white p-6 text-center text-sm text-muted-foreground">
+                Loading menu preview...
+              </div>
+            )
           ) : (
             <div className="rounded-3xl bg-white p-6 shadow-md ring-1 ring-slate-200/60">
               <DragDropContext onDragEnd={handleDragEnd}>
@@ -777,7 +783,7 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
           )}
         </div>
       </div>
-      {editingItem && (
+      {editingItem && menu && (
         <EditItemModal
           item={editingItem}
           currency={menu.currency}
@@ -808,13 +814,15 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
         />
       )}
 
-      <MenuImageManager
-        open={imageManagerOpen}
-        onOpenChange={setImageManagerOpen}
-        images={menuImages}
-        subdomain={menu.name}
-        onImagesChange={setMenuImages}
-      />
+      {menu && (
+        <MenuImageManager
+          open={imageManagerOpen}
+          onOpenChange={setImageManagerOpen}
+          images={menuImages}
+          subdomain={menu.name}
+          onImagesChange={setMenuImages}
+        />
+      )}
     </div>
   )
 }

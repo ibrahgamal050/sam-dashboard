@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Search, CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { ZonesAPI } from "@/lib/api/zones"
-import type { DeliveryZone } from "@/lib/types/delivery-zones"
+import type { DeliveryZone } from "@/types/delivery-zones"
 
 interface DeliveryCheckResult {
   isDeliveryAvailable: boolean

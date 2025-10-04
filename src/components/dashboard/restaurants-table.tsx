@@ -38,7 +38,7 @@ import {IRestaurant} from '@/types/restaurant'
 
 
 interface RestaurantsTableProps {
-  data: IRestaurant
+  data: IRestaurant[]
   isLoading?: boolean
 }
 

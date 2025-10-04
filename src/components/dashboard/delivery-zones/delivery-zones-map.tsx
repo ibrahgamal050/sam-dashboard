@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import type { DeliveryZone } from "@/app/page"
+import type { DeliveryZone } from "@/types/delivery-zones"
 
 interface DeliveryZonesMapProps {
   zones: DeliveryZone[]
@@ -65,7 +65,7 @@ export function DeliveryZonesMap({
               {/* Zone Overlays */}
               <div className="absolute inset-0">
                 {zones
-                  .filter((zone) => zone.isActive)
+                  .filter((zone) => zone.is_active)
                   .map((zone, index) => (
                     <div
                       key={zone.id}
@@ -75,11 +75,11 @@ export function DeliveryZonesMap({
                       style={{
                         left: `${20 + index * 15}%`,
                         top: `${30 + index * 10}%`,
-                        width: zone.shape === "circle" ? "120px" : "140px",
-                        height: zone.shape === "circle" ? "120px" : "100px",
+                        width: zone.zone_type === "circle" ? "120px" : "140px",
+                        height: zone.zone_type === "circle" ? "120px" : "100px",
                         backgroundColor: `${zone.color}40`,
                         border: `2px solid ${zone.color}`,
-                        borderRadius: zone.shape === "circle" ? "50%" : "8px",
+                        borderRadius: zone.zone_type === "circle" ? "50%" : "8px",
                       }}
                       onClick={() => handleZoneClick(zone)}
                     >
@@ -104,14 +104,14 @@ export function DeliveryZonesMap({
                 <h4 className="font-medium text-sm mb-3 text-card-foreground">Active Zones</h4>
                 <div className="space-y-2">
                   {zones
-                    .filter((zone) => zone.isActive)
+                    .filter((zone) => zone.is_active)
                     .map((zone) => (
                       <div key={zone.id} className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: zone.color }} />
                           <span className="text-card-foreground">{zone.name}</span>
                         </div>
-                        <span className="text-muted-foreground">€{zone.deliveryFee.toFixed(2)}</span>
+                        <span className="text-muted-foreground">€{zone.delivery_fee.toFixed(2)}</span>
                       </div>
                     ))}
                 </div>

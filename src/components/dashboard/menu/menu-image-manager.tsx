@@ -32,7 +32,7 @@ export function MenuImageManager({
     console.log()
     try {
       const newImage: IMenuImage = {
-        _id: crypto.randomUUID(),
+        _id: undefined,
         url: imageUrl,
         altText,
         createdAt: new Date(),

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import type { DeliveryZone, CircleGeometry, PolygonGeometry } from "@/lib/types/delivery-zones"
+import type { DeliveryZone, CircleGeometry, PolygonGeometry } from "@/types/delivery-zones"
 import {
   calculateGeometryMetrics,
   destinationPoint,

@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Trash2, Save, X } from "lucide-react"
-import type { DeliveryZone, CreateDeliveryZoneRequest } from "@/lib/types/delivery-zones"
+import type { DeliveryZone, CreateDeliveryZoneRequest } from "@/types/delivery-zones"
 
 interface ZoneEditorFormProps {
   zone?: DeliveryZone | null

@@ -39,17 +39,9 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/hooks/use-toast"
-import EditMenuItem from "./edit-menu-item"
+import EditMenuItem, { type MenuItemProps } from "./edit-menu-item"
 
-interface MenuItem {
-  id: string
-  name: { en: string; ar: string }
-  price: number
-  description?: { en: string; ar: string }
-  image?: string
-  dietary?: string[]
-  variants?: { id: string; name: string; price: number }[]
-}
+type MenuItem = MenuItemProps
 
 interface Category {
   id: string
@@ -232,8 +224,22 @@ export function MenuManager({ subdomain }: MenuManagerProps) {
     setHasUnsavedChanges(false)
   }
 
-  const handleSaveItem = async (updatedItem: MenuItem) => {
+  const handleSaveItem = (updatedItem: MenuItem) => {
     if (!menuData) return
+
+    const normalizedItem: MenuItem = {
+      ...updatedItem,
+      name: {
+        en: updatedItem.name.en,
+        ar: updatedItem.name.ar ?? "",
+      },
+      description: updatedItem.description
+        ? {
+            en: updatedItem.description.en ?? "",
+            ar: updatedItem.description.ar ?? "",
+          }
+        : undefined,
+    }
 
     const newMenuData = { ...menuData }
 
@@ -250,14 +256,14 @@ export function MenuManager({ subdomain }: MenuManagerProps) {
     if (itemIndex === -1) return
 
     // Update the item
-    newMenuData.categories[categoryIndex].menuItems[itemIndex] = updatedItem
+    newMenuData.categories[categoryIndex].menuItems[itemIndex] = normalizedItem
 
     // Simulate API call
     setMenuData(newMenuData)
 
     toast({
       title: "Item updated",
-      description: `${updatedItem.name.en} has been updated successfully.`,
+      description: `${normalizedItem.name.en} has been updated successfully.`,
     })
   }
 
@@ -499,7 +505,7 @@ export function MenuManager({ subdomain }: MenuManagerProps) {
                                 <div className="text-xs text-muted-foreground">{item.variants.length} variants</div>
                               </div>
                             ) : (
-                              <div className="text-sm">{item.price.toFixed(2)} EGP</div>
+                            <div className="text-sm">{(item.price ?? 0).toFixed(2)} EGP</div>
                             )}
 
                             <div className="flex gap-2">
@@ -574,7 +580,17 @@ export function MenuManager({ subdomain }: MenuManagerProps) {
         <EditMenuItem
           open={!!editingItem}
           onOpenChange={(open) => !open && setEditingItem(null)}
-          item={editingItem}
+          item={{
+            ...editingItem,
+            name: {
+              en: editingItem.name.en,
+              ar: editingItem.name.ar ?? "",
+            },
+            description: {
+              en: editingItem.description?.en ?? "",
+              ar: editingItem.description?.ar ?? "",
+            },
+          }}
           onSave={handleSaveItem}
         />
       )}
@@ -598,4 +614,3 @@ export function MenuManager({ subdomain }: MenuManagerProps) {
     </div>
   )
 }
-

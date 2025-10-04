@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { formatArea, formatDistance, type GeometryMetrics } from "@/lib/geometry"
-import type { DeliveryZone } from "@/lib/types/delivery-zones"
+import type { DeliveryZone } from "@/types/delivery-zones"
 import { Loader2, RotateCcw, Save, Trash2, XCircle, Magnet } from "lucide-react"
 
 interface MapEditingHudProps {

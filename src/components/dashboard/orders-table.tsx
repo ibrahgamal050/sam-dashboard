@@ -24,6 +24,8 @@ export type Order = {
   status: "On Delivery" | "Delivered" | "Canceled"
 }
 
+type OrdersTableRow = Order
+
 interface OrdersTableProps {
   orders: Order[]
 }
@@ -179,10 +181,20 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={(event) => event.domEvent?.stopPropagation?.()}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(event) => {
+                            event.preventDefault()
+                            event.stopPropagation()
+                          }}
+                        >
+                          Edit
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-destructive"
-                          onClick={(event) => event.domEvent?.stopPropagation?.()}
+                          onClick={(event) => {
+                            event.preventDefault()
+                            event.stopPropagation()
+                          }}
                         >
                           Cancel order
                         </DropdownMenuItem>

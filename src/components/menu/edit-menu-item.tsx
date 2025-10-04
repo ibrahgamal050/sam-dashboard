@@ -47,11 +47,11 @@ const menuItemSchema = z.object({
 
 type MenuItemFormValues = z.infer<typeof menuItemSchema>
 
-interface MenuItemProps {
+export interface MenuItemProps {
   id: string
   name: {
     en: string
-    ar?: string
+    ar: string
   }
   description?: {
     en?: string
@@ -497,4 +497,3 @@ export default function EditMenuItem({
     </Dialog>
   )
 }
-
