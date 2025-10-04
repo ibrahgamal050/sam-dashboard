@@ -5,6 +5,9 @@ import { withApiProtect } from '@/server/security/with-api-protect'
 import { buildRequestContext } from '@/server/security/request'
 import { mapUserToSafe } from '@/server/auth/mapper'
 
+export const dynamic = 'force-dynamic'
+
+
 export const POST = withApiProtect(async ({ req }) => {
   try {
     const body = await req.json()
