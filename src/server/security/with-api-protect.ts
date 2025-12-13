@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import dbConnect from '@/lib/dbConnect'
 import User, { type IUser, type UserRole } from '@/models/User'
-import { verifyAccessToken } from '../auth/token-service'
 import { hasRequiredRole } from './rbac'
 import { verifyCsrfToken, getCsrfCookieName } from './csrf'
+import { userCannotLogin } from '../auth/auth-service'
+import { getAuth } from '@/lib/auth/auth-server'
 
 interface AuthenticatedRequest {
   user: IUser
@@ -43,31 +44,40 @@ export function withApiProtect(handler: Handler, options: ApiProtectOptions = {}
       }
     }
 
-    const bearer = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-    const cookieToken = req.cookies.get('rms.access')?.value
-    const tokenCandidate = bearer || cookieToken
-
-    if (tokenCandidate) {
-      try {
-        await dbConnect()
-        const decoded = verifyAccessToken(tokenCandidate)
-        const user = await User.findById(decoded.sub)
-        if (!user) {
-          return NextResponse.json({ error: 'User not found' }, { status: 401 })
-        }
-        auth = {
-          user,
-          token: {
-            sub: decoded.sub,
-            roles: decoded.roles,
-            sessionId: decoded.sessionId,
-          },
-        }
-      } catch (error) {
-        if (!allowUnauthenticated) {
-          return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 })
-        }
+    const { userId, payload } = await getAuth(req)
+    if (userId) {
+      await dbConnect()
+      const user = await User.findById(userId)
+      if (!user) {
+        return NextResponse.json({ error: 'User not found' }, { status: 401 })
       }
+
+      const blocker = userCannotLogin(user)
+      if (blocker) {
+        return NextResponse.json({ error: blocker }, { status: 403 })
+      }
+
+      const rolesFromPayload =
+        Array.isArray((payload as any)?.roles) && (payload as any).roles.length
+          ? ((payload as any).roles as IUser['roles'])
+          : undefined
+
+      const sessionId =
+        (payload?.sid as string) ??
+        (payload?.sessionId as string) ??
+        (payload?.session_id as string) ??
+        'n/a'
+
+      auth = {
+        user,
+        token: {
+          sub: userId,
+          roles: rolesFromPayload ?? user.roles,
+          sessionId,
+        },
+      }
+    } else if (!allowUnauthenticated) {
+      return NextResponse.json({ error: 'Invalid or expired session' }, { status: 401 })
     }
 
     if (!auth && !allowUnauthenticated) {

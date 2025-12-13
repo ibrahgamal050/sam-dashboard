@@ -1,151 +1,67 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
-
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { login } from "@/lib/auth-client"
-
-type SignInData = {
-  email: string
-  password: string
-}
-
-const formSchema = z.object({
-  email: z.string().email({ message: "أدخل بريدًا إلكترونيًا صالحًا" }),
-  password: z.string().min(6, { message: "الرقم السري يجب ألا يقل عن 6 خانات" }),
-})
+import * as React from 'react'
+import { useSearchParams } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 
 export default function SignInPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard/restaurants"
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [showPassword, setShowPassword] = useState(false)
+  const search = useSearchParams()
+  const [loading, setLoading] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+  const errorParam = search?.get('error')
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignInData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { email: "", password: "" },
-  })
-
-  const onSubmit = async (data: SignInData) => {
-    try {
-      setIsLoading(true)
-      setError(null)
-
-      await login({ email: data.email, password: data.password })
-      router.push(callbackUrl)
-      router.refresh()
-    } catch (err) {
-      console.error("Sign in error", err)
-      setError(
-        err instanceof Error && err.message ? err.message : "حدث خطأ غير متوقع، حاول مرة أخرى"
-      )
-    } finally {
-      setIsLoading(false)
+  const callbackUrl = React.useMemo(() => {
+    const redirectParam = search?.get('callbackUrl') ?? search?.get('redirect')
+    if (redirectParam && redirectParam.startsWith('/')) {
+      return redirectParam
     }
-  }
+    return '/dashboard'
+  }, [search])
+
+  React.useEffect(() => {
+    if (!errorParam) return
+    if (errorParam === 'missingRole') {
+      setError('حسابك غير مرتبط بصلاحية تسمح بالدخول. تواصل مع مسؤول النظام لإضافتك.')
+    } else {
+      setError('غير مسموح لك بالدخول بهذا الحساب.')
+    }
+  }, [errorParam])
+
+  const handleMeelzaLogin = React.useCallback(async () => {
+    try {
+      setLoading(true)
+      await signIn('meelza-id', { callbackUrl })
+    } catch (err: any) {
+      setError(err?.message || 'Unable to connect to Meelza ID. Please try again.')
+      setLoading(false)
+    }
+  }, [callbackUrl])
 
   return (
-    <Card className="border-0 shadow-none" dir="rtl">
-      <CardHeader className="space-y-2 text-right">
-        <CardTitle className="text-3xl font-bold text-gray-900">مرحبًا بعودتك</CardTitle>
-        <CardDescription className="text-sm text-gray-500">
-          سجّل الدخول لبدء إدارة المطعم، وتتبع الطلبات والفريق من لوحة التحكم.
-        </CardDescription>
-      </CardHeader>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <CardContent className="space-y-5">
-          {error && (
-            <Alert variant="destructive" className="text-right">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          <div className="space-y-2 text-right">
-            <Label htmlFor="email">البريد الإلكتروني</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@restaurant.com"
-              className="text-right"
-              disabled={isLoading}
-              {...register("email")}
-            />
-            {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
-          </div>
-
-          <div className="space-y-2 text-right">
-            <Label htmlFor="password">الرقم السري</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                className="text-right"
-                disabled={isLoading}
-                {...register("password")}
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute left-0 top-0 h-full px-3 py-2 text-gray-500 hover:bg-transparent"
-                onClick={() => setShowPassword((prev) => !prev)}
-                disabled={isLoading}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-            </div>
-            {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
-          </div>
-
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <Link href="/auth/register" className="font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
-              إنشاء حساب جديد
-            </Link>
-            <Link href="/auth/forgot-password" className="hover:text-gray-700">
-              نسيت الرقم السري؟
-            </Link>
-          </div>
-        </CardContent>
-
-        <CardFooter className="flex flex-col gap-4 text-right">
-          <Button
-            type="submit"
-            className="w-full rounded-2xl bg-[#6c5ce7] text-white shadow-lg shadow-[#6c5ce7]/25"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                جارٍ التحقق من البيانات...
-              </>
-            ) : (
-              "تسجيل الدخول"
-            )}
-          </Button>
-
-          <p className="text-xs leading-6 text-gray-500">
-            باستخدامك للمنصة فأنت توافق على شروط الاستخدام وسياسة الخصوصية الخاصة بميلزا.
+    <main className="min-h-svh bg-slate-50 py-16">
+      <div className="mx-auto grid max-w-md gap-6 rounded-3xl border border-white/60 bg-white/90 p-10 text-center shadow-2xl shadow-indigo-100">
+        <div className="space-y-2">
+          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-500">Meelza RMS</p>
+          <h1 className="text-2xl font-semibold text-slate-900">Sign in with Meelza ID</h1>
+          <p className="text-sm text-slate-500">
+            Use your unified Meelza ID (admin, owner, or staff) to access the restaurant dashboard.
           </p>
-        </CardFooter>
-      </form>
-    </Card>
+        </div>
+        {error && (
+          <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+        )}
+        <button
+          type="button"
+          onClick={handleMeelzaLogin}
+          disabled={loading}
+          className="flex items-center justify-center gap-3 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {loading ? 'Connecting…' : 'Continue with Meelza ID'}
+        </button>
+        <p className="text-xs text-slate-400">
+          Need access? Contact your Meelza administrator to be added as owner or staff.
+        </p>
+      </div>
+    </main>
   )
 }

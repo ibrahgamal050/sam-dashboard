@@ -1,252 +1,68 @@
-'use client'
+"use client"
 
-import { useParams } from 'next/navigation'
-import { useState, useEffect, useCallback } from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import useSWR from "swr"
+import Link from "next/link"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react'
-import { useToast } from "@/components/ui/use-toast"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Plus, Pencil, MapPin, Phone, Power } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-interface Branch {
-  id: number;
-  name: string;
-  nameEn: string;
-  address: string;
-  url: string;
-  image: string;
-  _id?: string;
-}
+const fetcher = (url: string) => fetch(url).then(r => r.json())
 
-export default function BranchManager() {
-  const { subdomain } = useParams() as { subdomain: string }
-  const [branches, setBranches] = useState<Branch[]>([])
-  const [editingBranch, setEditingBranch] = useState<Branch | null>(null)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
-
-  const fetchApi = useCallback(async (endpoint: string, method: string = 'GET', data?: any) => {
-    if (!subdomain) {
-      throw new Error('Subdomain is not available');
-    }
-  
-    const response = await fetch(`/api/${subdomain}/branches${endpoint}`, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: data ? JSON.stringify(data) : undefined,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'An error occurred while communicating with the server');
-    }
-
-    return response.json();
-  }, [subdomain]);
-
-  const fetchBranches = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const data = await fetchApi('')
-      setBranches(data)
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch branch data",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }, [fetchApi, toast])
-
-  useEffect(() => {
-    fetchBranches()
-  }, [fetchBranches])
-
-  const handleSaveBranch = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!editingBranch) return;
-    setIsLoading(true);
-  
-    const endpoint = editingBranch.id ? `/${editingBranch.id}` : '';
-    const method = editingBranch.id ? 'PUT' : 'POST';
-    const branchData = { ...editingBranch };
-    if (!editingBranch.id) delete branchData._id;
-  
-    try {
-      await fetchApi(endpoint, method, branchData);
-      toast({
-        title: editingBranch.id ? "Updated" : "Added",
-        description: editingBranch.id ? "Branch updated successfully" : "New branch added successfully",
-      });
-      await fetchBranches();
-      setIsDialogOpen(false);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save branch data",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteBranch = async (id: string) => {
-    if (!id) {
-      toast({
-        title: "Error",
-        description: "Invalid branch ID",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      await fetchApi(`/${id}`, 'DELETE');
-      toast({ title: "Deleted", description: "Branch deleted successfully" });
-      await fetchBranches();
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to delete branch",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setEditingBranch(prev => (prev ? { ...prev, [name]: value } : prev))
-  }
+export default function BranchesPage({ params }: { params: { subdomain: string } }) {
+  const [q, setQ] = useState("")
+  const { data, isLoading, mutate } = useSWR(
+    `/api/${params.subdomain}/branches?q=${encodeURIComponent(q)}&limit=50`,
+    fetcher
+  )
 
   return (
-    <Card className="w-full max-w-4xl mx-auto" dir="rtl">
-      <CardHeader>
-        <CardTitle className="text-3xl font-bold">لوحة التحكم - إدارة الفروع</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4">
-          <Button onClick={() => setIsDialogOpen(true)} disabled={isLoading}>
-            <Plus className="ml-2 h-4 w-4" /> إضافة فرع جديد
-          </Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">الفروع</h1>
+        <Link href={`/dashboard/${params.subdomain}/branches/new`}>
+          <Button><Plus className="w-4 h-4 mr-2" /> إضافة فرع</Button>
+        </Link>
+      </div>
+
+      <div className="flex gap-3">
+        <Input
+          placeholder="ابحث بالاسم أو العنوان..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+        <Button variant="secondary" onClick={() => mutate()}>بحث</Button>
+      </div>
+
+      {isLoading ? (
+        <p>جارِ التحميل…</p>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {data?.items?.map((b: any) => (
+            <div key={b._id} className={cn("p-4 rounded-2xl border shadow-sm", !b.isActive && "opacity-70")}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-medium">
+                  {b.name} {b.isMain && <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-100">الفرع الرئيسي</span>}
+                </div>
+                <Link href={`/dashboard/${params.subdomain}/branches/${b._id}`}>
+                  <Button size="sm" variant="outline"><Pencil className="w-4 h-4" /></Button>
+                </Link>
+              </div>
+              <div className="text-sm text-muted-foreground space-y-1">
+                <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {b.address?.line1}</div>
+                {b.phone && <div className="flex items-center gap-2"><Phone className="w-4 h-4" /> {b.phone}</div>}
+              </div>
+              <div className="mt-3">
+                <span className={cn("inline-flex items-center gap-1 text-xs px-2 py-1 rounded",
+                  b.isActive ? "bg-green-100" : "bg-zinc-200")}>
+                  <Power className="w-3 h-3" /> {b.isActive ? "نشط" : "مُعطَّل"}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
-
-        {isLoading ? (
-          <div className="flex justify-center items-center h-32">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>اسم الفرع</TableHead>
-                <TableHead>العنوان</TableHead>
-                <TableHead>الإجراءات</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {branches.map((branch) => (
-                <TableRow key={branch.id}>
-                  <TableCell>{branch.name}</TableCell>
-                  <TableCell>{branch.address}</TableCell>
-                  <TableCell>
-                    <Button variant="outline" size="icon" onClick={() => {
-                      setEditingBranch(branch);
-                      setIsDialogOpen(true);
-                    }} disabled={isLoading}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="icon" onClick={() => handleDeleteBranch(branch.id.toString())} disabled={isLoading}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>{editingBranch?.id ? 'تعديل الفرع' : 'إضافة فرع جديد'}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSaveBranch} className="space-y-4">
-              <div>
-                <Label htmlFor="name">اسم الفرع</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={editingBranch?.name || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="nameEn">الاسم بالإنجليزية</Label>
-                <Input
-                  id="nameEn"
-                  name="nameEn"
-                  value={editingBranch?.nameEn || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="address">العنوان</Label>
-                <Input
-                  id="address"
-                  name="address"
-                  value={editingBranch?.address || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="url">الموقع</Label>
-                <Input
-                  type="url"
-                  id="url"
-                  name="url"
-                  value={editingBranch?.url || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="image">الصورة</Label>
-                <Input
-                  id="image"
-                  name="image"
-                  value={editingBranch?.image || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <DialogFooter>
-                <Button type="button" variant="secondary" onClick={() => setIsDialogOpen(false)} disabled={isLoading}>
-                  إلغاء
-                </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? <Loader2 className="ml-2 h-4 w-4 animate-spin" /> : null}
-                  {editingBranch?.id ? 'تحديث' : 'إضافة'}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   )
 }

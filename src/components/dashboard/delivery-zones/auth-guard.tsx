@@ -2,10 +2,9 @@
 
 import type React from "react"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
+import { useSession } from "next-auth/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-
-import { getStoredSession, onSessionChange } from "@/lib/auth/client"
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -13,50 +12,25 @@ interface AuthGuardProps {
 }
 
 export default function AuthGuard({ children, fallback }: AuthGuardProps) {
-  const [isChecking, setIsChecking] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const searchParamsString = searchParams?.toString() ?? ""
   const hasRedirectedRef = useRef(false)
-  const previousTokenRef = useRef<string | null>(null)
 
   useEffect(() => {
-    const evaluateSession = () => {
-      const { token } = getStoredSession()
+    if (status !== "unauthenticated" || hasRedirectedRef.current) return
 
-      if (previousTokenRef.current !== token) {
-        previousTokenRef.current = token
-        hasRedirectedRef.current = false
-      }
+    hasRedirectedRef.current = true
+    const redirectTarget = pathname
+      ? `${pathname}${searchParamsString ? `?${searchParamsString}` : ""}`
+      : "/dashboard"
+    const loginUrl = `/auth/signin?callbackUrl=${encodeURIComponent(redirectTarget)}`
+    router.push(loginUrl)
+  }, [pathname, router, searchParamsString, status])
 
-      const authenticated = Boolean(token)
-      setIsAuthenticated(authenticated)
-      setIsChecking(false)
-
-      if (!authenticated && !hasRedirectedRef.current) {
-        hasRedirectedRef.current = true
-        const redirectTarget = pathname
-          ? `${pathname}${searchParamsString ? `?${searchParamsString}` : ""}`
-          : "/dashboard"
-        const loginUrl = `/auth/login?redirect=${encodeURIComponent(redirectTarget)}`
-        router.push(loginUrl)
-      }
-    }
-
-    evaluateSession()
-
-    const unsubscribe = onSessionChange(() => {
-      evaluateSession()
-    })
-
-    return () => {
-      unsubscribe()
-    }
-  }, [pathname, router, searchParamsString])
-
-  if (isChecking) {
+  if (status === "loading") {
     return (
       fallback || (
         <div className="flex min-h-screen items-center justify-center">
@@ -69,7 +43,7 @@ export default function AuthGuard({ children, fallback }: AuthGuardProps) {
     )
   }
 
-  if (!isAuthenticated) {
+  if (status !== "authenticated") {
     return null
   }
 

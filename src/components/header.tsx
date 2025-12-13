@@ -15,8 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { useDashboardAuth } from "@/components/dashboard/auth-context"
-import { logout } from "@/lib/auth-client"
+import { signOut } from "next-auth/react"
 import { cn } from "@/lib/utils"
 
 type HeaderProps = {
@@ -26,23 +25,17 @@ type HeaderProps = {
 
 export function Header({ subdomain, onOpenSidebar }: HeaderProps) {
   const router = useRouter()
-  const { user } = useDashboardAuth()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const displayName = subdomain ? subdomain.replace(/[-_]/g, ' ') : 'Dashboard'
 
-  const userFullName = [user?.name?.first, user?.name?.last].filter(Boolean).join(' ') || user.email
-  const userEmail = user.email
-  const userInitials = [user?.name?.first?.[0], user?.name?.last?.[0]]
-    .filter(Boolean)
-    .join('')
-    .toUpperCase() || user.email.charAt(0).toUpperCase()
+
 
   const handleLogout = async () => {
     if (isLoggingOut) return
     setIsLoggingOut(true)
     try {
-      await logout()
+      await signOut({ redirect: false })
       router.push('/auth/signin')
       router.refresh()
     } catch (error) {
@@ -89,15 +82,15 @@ export function Header({ subdomain, onOpenSidebar }: HeaderProps) {
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full border border-slate-200">
                   <Avatar className="h-9 w-9">
                     <AvatarImage src="/placeholder.svg?height=36&width=36" alt="User" />
-                    <AvatarFallback>{userInitials}</AvatarFallback>
+                    <AvatarFallback></AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{userFullName}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
+                    <p className="text-sm font-medium leading-none"></p>
+                    <p className="text-xs leading-none text-muted-foreground"></p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

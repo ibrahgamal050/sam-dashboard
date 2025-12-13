@@ -1,22 +1,12 @@
 import crypto from 'node:crypto'
-import { Types } from 'mongoose'
 import dbConnect from '@/lib/dbConnect'
 import User, { type IUser } from '@/models/User'
 import EmailVerificationToken from '@/models/EmailVerificationToken'
 import PasswordResetToken from '@/models/PasswordResetToken'
-import SessionToken from '@/models/SessionToken'
 import { hashPassword, comparePassword } from './password-service'
-import {
-  issueNewSession,
-  rotateSession,
-  verifyRefreshToken,
-  findSessionById,
-  revokeSession,
-} from './token-service'
 import { logAuditEvent } from '../security/audit'
 import { resetLoginFailures, recordLoginFailure, isIdentifierLocked } from '../security/rate-limit'
 import { sendEmail } from '../email/send'
-import { env } from '../env'
 
 interface RequestContext {
   ipAddress?: string
@@ -39,7 +29,7 @@ const stringifyObjectId = (value: unknown): string => {
 const EMAIL_TOKEN_TTL_MS = 24 * 60 * 60 * 1000
 const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000
 
-const userCannotLogin = (user: IUser) => {
+export const userCannotLogin = (user: IUser) => {
   if (user.status === 'DISABLED') return 'Account disabled'
   if (!user.emailVerifiedAt) return 'Email not verified'
   if (!user.securityProfile.hardeningComplete) return 'Security checklist incomplete'
@@ -47,6 +37,76 @@ const userCannotLogin = (user: IUser) => {
     return 'Account temporarily locked'
   }
   return null
+}
+
+export async function authenticateUserCredentials(
+  email: string,
+  password: string,
+  context: RequestContext
+): Promise<IUser> {
+  await dbConnect()
+  const normalizedEmail = email.toLowerCase()
+
+  const { locked, lockedUntil } = isIdentifierLocked(normalizedEmail)
+  if (locked) {
+    throw new Error(`Too many attempts. Try again after ${new Date(lockedUntil!).toISOString()}`)
+  }
+
+  const user = await User.findOne({ email: normalizedEmail })
+  if (!user) {
+    recordLoginFailure(normalizedEmail)
+    await logAuditEvent({
+      action: 'USER_LOGIN_FAILED',
+      metadata: { reason: 'USER_NOT_FOUND', email },
+      ipAddress: context.ipAddress,
+      userAgent: context.userAgent,
+    })
+    throw new Error('Invalid credentials')
+  }
+
+  if (user.status === 'DISABLED') {
+    await logAuditEvent({
+      userId: stringifyObjectId(user._id),
+      action: 'USER_LOGIN_FAILED',
+      metadata: { reason: 'ACCOUNT_DISABLED' },
+      ipAddress: context.ipAddress,
+      userAgent: context.userAgent,
+    })
+    throw new Error('Account disabled')
+  }
+
+  if (typeof user.passwordHash !== 'string' || !user.passwordHash) {
+    await logAuditEvent({
+      userId: stringifyObjectId(user._id),
+      action: 'USER_LOGIN_FAILED',
+      metadata: { reason: 'PASSWORD_NOT_SET' },
+      ipAddress: context.ipAddress,
+      userAgent: context.userAgent,
+    })
+    throw new Error('Account password not configured')
+  }
+
+  const passwordOk = await comparePassword(password, user.passwordHash)
+  if (!passwordOk) {
+    const { locked: nowLocked, remaining, lockedUntil: lockTime } = recordLoginFailure(normalizedEmail)
+    await logAuditEvent({
+      userId: stringifyObjectId(user._id),
+      action: 'USER_LOGIN_FAILED',
+      metadata: { reason: 'INVALID_PASSWORD', remainingAttempts: remaining, lockUntil: lockTime },
+      ipAddress: context.ipAddress,
+      userAgent: context.userAgent,
+    })
+    throw new Error(nowLocked ? 'Account temporarily locked due to failures' : 'Invalid credentials')
+  }
+
+  resetLoginFailures(normalizedEmail)
+
+  const blocker = userCannotLogin(user)
+  if (blocker) {
+    throw new Error(blocker)
+  }
+
+  return user
 }
 
 export async function registerUser(
@@ -151,111 +211,6 @@ export async function activateSecurityChecklist(userId: string, context: Request
   return user
 }
 
-export async function loginUser(
-  email: string,
-  password: string,
-  context: RequestContext
-) {
-  await dbConnect()
-  const normalizedEmail = email.toLowerCase()
-
-  const { locked, lockedUntil } = isIdentifierLocked(normalizedEmail)
-  if (locked) {
-    throw new Error(`Too many attempts. Try again after ${new Date(lockedUntil!).toISOString()}`)
-  }
-
-  const user = await User.findOne({ email: normalizedEmail })
-  if (!user) {
-    recordLoginFailure(normalizedEmail)
-    await logAuditEvent({ action: 'USER_LOGIN_FAILED', metadata: { reason: 'USER_NOT_FOUND', email }, ipAddress: context.ipAddress, userAgent: context.userAgent })
-    throw new Error('Invalid credentials')
-  }
-
-  if (user.status === 'DISABLED') {
-    await logAuditEvent({
-      userId: stringifyObjectId(user._id),
-      action: 'USER_LOGIN_FAILED',
-      metadata: { reason: 'ACCOUNT_DISABLED' },
-      ipAddress: context.ipAddress,
-      userAgent: context.userAgent,
-    })
-    throw new Error('Account disabled')
-  }
-
-  if (typeof user.passwordHash !== 'string' || !user.passwordHash) {
-    await logAuditEvent({
-      userId: stringifyObjectId(user._id),
-      action: 'USER_LOGIN_FAILED',
-      metadata: { reason: 'PASSWORD_NOT_SET' },
-      ipAddress: context.ipAddress,
-      userAgent: context.userAgent,
-    })
-    throw new Error('Account password not configured')
-  }
-
-  const passwordOk = await comparePassword(password, user.passwordHash)
-  if (!passwordOk) {
-    const { locked: nowLocked, remaining, lockedUntil: lockTime } = recordLoginFailure(normalizedEmail)
-    await logAuditEvent({
-      userId: stringifyObjectId(user._id),
-      action: 'USER_LOGIN_FAILED',
-      metadata: { reason: 'INVALID_PASSWORD', remainingAttempts: remaining, lockUntil: lockTime },
-      ipAddress: context.ipAddress,
-      userAgent: context.userAgent,
-    })
-    throw new Error(nowLocked ? 'Account temporarily locked due to failures' : 'Invalid credentials')
-  }
-
-  resetLoginFailures(normalizedEmail)
-
-  const blocker = userCannotLogin(user)
-  if (blocker) {
-    throw new Error(blocker)
-  }
-
-  const tokens = await issueNewSession(user, context)
-
-  await logAuditEvent({
-    userId: stringifyObjectId(user._id),
-    action: 'USER_LOGIN_SUCCESS',
-    metadata: { sessionId: tokens.session.id },
-    ipAddress: context.ipAddress,
-    userAgent: context.userAgent,
-  })
-
-  return { user, ...tokens }
-}
-
-export async function refreshTokens(refreshToken: string, context: RequestContext) {
-  await dbConnect()
-  const payload = verifyRefreshToken(refreshToken)
-  const session = await findSessionById(payload.sessionId)
-  if (!session || session.revokedAt) {
-    throw new Error('Session invalid')
-  }
-
-  const user = await User.findById(session.userId)
-  if (!user) throw new Error('User not found for session')
-
-  const tokens = await rotateSession(session, user, refreshToken, context)
-
-  await logAuditEvent({
-    userId: stringifyObjectId(user._id),
-    action: 'TOKEN_REFRESHED',
-    metadata: { sessionId: tokens.session.id },
-    ipAddress: context.ipAddress,
-    userAgent: context.userAgent,
-  })
-
-  return { user, ...tokens }
-}
-
-export async function logoutUser(sessionId: string, context: RequestContext) {
-  await dbConnect()
-  await revokeSession(sessionId)
-  await logAuditEvent({ action: 'USER_LOGOUT', metadata: { sessionId }, ipAddress: context.ipAddress, userAgent: context.userAgent })
-}
-
 export async function requestPasswordReset(email: string, context: RequestContext) {
   await dbConnect()
   const user = await User.findOne({ email: email.toLowerCase() })
@@ -302,8 +257,6 @@ export async function resetPassword(token: string, newPassword: string, context:
   record.consumedAt = new Date()
   await record.save()
 
-  await SessionToken.updateMany({ userId: user._id }, { revokedAt: new Date() })
-
   await logAuditEvent({
     userId: stringifyObjectId(user._id),
     action: 'PASSWORD_RESET_COMPLETED',
@@ -330,8 +283,6 @@ export async function changePassword(
   user.passwordHash = await hashPassword(newPassword)
   user.securityProfile.lastPasswordChangeAt = new Date()
   await user.save()
-
-  await SessionToken.updateMany({ userId: user._id }, { revokedAt: new Date() })
 
   await logAuditEvent({
     userId: stringifyObjectId(user._id),
@@ -368,8 +319,6 @@ export async function disableAccount(userId: string, reason: string | undefined,
   user.status = 'DISABLED'
   user.disabledAt = new Date()
   await user.save()
-
-  await SessionToken.updateMany({ userId: user._id }, { revokedAt: new Date() })
 
   await logAuditEvent({
     userId: stringifyObjectId(user._id),

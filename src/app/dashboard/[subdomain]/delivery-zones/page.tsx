@@ -21,7 +21,7 @@ export default async function DeliveryZonesPage({ params }: DeliveryZonesPagePro
   const restaurantId = restaurant._id.toString()
 
   return (
-    <AuthGuard>
+    
       <div className="min-h-screen bg-background">
         <header className="border-b border-border bg-card">
           <div className="flex h-16 items-center justify-between px-6">
@@ -52,6 +52,6 @@ export default async function DeliveryZonesPage({ params }: DeliveryZonesPagePro
           <DeliveryZonesManager className="h-full" restaurantId={restaurantId} />
         </div>
       </div>
-    </AuthGuard>
+  
   )
 }

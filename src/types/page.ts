@@ -1,6 +1,5 @@
 import type { Document, Types } from 'mongoose'
 
-
 export interface ISEO {
   title: string;
   description: string;
@@ -41,6 +40,16 @@ export interface IComponent {
   position: number;
 }
 
+export type BuilderSection = {
+  id?: string
+  key?: string
+  type?: string
+  position?: number
+  layout?: Record<string, any>
+  elements?: Array<Record<string, any>>
+  [key: string]: any
+}
+
 export interface IPage {
   _id: Types.ObjectId;
   name: string;
@@ -51,6 +60,7 @@ export interface IPage {
   headerImage: string;
   seo: ISEO;
   components: IComponent[];
+  sections?: BuilderSection[];
   metadata: {
     created_at: Date;
     updated_at: Date;

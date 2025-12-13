@@ -30,7 +30,10 @@ export async function GET(req: NextRequest) {
     }
     const restObjectId = new mongoose.Types.ObjectId(restaurantId)
 
-    const query: any = { restaurantId: restObjectId }
+    const normalizeQueryValue = (value: string) =>
+      value.trim().toLowerCase().replace(/\s+/g, '_').replace(/-+/g, '_')
+
+    const filters: any[] = [{ restaurantId: restObjectId }]
 
     const status = searchParams.get('status')
     const forKitchen = searchParams.has('kitchen')
@@ -42,28 +45,54 @@ export async function GET(req: NextRequest) {
     const from = searchParams.get('from')
     const to = searchParams.get('to')
     if (forKitchen) {
-      query.status = { $in: includeReady ? ['pending','queued','in_progress','ready'] : ['pending','queued','in_progress'] }
+      filters.push({
+        status: { $in: includeReady ? ['pending','queued','in_progress','ready'] : ['pending','queued','in_progress'] },
+      })
     } else if (forExpo) {
-      query.status = 'ready'
+      filters.push({ status: 'ready' })
     } else if (status) {
-      query.status = status
+      filters.push({ status: normalizeQueryValue(status) })
     }
-    if (paymentStatus) query.paymentStatus = paymentStatus
-    if (paymentMethod) query.paymentMethod = paymentMethod
-    if (type) query.type = type
+    if (paymentStatus) {
+      const normalized = normalizeQueryValue(paymentStatus)
+      filters.push({
+        $or: [{ 'payment.status': normalized }, { paymentStatus: normalized }],
+      })
+    }
+    if (paymentMethod) {
+      const normalized = normalizeQueryValue(paymentMethod)
+      filters.push({
+        $or: [{ 'payment.method': normalized }, { paymentMethod: normalized }],
+      })
+    }
+    if (type) filters.push({ type: normalizeQueryValue(type) })
     if (from || to) {
-      query.createdAt = {}
-      if (from) query.createdAt.$gte = new Date(from)
-      if (to) query.createdAt.$lte = new Date(to)
+      const range: any = {}
+      if (from) range.$gte = new Date(from)
+      if (to) range.$lte = new Date(to)
+      filters.push({ createdAt: range })
     }
 
     const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 100)
     const cursor = searchParams.get('cursor') // ISO date or ms
-    const findQuery: any = { ...query }
+    const buildQuery = (parts: any[]) => {
+      if (!parts.length) return {}
+      if (parts.length === 1) return parts[0]
+      return { $and: parts }
+    }
+
+    const baseFilters = [...filters]
+    const findFilters = [...filters]
+
     if (cursor) {
       const dt = new Date(cursor)
-      if (!isNaN(dt.getTime())) findQuery.createdAt = { ...(findQuery.createdAt || {}), $lt: dt }
+      if (!isNaN(dt.getTime())) {
+        findFilters.push({ createdAt: { $lt: dt } })
+      }
     }
+
+    const query = buildQuery(baseFilters)
+    const findQuery = buildQuery(findFilters)
 
     const sortDir = forKitchen ? 1 : -1
     const orders = await Order.find(findQuery)
@@ -105,8 +134,8 @@ export async function GET(req: NextRequest) {
       })),
       totalPrice: o.totalPrice,
       status: o.status,
-      paymentStatus: o.paymentStatus,
-      paymentMethod: o.paymentMethod,
+      paymentStatus: o.payment?.status ?? (o as any).paymentStatus ?? null,
+      paymentMethod: o.payment?.method ?? (o as any).paymentMethod ?? null,
       type: o.type,
       table: o.table,
       eta: o.eta,

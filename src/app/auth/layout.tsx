@@ -12,6 +12,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               <Link href="/" className="text-2xl font-bold tracking-tight">
                 Meelza Platform
               </Link>
+              
               <span className="rounded-full bg-white/15 px-4 py-1 text-sm font-medium">حل متكامل للمطاعم</span>
             </header>
 

@@ -18,19 +18,15 @@ export async function POST(req: Request, context: RouteHandlerContext) {
     if (!order) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
 
     // Normalize method to schema enum (cod|card)
-    const normalizedMethod = ((): 'cod' | 'card' => {
+    const normalizedMethod = ((): 'cash' | 'card' => {
       const m = String(method).toLowerCase()
-      if (m === 'cash' || m === 'cod') return 'cod'
+      if (m === 'cash' || m === 'cod') return 'cash'
       return 'card'
     })()
 
     // naive paid check; a real implementation would sum prior payments
-    order.payment = { method: normalizedMethod,paymentStatus : 'paid' } as any
-    // Mirror onto new top-level fields
-    order.paymentStatus = 'paid' as any
-    order.paymentMethod = normalizedMethod === 'cod' ? 'cash' as any : 'card' as any
-    // Align with existing status enum (uses legacy 'Paid')
-    order.paymentStatus = 'Paid' as any
+    order.set('payment.method', normalizedMethod)
+    order.set('payment.status', 'paid')
     await order.save()
 
     return NextResponse.json({ ok: true })

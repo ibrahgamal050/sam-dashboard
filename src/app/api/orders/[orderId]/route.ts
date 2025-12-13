@@ -46,12 +46,18 @@ export async function PATCH(req: NextRequest, context: RouteHandlerContext) {
     const tenantCheck = assertTenantOrThrow(req as any, existing.restaurantId as any)
     if (!tenantCheck.ok) return NextResponse.json({ error: tenantCheck.reason }, { status: 403 })
     const changes: any = {}
+    const paymentStatusUpdate = parsed.data.payment?.status ?? parsed.data.paymentStatus
+    const paymentMethodUpdate = parsed.data.payment?.method ?? parsed.data.paymentMethod
     if (parsed.data.status) changes.status = parsed.data.status
-    if (parsed.data.paymentStatus) changes.paymentStatus = parsed.data.paymentStatus
-    if (parsed.data.paymentMethod) changes.paymentMethod = parsed.data.paymentMethod
+    if (paymentStatusUpdate) changes['payment.status'] = paymentStatusUpdate
+    if (paymentMethodUpdate) changes['payment.method'] = paymentMethodUpdate
     const updated = await Order.findByIdAndUpdate(existing._id, { $set: changes }, { new: true })
     if (updated) {
-      emitOrderEvent(String(updated.restaurantId), 'order.updated', { orderId: String(updated._id), ...changes })
+      const payload: any = { orderId: String(updated._id) }
+      if (parsed.data.status) payload.status = parsed.data.status
+      if (paymentStatusUpdate) payload.paymentStatus = paymentStatusUpdate
+      if (paymentMethodUpdate) payload.paymentMethod = paymentMethodUpdate
+      emitOrderEvent(String(updated.restaurantId), 'order.updated', payload)
     }
     return NextResponse.json(updated?.toObject?.() || updated)
   } catch (e) {

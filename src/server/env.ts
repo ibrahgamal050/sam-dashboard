@@ -1,12 +1,8 @@
 import assert from 'node:assert'
 
 const requiredEnv = [
-  'JWT_ACCESS_SECRET',
-  'JWT_REFRESH_SECRET',
-  'JWT_ISSUER',
+  'NEXTAUTH_SECRET',
   'SECURITY_CSRF_SECRET',
-  'AUTH_TOKEN_EXPIRES_IN',
-  'REFRESH_TOKEN_EXPIRES_IN',
 ]
 
 for (const key of requiredEnv) {
@@ -20,11 +16,7 @@ const parseNumber = (value: string | undefined, fallback: number): number => {
 }
 
 export const env = {
-  jwtAccessSecret: process.env.JWT_ACCESS_SECRET as string,
-  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET as string,
-  jwtIssuer: process.env.JWT_ISSUER as string,
-  authTokenExpiresIn: process.env.AUTH_TOKEN_EXPIRES_IN ?? '15m',
-  refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN ?? '7d',
+  nextAuthSecret: process.env.NEXTAUTH_SECRET as string,
   csrfSecret: process.env.SECURITY_CSRF_SECRET as string,
   allowedOrigins: (process.env.ALLOWED_ORIGINS ?? '')
     .split(',')

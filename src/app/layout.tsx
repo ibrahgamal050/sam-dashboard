@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AppProviders } from "./providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,7 +31,7 @@ export default function RootLayout({
       >
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#7c3aed" />
-        {children}
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

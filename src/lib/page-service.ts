@@ -37,6 +37,33 @@ export class PageService {
     return data.data
   }
 
+  static async getPageBySlug(subdomain: string, slug: string, language: 'en' | 'ar'): Promise<PageDto> {
+    const query = new URLSearchParams({ slug, language })
+
+    const response = await fetch(`${this.buildBasePath(subdomain)}?${query.toString()}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    })
+
+    const data = await handleResponse<{
+      success: boolean
+      data: { page?: PageDto; pages?: PageDto[] }
+    }>(response)
+
+    if (data.data.page) {
+      return data.data.page
+    }
+
+    const page = data.data.pages?.[0]
+    if (!page) {
+      throw new Error('Page not found for the provided slug')
+    }
+    return page
+  }
+
   static async savePage(subdomain: string, page: PageApiPayload): Promise<PageDto> {
     const response = await fetch(this.buildBasePath(subdomain), {
       method: 'POST',

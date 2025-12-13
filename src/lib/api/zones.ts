@@ -1,4 +1,3 @@
-import { withAuthHeaders } from "@/lib/auth/client"
 import type { CreateDeliveryZoneRequest, DeliveryZone, UpdateDeliveryZoneRequest } from "@/types/delivery-zones"
 
 const API_BASE = "/api/zones"
@@ -19,7 +18,7 @@ export class ZonesAPI {
     }
 
     const response = await fetch(`${API_BASE}?${params.toString()}`, {
-      headers: withAuthHeaders(),
+      credentials: "include",
     })
 
     if (!response.ok) {
@@ -34,7 +33,7 @@ export class ZonesAPI {
   static async getZone(restaurantId: string, id: string): Promise<DeliveryZone> {
     const params = new URLSearchParams({ restaurantId: requireRestaurantId(restaurantId) })
     const response = await fetch(`${API_BASE}/${id}?${params.toString()}`, {
-      headers: withAuthHeaders(),
+      credentials: "include",
     })
 
     if (!response.ok) {
@@ -55,11 +54,10 @@ export class ZonesAPI {
   ): Promise<DeliveryZone> {
     const response = await fetch(API_BASE, {
       method: "POST",
-      headers: withAuthHeaders({
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }),
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ ...zoneData, restaurantId: requireRestaurantId(restaurantId) }),
     })
 
@@ -82,11 +80,10 @@ export class ZonesAPI {
 
     const response = await fetch(`${API_BASE}/${id}?${params.toString()}`, {
       method: "PUT",
-      headers: withAuthHeaders({
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }),
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(updates),
     })
 
@@ -104,7 +101,7 @@ export class ZonesAPI {
     const params = new URLSearchParams({ restaurantId: requireRestaurantId(restaurantId) })
     const response = await fetch(`${API_BASE}/${id}?${params.toString()}`, {
       method: "DELETE",
-      headers: withAuthHeaders(),
+      credentials: "include",
     })
 
     if (!response.ok) {
@@ -126,11 +123,10 @@ export class ZonesAPI {
   }> {
     const response = await fetch(`${API_BASE}/check-delivery`, {
       method: "POST",
-      headers: withAuthHeaders({
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }),
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ restaurantId: requireRestaurantId(restaurantId), lat, lng }),
     })
 

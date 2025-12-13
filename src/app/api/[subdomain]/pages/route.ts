@@ -38,6 +38,9 @@ function buildNewPage(pageData: IncomingPage): IPage {
 
 function updateExistingPage(existingPage: IPage, pageData: IncomingPage) {
   const now = new Date()
+  if (!existingPage._id) {
+    existingPage._id = new Types.ObjectId()
+  }
 
   if (pageData.name) existingPage.name = pageData.name
   if (pageData.slug) existingPage.slug = pageData.slug.toLowerCase()
@@ -63,6 +66,10 @@ function serializePagesResponse(pages: IPage[]) {
     ...page,
     _id: page._id?.toString(),
   }))
+}
+
+function serializeSinglePage(page: IPage) {
+  return serializePagesResponse([page])[0]
 }
 
 export async function POST(
@@ -179,6 +186,7 @@ export async function GET(
     const url = new URL(request.url);
     const language = url.searchParams.get('language');
     const isPublished = url.searchParams.get('isPublished');
+    const slug = url.searchParams.get('slug');
 
     let filteredPages = pagesDocument.pages || [];
 
@@ -186,9 +194,32 @@ export async function GET(
     if (language) {
       filteredPages = filteredPages.filter(page => page.language === language);
     }
+    if (slug) {
+      filteredPages = filteredPages.filter(page => page.slug === slug);
+    }
     if (isPublished !== null) {
       const publishedStatus = isPublished === 'true';
       filteredPages = filteredPages.filter(page => page.isPublished === publishedStatus);
+    }
+
+    const shouldReturnSinglePage = Boolean(slug && language);
+    if (shouldReturnSinglePage) {
+      const targetPage = filteredPages[0];
+      if (!targetPage) {
+        return NextResponse.json(
+          { success: false, error: 'Page not found' },
+          { status: 404 },
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          restaurantId: pagesDocument.restaurantId,
+          subdomain: pagesDocument.subdomain,
+          page: serializeSinglePage(targetPage as unknown as IPage),
+        }
+      }, { status: 200 });
     }
 
     return NextResponse.json({

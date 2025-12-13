@@ -1,28 +1,14 @@
-"use client"
+// src/components/dashboard/auth-context.tsx
+"use client";
+import { createContext, useContext } from "react";
+import type { Session } from "next-auth";
 
-import { createContext, useContext } from "react"
-import type { AuthUser } from "@/lib/auth-client"
-
-interface DashboardAuthValue {
-  user: AuthUser
-  sessionId: string
+const Ctx = createContext<Session | null>(null);
+export function DashboardAuthProvider({ value, children }: { value: Session; children: React.ReactNode }) {
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
-
-const DashboardAuthContext = createContext<DashboardAuthValue | null>(null)
-
-interface DashboardAuthProviderProps {
-  value: DashboardAuthValue
-  children: React.ReactNode
-}
-
-export function DashboardAuthProvider({ value, children }: DashboardAuthProviderProps) {
-  return <DashboardAuthContext.Provider value={value}>{children}</DashboardAuthContext.Provider>
-}
-
-export function useDashboardAuth() {
-  const context = useContext(DashboardAuthContext)
-  if (!context) {
-    throw new Error("useDashboardAuth must be used within a DashboardAuthProvider")
-  }
-  return context
+export function useDashboardSession() {
+  const s = useContext(Ctx);
+  if (!s) throw new Error("useDashboardSession must be used within DashboardAuthProvider");
+  return s;
 }

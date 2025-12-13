@@ -19,8 +19,10 @@ export async function PATCH(req: NextRequest) {
     if (!ids.length) return NextResponse.json({ error: 'No valid ids' }, { status: 400 })
     const changes: any = {}
     if (parsed.data.changes.status) changes.status = parsed.data.changes.status
-    if (parsed.data.changes.paymentStatus) changes.paymentStatus = parsed.data.changes.paymentStatus
-    if (parsed.data.changes.paymentMethod) changes.paymentMethod = parsed.data.changes.paymentMethod
+    const paymentStatusUpdate = parsed.data.changes.payment?.status ?? parsed.data.changes.paymentStatus
+    const paymentMethodUpdate = parsed.data.changes.payment?.method ?? parsed.data.changes.paymentMethod
+    if (paymentStatusUpdate) changes['payment.status'] = paymentStatusUpdate
+    if (paymentMethodUpdate) changes['payment.method'] = paymentMethodUpdate
 
     const res = await Order.updateMany(
       { _id: { $in: ids }, restaurantId: new mongoose.Types.ObjectId(tenant) },

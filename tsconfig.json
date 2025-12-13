@@ -1,5 +1,7 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "lib": [
       "dom",
       "dom.iterable",
@@ -25,6 +27,12 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@meelza/auth": [
+        "../../packages/auth/index.ts"
+      ],
+      "@meelza/*": [
+        "../../packages/*/index.ts"
       ]
     },
     "target": "ES2017"

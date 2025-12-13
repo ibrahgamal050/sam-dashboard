@@ -19,9 +19,10 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
+import type { BuilderSection } from "@/types/page"
 
 interface PageDocument {
-  _id: string
+  _id?: string
   name: string
   slug: string
   language: string
@@ -31,6 +32,7 @@ interface PageDocument {
     updated_at: string
     published_at?: string
   }
+  sections?: BuilderSection[]
 }
 
 interface FetchResponse {
@@ -79,11 +81,17 @@ export default function PagesDashboard() {
     return () => controller.abort()
   }, [subdomain])
 
-  const allSelected = selectedIds.length > 0 && selectedIds.length === pages.length
+  const selectablePageIds = useMemo(
+    () => pages.map((page) => page._id).filter((id): id is string => Boolean(id)),
+    [pages],
+  )
+
+  const allSelected =
+    selectablePageIds.length > 0 && selectedIds.length === selectablePageIds.length
 
   const toggleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIds(pages.map((page) => page._id))
+      setSelectedIds(selectablePageIds)
     } else {
       setSelectedIds([])
     }
@@ -156,6 +164,17 @@ export default function PagesDashboard() {
       { label: "Drafts", value: pages.length - published },
     ]
   }, [pages])
+
+  const getEditorUrl = (page: PageDocument) => {
+    if (page._id) {
+      return `/dashboard/${subdomain}/pages/${page._id}`
+    }
+    const search = new URLSearchParams({
+      slug: page.slug,
+      language: page.language,
+    })
+    return `/dashboard/${subdomain}/pages/slug?${search.toString()}`
+  }
 
   if (isLoading) {
     return (
@@ -241,68 +260,101 @@ export default function PagesDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pages.map((page) => (
-                <TableRow key={page._id} className="text-sm text-slate-700">
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedIds.includes(page._id)}
-                      onCheckedChange={(checked) => toggleSelectPage(page._id, Boolean(checked))}
-                      aria-label={`Select page ${page.name}`}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium text-slate-900">{page.name}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={page.isPublished ? "secondary" : "outline"}
-                      className={cn(
-                        "rounded-full border px-2 py-0.5 text-xs",
-                        page.isPublished
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-amber-200 bg-amber-50 text-amber-700",
-                      )}
-                    >
-                      {page.isPublished ? "Published" : "Draft"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="rounded-full border-slate-200 text-slate-600">
-                      {page.language.toUpperCase()}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{new Date(page.metadata.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell>{new Date(page.metadata.updated_at).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-8 w-8 text-slate-500 hover:text-slate-900"
-                      onClick={() => copyLink(page.slug)}
-                    >
-                      <Globe className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                  <TableCell>
+              {pages.map((page) => {
+                const pageId = page._id ?? ""
+                const selectable = Boolean(pageId)
+                return (
+                  <TableRow key={pageId || page.slug} className="text-sm text-slate-700">
+                    <TableCell>
+                      <Checkbox
+                        disabled={!selectable}
+                        checked={selectable && selectedIds.includes(pageId)}
+                        onCheckedChange={(checked) => selectable && toggleSelectPage(pageId, Boolean(checked))}
+                        aria-label={`Select page ${page.name}`}
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <span>{page.name}</span>
+                        {page.sections?.length ? (
+                          <Badge className="rounded-full border border-amber-200 bg-amber-50 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+                            Builder
+                          </Badge>
+                        ) : null}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={page.isPublished ? "secondary" : "outline"}
+                        className={cn(
+                          "rounded-full border px-2 py-0.5 text-xs",
+                          page.isPublished
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                            : "border-amber-200 bg-amber-50 text-amber-700",
+                        )}
+                      >
+                        {page.isPublished ? "Published" : "Draft"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="rounded-full border-slate-200 text-slate-600">
+                        {page.language.toUpperCase()}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {page.metadata?.created_at
+                        ? new Date(page.metadata.created_at).toLocaleDateString()
+                        : "--"}
+                    </TableCell>
+                    <TableCell>
+                      {page.metadata?.updated_at
+                        ? new Date(page.metadata.updated_at).toLocaleDateString()
+                        : "--"}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-slate-500 hover:text-slate-900"
+                        onClick={() => copyLink(page.slug)}
+                      >
+                        <Globe className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                    <TableCell>
                     <div className="flex justify-end gap-2">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-blue-600 hover:text-blue-800"
-                        onClick={() => router.push(`/dashboard/${subdomain}/pages/${page._id}`)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-red-600 hover:text-red-800"
-                        onClick={() => deletePage(page._id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-blue-600 hover:text-blue-800"
+                          onClick={() => {
+                            if (!page._id && !page.slug) {
+                              toast({
+                                title: "Missing identifiers",
+                                description: "This page is missing both id and slug.",
+                                variant: "destructive",
+                              })
+                              return
+                            }
+                            router.push(getEditorUrl(page))
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-red-600 hover:text-red-800 disabled:opacity-40"
+                          disabled={!selectable}
+                          onClick={() => selectable && deletePage(pageId)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
               {pages.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={8} className="py-12 text-center text-sm text-slate-500">

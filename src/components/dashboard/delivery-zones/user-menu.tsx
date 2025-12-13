@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { LogOut, Settings, User } from "lucide-react"
+import { useSession, signOut } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -14,44 +13,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import {
-  clearStoredSession,
-  getStoredSession,
-  onSessionChange,
-  type StoredSession,
-} from "@/lib/auth/client"
 
 export default function UserMenu() {
-  const [session, setSession] = useState<StoredSession>(() => getStoredSession())
-  const router = useRouter()
+  const { data: session, status } = useSession()
 
-  useEffect(() => {
-    const applySession = () => {
-      setSession(getStoredSession())
-    }
-
-    applySession()
-
-    const unsubscribe = onSessionChange(() => {
-      applySession()
-    })
-
-    return () => {
-      unsubscribe()
-    }
-  }, [])
-
-  const handleSignOut = () => {
-    clearStoredSession()
-    router.push("/auth/login")
-  }
-
-  if (!session.token) {
+  if (status !== "authenticated") {
     return null
   }
 
-  const label = session.user?.name || session.user?.email || "Account"
-  const initials = (session.user?.name || session.user?.email || "U").charAt(0).toUpperCase()
+  const user = session.user
+  const label = `${user.name.first} ${user.name.last}`.trim() || user.email
+  const initials = (user.name.first?.[0] || user.email?.[0] || "U").toUpperCase()
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/auth/signin" })
+  }
 
   return (
     <DropdownMenu>
