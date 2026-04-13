@@ -2,15 +2,20 @@
 > admin-dashboard@0.1.0 dev /Users/ibrahimgamal/My project/meelza.com/apps/RMS-dashboard
 > next dev -p 3001
 
-   [1m[38;2;173;127;168m▲ Next.js 15.0.3[39m[22m
-   - Local:        http://localhost:3001
-   - Environments: .env.local
+node:internal/modules/cjs/loader:1252
+  throw err;
+  ^
 
- [32m[1m✓[22m[39m Starting...
- [32m[1m✓[22m[39m Ready in 4.5s
- [37m[1m○[22m[39m Compiling /api/[subdomain]/pages ...
- [32m[1m✓[22m[39m Compiled /api/[subdomain]/pages in 672ms (369 modules)
-MongoDB connected successfully
- GET /api/hadramotantar/pages?slug=home&language=ar [32m200[39m in 3679ms
- GET /api/welatain/pages?slug=home&language=ar [32m200[39m in 282ms
- OPTIONS /api/welatain/pages [32m204[39m in 25ms
+Error: Cannot find module '/Users/ibrahimgamal/My project/meelza.com/apps/RMS-dashboard/node_modules/next/dist/bin/next'
+[90m    at Function._resolveFilename (node:internal/modules/cjs/loader:1249:15)[39m
+[90m    at Function._load (node:internal/modules/cjs/loader:1075:27)[39m
+[90m    at TracingChannel.traceSync (node:diagnostics_channel:315:14)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:218:24)[39m
+[90m    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)[39m
+[90m    at node:internal/main/run_main_module:36:49[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: []
+}
+
+Node.js v22.11.0
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m

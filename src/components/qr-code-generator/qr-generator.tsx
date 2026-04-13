@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Palette, Sparkles, Table2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -48,7 +49,7 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
   const [hideWebsite, setHideWebsite] = React.useState(false)
   const [activeTab, setActiveTab] = React.useState<"menu" | "table">("menu")
 
-  const menuUrl = `https://${subdomain}.meelza.site/ar/menu/`
+  const menuUrl = `https://${subdomain}.meelza.com/ar/menu/`
 
   const handleSave = () => {
     toast({
@@ -58,21 +59,39 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10">
+    <div className="relative min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100/70 py-10">
       <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6">
-        <header className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold text-slate-900">QR Code Menu & Tableside ordering</h1>
-          <p className="text-sm text-slate-500">
-            Customize a branded QR sign for your tables. Update colors, copy, and layout before downloading the ready-to-print poster.
-          </p>
+        <header className="space-y-3 rounded-3xl border border-emerald-100/80 bg-gradient-to-r from-emerald-800 via-emerald-700 to-emerald-600 p-6 text-white shadow-2xl">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100/80">Brand assets</p>
+              <h1 className="text-2xl font-semibold sm:text-3xl">QR Code Menu & Tableside ordering</h1>
+              <p className="text-sm text-emerald-50/90">
+                صمّم لوحة QR جاهزة للطباعة بألوان وشعار علامتك. اختر القالب، وعدّل النصوص قبل التنزيل.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs font-semibold text-emerald-50/90">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
+                <Sparkles className="h-4 w-4" /> Live preview
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
+                <Table2 className="h-4 w-4" /> Tableside ready
+              </span>
+            </div>
+          </div>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-6">
-            <Card className="border-none bg-white shadow-xl shadow-slate-200/70">
+            <Card className="border-emerald-100/80 bg-white/85 shadow-xl backdrop-blur">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-semibold text-slate-900">QR Code template</CardTitle>
-                <p className="text-sm text-slate-500">Pick a layout that fits your brand. Colors and text adapt instantly.</p>
+                <CardTitle className="flex items-center gap-2 text-lg font-semibold text-emerald-900">
+                  <Palette className="h-4 w-4 text-emerald-600" />
+                  QR Code template
+                </CardTitle>
+                <p className="text-sm text-emerald-700/90">
+                  اختر القالب والألوان، ويُحدّث المعاينة مباشرة.
+                </p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <TemplateSelector
@@ -82,9 +101,9 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
                   onSelect={(id) => setSelectedTemplate(id as TemplateId)}
                 />
 
-                <div className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-slate-700">Background color</h3>
+                    <h3 className="text-sm font-medium text-emerald-900">Background color</h3>
                     <ColorPicker
                       colors={BACKGROUND_COLORS}
                       selectedColor={backgroundColor}
@@ -92,28 +111,34 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
                     />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-slate-700">Text color</h3>
+                    <h3 className="text-sm font-medium text-emerald-900">Text color</h3>
                     <ColorPicker colors={TEXT_COLORS} selectedColor={textColor} onChange={setTextColor} />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-none bg-white shadow-xl shadow-slate-200/70">
+            <Card className="border-emerald-100/80 bg-white/85 shadow-xl backdrop-blur">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-semibold text-slate-900">Content</CardTitle>
-                <p className="text-sm text-slate-500">Give guests a friendly prompt so they know what they will scan.</p>
+                <CardTitle className="text-lg font-semibold text-emerald-900">Content</CardTitle>
+                <p className="text-sm text-emerald-700/90">حدّد النص الذي يراه العميل عند مسح الكود.</p>
               </CardHeader>
               <CardContent className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="qr-title" className="text-sm font-semibold text-slate-700">
+                  <Label htmlFor="qr-title" className="text-sm font-semibold text-emerald-900">
                     Title
                   </Label>
-                  <Input id="qr-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Our menu" />
+                  <Input
+                    id="qr-title"
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                    placeholder="Our menu"
+                    className="border-emerald-200"
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="qr-description" className="text-sm font-semibold text-slate-700">
+                  <Label htmlFor="qr-description" className="text-sm font-semibold text-emerald-900">
                     Description
                   </Label>
                   <Input
@@ -121,6 +146,7 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
                     value={description}
                     onChange={(event) => setDescription(event.target.value)}
                     placeholder="Scan me"
+                    className="border-emerald-200"
                   />
                 </div>
 
@@ -142,9 +168,12 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
                   />
                 </div>
 
-                <div className="flex justify-end">
-                  <Button onClick={handleSave} className="rounded-full px-6">
-                    Save
+                <div className="flex flex-wrap justify-end gap-2">
+                  <Button variant="outline" className="rounded-full border-emerald-200 text-emerald-800 hover:bg-emerald-50">
+                    Preview PDF
+                  </Button>
+                  <Button onClick={handleSave} className="rounded-full bg-emerald-600 px-6 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-500/30">
+                    Save design
                   </Button>
                 </div>
               </CardContent>
@@ -153,11 +182,11 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
 
           <div className="space-y-4">
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "menu" | "table")}>
-              <TabsList className="grid w-full grid-cols-2 rounded-full bg-white shadow-lg shadow-slate-200/60">
-                <TabsTrigger value="menu" className="rounded-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+              <TabsList className="grid w-full grid-cols-2 rounded-full bg-white shadow-lg shadow-emerald-200/60">
+                <TabsTrigger value="menu" className="rounded-full data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
                   Menu
                 </TabsTrigger>
-                <TabsTrigger value="table" className="rounded-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                <TabsTrigger value="table" className="rounded-full data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
                   Table-specific
                 </TabsTrigger>
               </TabsList>

@@ -16,7 +16,9 @@ import type { DeliveryZone, CreateDeliveryZoneRequest } from "@/types/delivery-z
 
 interface ZoneEditorFormProps {
   zone?: DeliveryZone | null
-  restaurantId: string
+  entityId: string
+  entityType?: "restaurant" | "supermarket"
+  allowedZoneTypes?: Array<"circle" | "polygon">
   onSave: (zoneData: CreateDeliveryZoneRequest | (Partial<DeliveryZone> & { id: string })) => Promise<void>
   onDelete?: (zoneId: string) => Promise<void>
   onCancel: () => void
@@ -25,31 +27,34 @@ interface ZoneEditorFormProps {
 }
 
 const ZONE_COLORS = [
-  { name: "Blue", value: "#3B82F6" },
-  { name: "Green", value: "#10B981" },
-  { name: "Red", value: "#EF4444" },
-  { name: "Purple", value: "#8B5CF6" },
-  { name: "Orange", value: "#F97316" },
-  { name: "Pink", value: "#EC4899" },
-  { name: "Teal", value: "#14B8A6" },
-  { name: "Yellow", value: "#F59E0B" },
+  { name: "أزرق", value: "#3B82F6" },
+  { name: "أخضر", value: "#10B981" },
+  { name: "أحمر", value: "#EF4444" },
+  { name: "بنفسجي", value: "#8B5CF6" },
+  { name: "برتقالي", value: "#F97316" },
+  { name: "وردي", value: "#EC4899" },
+  { name: "فيروزي", value: "#14B8A6" },
+  { name: "أصفر", value: "#F59E0B" },
 ]
 
 export default function ZoneEditorForm({
   zone,
-  restaurantId,
+  entityId,
+  entityType = "restaurant",
+  allowedZoneTypes = ["circle", "polygon"],
   onSave,
   onDelete,
   onCancel,
   isLoading = false,
   className = "",
 }: ZoneEditorFormProps) {
+  const initialZoneType = zone?.zone_type || allowedZoneTypes[0] || "polygon"
   const [formData, setFormData] = useState({
     name: zone?.name || "",
     description: zone?.description || "",
     delivery_fee: zone?.delivery_fee?.toString() || "0",
     color: zone?.color || "#3B82F6",
-    zone_type: zone?.zone_type || ("circle" as "circle" | "polygon"),
+    zone_type: initialZoneType,
     is_active: zone?.is_active ?? true,
   })
 
@@ -59,12 +64,12 @@ export default function ZoneEditorForm({
     const newErrors: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = "Zone name is required"
+      newErrors.name = "اسم المنطقة مطلوب"
     }
 
     const fee = Number.parseFloat(formData.delivery_fee)
     if (isNaN(fee) || fee < 0) {
-      newErrors.delivery_fee = "Delivery fee must be a valid positive number"
+      newErrors.delivery_fee = "رسوم التوصيل يجب أن تكون رقمًا صحيحًا"
     }
 
     setErrors(newErrors)
@@ -90,12 +95,15 @@ export default function ZoneEditorForm({
       await onSave({ ...zoneData, id: zone.id })
     } else {
       // Create new zone - geometry will be added by parent component
-      await onSave({ ...zoneData, restaurantId } as CreateDeliveryZoneRequest)
+      await onSave({
+        ...zoneData,
+        ...(entityType === "supermarket" ? { supermarketId: entityId } : { restaurantId: entityId }),
+      } as CreateDeliveryZoneRequest)
     }
   }
 
   const handleDelete = async () => {
-    if (zone && onDelete && window.confirm("Are you sure you want to delete this delivery zone?")) {
+    if (zone && onDelete && window.confirm("هل أنت متأكد من حذف منطقة التوصيل هذه؟")) {
       await onDelete(zone.id)
     }
   }
@@ -104,7 +112,7 @@ export default function ZoneEditorForm({
     <Card className={className}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{zone ? "Edit Zone" : "Create New Zone"}</CardTitle>
+          <CardTitle className="text-lg">{zone ? "تعديل المنطقة" : "إضافة منطقة جديدة"}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onCancel} className="h-8 w-8 p-0">
             <X className="h-4 w-4" />
           </Button>
@@ -112,10 +120,10 @@ export default function ZoneEditorForm({
         {zone && (
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs">
-              {zone.zone_type}
+              {zone.zone_type === "circle" ? "دائرة" : "مضلع"}
             </Badge>
             <Badge variant={zone.is_active ? "default" : "secondary"} className="text-xs">
-              {zone.is_active ? "Active" : "Inactive"}
+              {zone.is_active ? "نشطة" : "غير مفعلة"}
             </Badge>
           </div>
         )}
@@ -124,12 +132,12 @@ export default function ZoneEditorForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Zone Name */}
           <div className="space-y-2">
-            <Label htmlFor="name">Zone Name *</Label>
+            <Label htmlFor="name">اسم المنطقة *</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-              placeholder="Enter zone name"
+              placeholder="اكتب اسم المنطقة"
               className={errors.name ? "border-red-500" : ""}
             />
             {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
@@ -137,19 +145,19 @@ export default function ZoneEditorForm({
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">الوصف</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-              placeholder="Optional description"
+              placeholder="وصف اختياري"
               rows={2}
             />
           </div>
 
           {/* Delivery Fee */}
           <div className="space-y-2">
-            <Label htmlFor="delivery_fee">Delivery Fee (€) *</Label>
+            <Label htmlFor="delivery_fee">رسوم التوصيل (جنيه) *</Label>
             <Input
               id="delivery_fee"
               type="number"
@@ -164,27 +172,40 @@ export default function ZoneEditorForm({
           </div>
 
           {/* Zone Type */}
-          <div className="space-y-2">
-            <Label>Zone Type</Label>
-            <Select
-              value={formData.zone_type}
-              onValueChange={(value: "circle" | "polygon") => setFormData((prev) => ({ ...prev, zone_type: value }))}
-              disabled={!!zone} // Can't change type of existing zone
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="circle">Circle</SelectItem>
-                <SelectItem value="polygon">Custom Shape</SelectItem>
-              </SelectContent>
-            </Select>
-            {zone && <p className="text-xs text-muted-foreground">Zone type cannot be changed after creation</p>}
-          </div>
+          {allowedZoneTypes.length > 1 ? (
+            <div className="space-y-2">
+              <Label>نوع المنطقة</Label>
+              <Select
+                value={formData.zone_type}
+                onValueChange={(value: "circle" | "polygon") =>
+                  setFormData((prev) => ({ ...prev, zone_type: value }))
+                }
+                disabled={!!zone} // Can't change type of existing zone
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {allowedZoneTypes.includes("circle") && <SelectItem value="circle">دائرة</SelectItem>}
+                  {allowedZoneTypes.includes("polygon") && <SelectItem value="polygon">مضلع مخصص</SelectItem>}
+                </SelectContent>
+              </Select>
+              {zone && (
+                <p className="text-xs text-muted-foreground">لا يمكن تغيير نوع المنطقة بعد الإنشاء</p>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label>نوع المنطقة</Label>
+              <div className="rounded-lg border px-3 py-2 text-sm text-muted-foreground">
+                {formData.zone_type === "polygon" ? "مضلع مخصص" : "دائرة"}
+              </div>
+            </div>
+          )}
 
           {/* Color */}
           <div className="space-y-2">
-            <Label>Zone Color</Label>
+            <Label>لون المنطقة</Label>
             <div className="flex flex-wrap gap-2">
               {ZONE_COLORS.map((colorOption) => (
                 <button
@@ -211,8 +232,8 @@ export default function ZoneEditorForm({
           {zone && (
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Zone Status</Label>
-                <p className="text-sm text-muted-foreground">Inactive zones are hidden from delivery checks</p>
+                <Label>حالة المنطقة</Label>
+                <p className="text-sm text-muted-foreground">المناطق غير المفعلة لن تُستخدم في التوصيل</p>
               </div>
               <Switch
                 checked={formData.is_active}
@@ -227,17 +248,17 @@ export default function ZoneEditorForm({
               {zone && onDelete && (
                 <Button type="button" variant="destructive" size="sm" onClick={handleDelete} disabled={isLoading}>
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Zone
+                  حذف المنطقة
                 </Button>
               )}
             </div>
             <div className="flex items-center gap-2">
               <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
-                Cancel
+                إلغاء
               </Button>
               <Button type="submit" disabled={isLoading}>
                 <Save className="h-4 w-4 mr-2" />
-                {isLoading ? "Saving..." : zone ? "Update Zone" : "Create Zone"}
+                {isLoading ? "جارٍ الحفظ..." : zone ? "تحديث المنطقة" : "إنشاء المنطقة"}
               </Button>
             </div>
           </div>

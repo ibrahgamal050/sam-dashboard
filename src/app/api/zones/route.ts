@@ -4,12 +4,18 @@ import { Types } from "mongoose"
 
 import dbConnect from "@/lib/dbConnect"
 import DeliveryZoneLegacy, { type DeliveryZoneLegacyDocument } from "@/models/delivery-zone-legacy"
+import SupermarketDeliveryZone from "@/models/SupermarketDeliveryZone"
 import { serializeDeliveryZone, serializeDeliveryZones } from "@/lib/delivery-zones/serialize"
 import type { CreateDeliveryZoneRequest } from "@/types/delivery-zones"
 
 function validatePayload(body: CreateDeliveryZoneRequest) {
-  if (!body.restaurantId || !Types.ObjectId.isValid(body.restaurantId)) {
-    return "Valid restaurantId is required"
+  if (body.restaurantId && body.supermarketId) {
+    return "Use either restaurantId or supermarketId, not both"
+  }
+
+  const targetId = body.restaurantId || body.supermarketId
+  if (!targetId || !Types.ObjectId.isValid(targetId)) {
+    return "Valid restaurantId or supermarketId is required"
   }
 
   if (!body.name || !body.name.trim() || !body.geometry || !body.zone_type) {
@@ -31,6 +37,26 @@ function validatePayload(body: CreateDeliveryZoneRequest) {
   return null
 }
 
+function serializeSupermarketZone(zone: any) {
+  return {
+    id: zone?._id?.toString?.() ?? String(zone?._id ?? ""),
+    restaurantId: undefined,
+    supermarketId: zone?.supermarketId?.toString?.() ?? String(zone?.supermarketId ?? ""),
+    name: zone?.name ?? "",
+    description: zone?.description ?? undefined,
+    delivery_fee: Number(zone?.fee ?? 0),
+    color: zone?.color ?? "#3B82F6",
+    zone_type: "polygon" as const,
+    geometry: zone?.polygon,
+    is_active: zone?.isActive ?? true,
+    created_at: zone?.createdAt ? new Date(zone.createdAt).toISOString() : new Date().toISOString(),
+    updated_at: zone?.updatedAt ? new Date(zone.updatedAt).toISOString() : new Date().toISOString(),
+    min_order: zone?.minOrder ?? undefined,
+    eta_mins: zone?.etaMins ?? undefined,
+    priority: zone?.priority ?? undefined,
+  }
+}
+
 // GET /api/zones - Fetch all delivery zones
 export async function GET(request: NextRequest) {
   try {
@@ -39,12 +65,34 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const activeOnly = searchParams.get("active") === "true"
     const restaurantId = searchParams.get("restaurantId")
+    const supermarketId = searchParams.get("supermarketId")
 
-    if (!restaurantId || !Types.ObjectId.isValid(restaurantId)) {
+    if (restaurantId && supermarketId) {
+      return NextResponse.json({ error: "Use either restaurantId or supermarketId" }, { status: 400 })
+    }
+
+    if (!restaurantId && !supermarketId) {
+      return NextResponse.json({ error: "Valid restaurantId or supermarketId is required" }, { status: 400 })
+    }
+
+    if (restaurantId && !Types.ObjectId.isValid(restaurantId)) {
       return NextResponse.json({ error: "Valid restaurantId is required" }, { status: 400 })
     }
 
-    const restaurantObjectId = new Types.ObjectId(restaurantId)
+    if (supermarketId && !Types.ObjectId.isValid(supermarketId)) {
+      return NextResponse.json({ error: "Valid supermarketId is required" }, { status: 400 })
+    }
+
+    if (supermarketId) {
+      const marketObjectId = new Types.ObjectId(supermarketId)
+      const filters = activeOnly
+        ? { supermarketId: marketObjectId, isActive: true }
+        : { supermarketId: marketObjectId }
+      const zones = await SupermarketDeliveryZone.find(filters).sort({ createdAt: -1 }).lean()
+      return NextResponse.json({ zones: zones.map(serializeSupermarketZone) })
+    }
+
+    const restaurantObjectId = new Types.ObjectId(restaurantId!)
 
     const filters = activeOnly
       ? { restaurantId: restaurantObjectId, is_active: true }
@@ -71,6 +119,28 @@ export async function POST(request: NextRequest) {
     }
 
     await dbConnect()
+
+    if (body.supermarketId) {
+      if (body.zone_type !== "polygon" || body.geometry?.type !== "Polygon") {
+        return NextResponse.json({ error: "Supermarket zones must be polygons" }, { status: 400 })
+      }
+
+      const zone = await SupermarketDeliveryZone.create({
+        supermarketId: new Types.ObjectId(body.supermarketId),
+        name: body.name.trim(),
+        polygon: body.geometry,
+        fee: body.delivery_fee ?? 0,
+        minOrder: body.min_order ?? 0,
+        etaMins: body.eta_mins ?? 30,
+        priority: body.priority ?? 0,
+        isActive: body.is_active ?? true,
+        color: body.color || "#3B82F6",
+      })
+
+      const serialized = serializeSupermarketZone(zone)
+      console.log("[v0] Successfully created supermarket zone:", serialized.id)
+      return NextResponse.json({ zone: serialized }, { status: 201 })
+    }
 
     const zone = await DeliveryZoneLegacy.create({
       restaurantId: new Types.ObjectId(body.restaurantId),

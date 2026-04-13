@@ -47,7 +47,7 @@ export default function AuthError() {
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full" onClick={() => (window.location.href = "/auth/signin")}>
+          <Button className="w-full" onClick={() => (window.location.href = "/auth/login")}>
             Try Again
           </Button>
           <div className="text-center text-sm">

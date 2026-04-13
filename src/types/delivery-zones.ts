@@ -9,7 +9,8 @@ export type DeliveryZoneGeometry = GeoJSON.Geometry & {
 
 export interface DeliveryZone {
   id: string
-  restaurantId: string
+  restaurantId?: string
+  supermarketId?: string
   name: string
   description?: string
   delivery_fee: number
@@ -20,10 +21,14 @@ export interface DeliveryZone {
   created_at: string
   updated_at: string
   created_by?: string
+  min_order?: number
+  eta_mins?: number
+  priority?: number
 }
 
 export interface CreateDeliveryZoneRequest {
-  restaurantId: string
+  restaurantId?: string
+  supermarketId?: string
   name: string
   description?: string
   delivery_fee: number
@@ -31,6 +36,9 @@ export interface CreateDeliveryZoneRequest {
   zone_type: "circle" | "polygon"
   geometry: DeliveryZoneGeometry
   is_active?: boolean
+  min_order?: number
+  eta_mins?: number
+  priority?: number
 }
 
 export interface UpdateDeliveryZoneRequest extends Partial<CreateDeliveryZoneRequest> {

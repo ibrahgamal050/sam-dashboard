@@ -3,17 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import useSWR from "swr"
 import { useParams } from "next/navigation"
-import { Filter, ListFilter, RefreshCw, Search, SortAsc, SortDesc, X } from "lucide-react"
+import { Bell, BellOff, ChevronLeft, RefreshCw, Search } from "lucide-react"
 
-import { OrdersList } from "@/components/dashboard/orders/orders-list"
-import { OrderDetails } from "@/components/dashboard/orders/order-details"
+import { OrderDetails } from "@/components/orders-live/orders/order-details"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
-import { getDirection, LOCALE_LABELS, Locale, resolveLocale } from "@/lib/locale"
+import { getDirection, Locale, resolveLocale } from "@/lib/locale"
 
 const ORDER_TYPE_SOUNDS: Record<string, number> = {
   delivery: 480,
@@ -23,23 +20,6 @@ const ORDER_TYPE_SOUNDS: Record<string, number> = {
 }
 
 const DONE_STATUSES = new Set(["ready", "served", "completed", "delivered", "canceled", "rejected"])
-
-const STATUS_FILTERS = [
-  { value: "active", label: { en: "Active", ar: "نشط" } },
-  { value: "pending", label: { en: "Pending", ar: "قيد الانتظار" } },
-  { value: "in_progress", label: { en: "In progress", ar: "قيد التنفيذ" } },
-  { value: "ready", label: { en: "Ready", ar: "جاهز" } },
-  { value: "delivered", label: { en: "Delivered", ar: "تم التسليم" } },
-  { value: "canceled", label: { en: "Canceled", ar: "ملغى" } },
-  { value: "all", label: { en: "All", ar: "الكل" } },
-]
-
-const TYPE_FILTERS = [
-  { value: "all", label: { en: "All types", ar: "كل الأنواع" } },
-  { value: "delivery", label: { en: "Delivery", ar: "توصيل" } },
-  { value: "pickup", label: { en: "Pickup", ar: "استلام" } },
-  { value: "dine_in", label: { en: "Dine-in", ar: "داخل المطعم" } },
-]
 
 type ApiOrder = {
   _id?: string
@@ -179,6 +159,48 @@ const safeJson = async (res: Response) => {
   }
 }
 
+const normalizeStatus = (status?: string) => String(status ?? "").toLowerCase().replace(/[\s-]+/g, "_")
+
+const formatCurrency = (amount: number, currency: string, locale: Locale) => {
+  const localeTag = locale === "ar" ? "ar-EG" : "en-US"
+  const safeCurrency = currency?.toUpperCase?.() || "USD"
+  try {
+    return new Intl.NumberFormat(localeTag, { style: "currency", currency: safeCurrency }).format(amount)
+  } catch {
+    return `${amount.toFixed(2)} ${safeCurrency}`
+  }
+}
+
+const formatTimeLabel = (value?: string, locale: Locale = "en") => {
+  if (!value) return ""
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return ""
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(parsed)
+}
+
+const formatDuration = (value?: string) => {
+  if (!value) return "00:30:00"
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return "00:30:00"
+  const diff = Math.max(0, Date.now() - parsed.getTime())
+  const totalSeconds = Math.floor(diff / 1000)
+  const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0")
+  const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0")
+  const seconds = String(totalSeconds % 60).padStart(2, "0")
+  return `${hours}:${minutes}:${seconds}`
+}
+
+const toTitleCase = (value?: string) => {
+  if (!value) return ""
+  return value
+    .toLowerCase()
+    .replace(/[_\s-]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
 const mapOrder = (order: ApiOrder) => {
   const rawId = order.orderId ?? order._id ?? ""
   const id = rawId ? String(rawId) : ""
@@ -286,13 +308,13 @@ export default function OrdersPage() {
 
   const [lang, setLang] = useState<Locale>("en")
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-  const [isMobileDetailsOpen, setIsMobileDetailsOpen] = useState(false)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [autoAccept, setAutoAccept] = useState(false)
   const [muteAutoAccepted, setMuteAutoAccepted] = useState(true)
-  const [statusFilter, setStatusFilter] = useState("active")
-  const [typeFilter, setTypeFilter] = useState("all")
+  const statusFilter = "active"
+  const typeFilter = "all"
   const [searchTerm, setSearchTerm] = useState("")
-  const [sortDirection, setSortDirection] = useState<"newest" | "oldest">("newest")
+  const sortDirection: "newest" | "oldest" = "newest"
   const [pendingActions, setPendingActions] = useState<
     Record<string, { accept?: boolean; ready?: boolean; deliver?: boolean; cancel?: boolean }>
   >({})
@@ -382,12 +404,7 @@ export default function OrdersPage() {
       const status = String(order.status ?? "").toLowerCase()
       const type = String(order.type ?? "").toLowerCase()
 
-      const matchesStatus =
-        statusFilter === "all"
-          ? true
-          : statusFilter === "active"
-            ? !DONE_STATUSES.has(status)
-            : status === statusFilter
+      const matchesStatus = statusFilter === "active" ? !DONE_STATUSES.has(status) : status === statusFilter
 
       const matchesType = typeFilter === "all" ? true : type === typeFilter
 
@@ -414,7 +431,7 @@ export default function OrdersPage() {
   useEffect(() => {
     if (!displayOrders.length) {
       setSelectedOrderId(null)
-      setIsMobileDetailsOpen(false)
+      setIsDetailsOpen(false)
       return
     }
     if (!selectedOrderId || !displayOrders.some((order) => order.id === selectedOrderId)) {
@@ -553,6 +570,202 @@ export default function OrdersPage() {
   const readying = selectedOrder ? Boolean(pendingActions[selectedOrder.id]?.ready) : false
   const delivering = selectedOrder ? Boolean(pendingActions[selectedOrder.id]?.deliver) : false
   const canceling = selectedOrder ? Boolean(pendingActions[selectedOrder.id]?.cancel) : false
+  const handleOpenDetails = (id?: string | null) => {
+    if (!id) return
+    setSelectedOrderId(id)
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setIsDetailsOpen(true)
+    }
+  }
+
+  const actionForOrder = (order: NormalizedOrder) => {
+    const status = normalizeStatus(order.status)
+    const pending = pendingActions[order.id ?? ""] ?? {}
+    const distance =
+      typeof order.meta?.distance === "number"
+        ? `${order.meta.distance.toFixed(1)}km away`
+        : typeof order.meta?.distance === "string"
+          ? `${order.meta.distance} away`
+          : undefined
+
+    if (status === "pending" || status === "queued") {
+      return {
+        label: "View",
+        color: "bg-[#0EBE7F]",
+        text: "text-white",
+        onClick: () => handleOpenDetails(order.id),
+      }
+    }
+    if (["in_progress", "processing", "accepted", "preparing"].includes(status)) {
+      return {
+        label: pending.ready ? "Updating..." : "Ready",
+        color: "bg-[#FF6D2E]",
+        text: "text-white",
+        onClick: () => order.id && handleStatusChange(order.id, "ready", "ready"),
+      }
+    }
+    if (status === "ready") {
+      return {
+        label: pending.deliver ? "Updating..." : distance ?? "Arrived",
+        color: "bg-gradient-to-r from-[#7C8AFF] to-[#5BC8FB]",
+        text: "text-white",
+        onClick: () => order.id && handleStatusChange(order.id, "delivered", "deliver"),
+      }
+    }
+    if (["delivered", "completed"].includes(status)) {
+      return { label: "Completed", color: "bg-gray-200", text: "text-gray-600", disabled: true }
+    }
+    if (["canceled", "cancelled", "rejected"].includes(status)) {
+      return { label: "Canceled", color: "bg-gray-200", text: "text-gray-600", disabled: true }
+    }
+    return {
+      label: "View",
+      color: "bg-gray-200",
+      text: "text-gray-700",
+      onClick: () => handleOpenDetails(order.id),
+    }
+  }
+
+  const renderOrderRow = (order: NormalizedOrder) => {
+    const id = order.orderId ?? order.id ?? order._id ?? "—"
+    const token =
+      (order.meta?.token as string) ??
+      (order.meta?.table as string) ??
+      (order.meta?.brand as string) ??
+      order.type ??
+      "—"
+    const brandName = toTitleCase(order.meta?.brand as string) || "Brand"
+    const brandId =
+      (order.meta?.brandId as string) ??
+      (order.meta?.brand as string) ??
+      (order.meta?.table as string) ??
+      "Brand 1"
+    const providerName = toTitleCase(
+      (order.meta?.provider as string) ??
+        (order.meta?.channel as string) ??
+        (order.meta?.source as string) ??
+        "Zomato"
+    )
+    const providerKey = normalizeStatus(providerName)
+    const providerPalette: Record<string, { bg: string; text: string }> = {
+      zomato: { bg: "bg-[#FFE9DD]", text: "text-[#F45D2F]" },
+      swiggy: { bg: "bg-[#FFEBDD]", text: "text-[#FF6D2E]" },
+      food_panda: { bg: "bg-[#FFE7F3]", text: "text-[#F45CA0]" },
+      uber_eats: { bg: "bg-[#E3F7EE]", text: "text-[#1D9F66]" },
+      default: { bg: "bg-[#E8ECFF]", text: "text-[#6F70FF]" },
+    }
+    const providerStyle = providerPalette[providerKey] ?? providerPalette.default
+    const channelOrderId =
+      (order.meta?.orderId as string) ??
+      (order.meta?.channelOrderId as string) ??
+      (order.meta?.sourceOrderId as string) ??
+      ""
+    const customerName = order.customer?.name || "Guest"
+    const addressLines = Array.isArray(order.address)
+      ? order.address
+      : [
+          typeof order.address === "string" ? order.address : null,
+          order.address?.street || order.address?.line1 || order.address?.address1 || order.address?.apartment,
+          order.address?.city || order.address?.state,
+          order.address?.country,
+        ]
+    const safeAddress = addressLines.filter(Boolean).slice(0, 2).join(", ")
+    const amount =
+      typeof order.totalPrice === "number"
+        ? order.totalPrice
+        : typeof order.amounts?.total === "number"
+          ? order.amounts.total
+          : typeof order.subtotal === "number"
+            ? order.subtotal
+            : 0
+    const currency = order.currency ?? order.amounts?.currency ?? "USD"
+    const paymentStatus = toTitleCase(order.paymentStatus ?? order.payment?.status ?? "Paid")
+    const createdTime = formatTimeLabel(order.createdAt, lang)
+    const duration = formatDuration(order.createdAt)
+    const action = actionForOrder(order)
+    const badgeLetter = brandName.slice(0, 1) || "B"
+    const isActive = selectedOrderId === order.id || selectedOrderId === id
+    const isWarning = ["in_progress", "processing", "preparing"].includes(normalizeStatus(order.status))
+
+    return (
+      <div
+        key={order.id ?? id}
+        onClick={() => handleOpenDetails(order.id ?? order.orderId ?? order._id ?? null)}
+        className={cn(
+          "cursor-pointer rounded-2xl bg-white p-3 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.35)] transition-all hover:shadow-lg",
+          isActive && "ring-2 ring-[#0EBE7F]"
+        )}
+      >
+        <div className="grid grid-cols-1 items-center gap-3 md:grid-cols-[110px,110px,1.1fr,1fr,0.9fr,0.9fr,0.8fr]">
+          <div className="flex flex-col text-sm text-[#1b1b1b]">
+            <span className="font-semibold leading-tight">{id}</span>
+            <span className="text-xs font-medium text-[#6F70FF]">View Order</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#E7F4FF] text-sm font-semibold text-[#1B82E3]">
+              {token}
+            </div>
+            <div className="text-xs text-muted-foreground leading-tight">
+              <div className="font-semibold text-[#1b1b1b]">{brandName}</div>
+              <div className="text-[11px] text-gray-500">{brandId}</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div
+              className={cn(
+                "flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold",
+                providerStyle.bg,
+                providerStyle.text
+              )}
+            >
+              {badgeLetter}
+            </div>
+            <div className="leading-tight">
+              <div className="text-sm font-semibold text-[#1b1b1b]">{providerName}</div>
+              <div className="text-xs text-gray-500">{channelOrderId || id}</div>
+            </div>
+          </div>
+
+          <div className="leading-tight text-sm text-[#1b1b1b]">
+            <div className="font-semibold">{customerName}</div>
+            <div className="max-h-[32px] overflow-hidden text-xs text-gray-500">
+              {safeAddress || order.customer?.phone || "—"}
+            </div>
+          </div>
+
+          <div className="leading-tight text-sm text-[#1b1b1b]">
+            <div className={cn("font-semibold", isWarning && "text-[#FF6D2E]")}>{duration}</div>
+            <div className="text-xs text-gray-500">{createdTime}</div>
+          </div>
+
+          <div className="leading-tight text-sm text-[#1b1b1b]">
+            <div className="font-semibold">{formatCurrency(amount, currency, lang)}</div>
+            <div className="text-xs text-gray-500">{paymentStatus}</div>
+          </div>
+
+          <div className="flex items-center justify-end">
+            <Button
+              disabled={action.disabled}
+              onClick={(event) => {
+                event.stopPropagation()
+                action.onClick?.()
+              }}
+              className={cn(
+                "h-10 rounded-full px-4 text-sm font-semibold shadow-none transition-all",
+                action.color,
+                action.text,
+                action.disabled && "opacity-70"
+              )}
+            >
+              {action.label}
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!restaurantSlug) {
     return (
@@ -582,194 +795,119 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="flex h-screen bg-background" lang={lang} dir={direction}>
-      <div className="w-full md:w-96 border-r border-border bg-card flex flex-col">
-        <div className="p-3 md:p-4 border-b border-border flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="flex flex-col">
-                <h1 className="text-base md:text-lg font-semibold text-foreground">
-                  {restaurantName ?? strings.fallbackTitle}
-                </h1>
-                {data?.restaurant?.subdomain && (
-                  <span className="text-xs text-muted-foreground">@{data.restaurant.subdomain}</span>
-                )}
-              </div>
-              <button
-                onClick={() => mutate()}
-                className="p-1 hover:bg-accent rounded-md transition-colors flex-shrink-0"
-                title={strings.refresh}
-                aria-label={strings.refresh}
-              >
-                <RefreshCw className={`w-4 h-4 text-muted-foreground ${isValidating ? "animate-spin" : ""}`} />
-              </button>
+    <div className="flex min-h-screen bg-[#E6E6E6] p-3" lang={lang} dir={direction}>
+      <div className="mx-auto flex w-full max-w-[1400px] gap-4">
+        <aside className="flex w-full flex-col rounded-[18px] bg-white p-3 shadow-md md:w-[520px]">
+          <div className="mb-1 flex items-center justify-between">
+            <div>
+              <div className="text-lg font-semibold text-[#1b1b1b]">{restaurantName ?? strings.fallbackTitle}</div>
+              {data?.restaurant?.subdomain && (
+                <div className="text-xs text-gray-500">@{data.restaurant.subdomain}</div>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Select value={lang} onValueChange={(value) => setLang(resolveLocale(value))}>
-                <SelectTrigger className="w-[120px]" aria-label={strings.language}>
-                  <SelectValue placeholder={strings.language} />
-                </SelectTrigger>
-                <SelectContent align={direction === "rtl" ? "end" : "start"}>
-                  {(Object.keys(LOCALE_LABELS) as Locale[]).map((localeKey) => (
-                    <SelectItem key={localeKey} value={localeKey}>
-                      {LOCALE_LABELS[localeKey]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className={cn("flex items-center gap-2", direction === "rtl" && "flex-row-reverse")}>
-                <Switch id="auto-accept" checked={autoAccept} onCheckedChange={setAutoAccept} />
-                <Label htmlFor="auto-accept" className="text-xs">
-                  {strings.autoAccept}
-                </Label>
-              </div>
-            </div>
+            <div className="text-[11px] text-gray-500">{strings.liveRefresh}</div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative flex-1 min-w-[180px]">
-              <Search
-                className={cn(
-                  "absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground",
-                  direction === "rtl" ? "right-3" : "left-3",
-                )}
-              />
+          <div className="mb-3 flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder={strings.searchPlaceholder}
-                className={cn(direction === "rtl" ? "pr-9" : "pl-9")}
+                placeholder="Enter token number or order ID to search"
+                className="h-11 w-full rounded-full border border-gray-200 bg-[#F7F7F7] pl-9 pr-3 text-sm"
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[160px]">
-                <ListFilter
-                  className={cn(
-                    "h-4 w-4 text-muted-foreground",
-                    direction === "rtl" ? "ml-2" : "mr-2",
-                  )}
-                />
-                <SelectValue placeholder={strings.statusPlaceholder} />
-              </SelectTrigger>
-              <SelectContent align={direction === "rtl" ? "end" : "start"}>
-                {STATUS_FILTERS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label[lang]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[160px]">
-                <Filter
-                  className={cn(
-                    "h-4 w-4 text-muted-foreground",
-                    direction === "rtl" ? "ml-2" : "mr-2",
-                  )}
-                />
-                <SelectValue placeholder={strings.typePlaceholder} />
-              </SelectTrigger>
-              <SelectContent align={direction === "rtl" ? "end" : "start"}>
-                {TYPE_FILTERS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label[lang]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
-              onClick={() => setSortDirection((prev) => (prev === "newest" ? "oldest" : "newest"))}
-              title={
-                sortDirection === "newest"
-                  ? strings.sortTooltip.oldest
-                  : strings.sortTooltip.newest
-              }
+              onClick={() => mutate()}
+              className="h-11 w-11 rounded-full bg-[#F3F3F3] text-[#1b1b1b] shadow-inner"
+              title={strings.refresh}
             >
-              {sortDirection === "newest" ? <SortDesc className="h-4 w-4" /> : <SortAsc className="h-4 w-4" />}
+              <RefreshCw className={cn("h-5 w-5", isValidating && "animate-spin")} />
             </Button>
-            <div className={cn("flex items-center gap-2", direction === "rtl" && "flex-row-reverse")}>
-              <Switch
-                id="mute-auto"
-                checked={muteAutoAccepted}
-                onCheckedChange={setMuteAutoAccepted}
-                disabled={!autoAccept}
-              />
-              <Label htmlFor="mute-auto" className="text-xs text-muted-foreground">
-                {strings.muteAutoAccepted}
-              </Label>
-            </div>
           </div>
 
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-            <span>{strings.liveRefresh}</span>
-            {error && (
-              <span className={cn("text-destructive", direction === "rtl" ? "mr-1" : "ml-1")}>
-                {strings.failedBadge}
-              </span>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-600">
+            <div className="flex items-center gap-2">
+              <Switch id="auto-accept" checked={autoAccept} onCheckedChange={setAutoAccept} />
+              <label htmlFor="auto-accept" className="font-semibold text-[#1b1b1b]">
+                Online / Auto-accept
+              </label>
+            </div>
+            <button
+              onClick={() => setMuteAutoAccepted((prev) => !prev)}
+              className={cn(
+                "flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold shadow-inner",
+                muteAutoAccepted ? "bg-[#F3F3F3] text-[#1b1b1b]" : "bg-[#FFF2E8] text-[#F45D2F]"
+              )}
+            >
+              {muteAutoAccepted ? <BellOff className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
+              Mute
+            </button>
+          </div>
+
+          <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+            {isLoading && !data ? (
+              <div className="flex h-40 items-center justify-center text-sm text-gray-500">{strings.liveRefresh}</div>
+            ) : displayOrders.length ? (
+              displayOrders.map((order) => renderOrderRow(order))
+            ) : (
+              <div className="flex h-40 items-center justify-center text-sm text-gray-500">{strings.noOrdersMatch}</div>
             )}
           </div>
-        </div>
+        </aside>
 
-        <OrdersList
-          orders={displayOrders}
-          selectedOrderId={selectedOrderId ?? ""}
-          onSelectOrder={(id) => {
-            setSelectedOrderId(id)
-            setIsMobileDetailsOpen(true)
-          }}
-          isLoading={isLoading && !data}
-          lang={lang}
-          dir={direction}
-        />
-      </div>
-
-      <div className="hidden md:flex flex-1 flex-col">
-        {selectedOrder ? (
-          <OrderDetails
-            order={selectedOrder}
-            onUpdate={() => mutate()}
-            lang={lang}
-            dir={direction}
-            onAccept={
-              ["pending", "queued"].includes(selectedStatus)
-                ? () => handleStatusChange(selectedOrder.id, "in_progress", "accept")
-                : undefined
-            }
-            onReady={
-              ["pending", "queued", "in_progress"].includes(selectedStatus)
-                ? () => handleStatusChange(selectedOrder.id, "ready", "ready")
-                : undefined
-            }
-            onDeliver={
-              ["ready", "in_progress"].includes(selectedStatus)
-                ? () => handleStatusChange(selectedOrder.id, "delivered", "deliver")
-                : undefined
-            }
-            onCancel={() => handleStatusChange(selectedOrder.id, "canceled", "cancel")}
-            accepting={accepting}
-            readying={readying}
-            delivering={delivering}
-            canceling={canceling}
-            />
-        ) : (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
-            {displayOrders.length ? strings.selectOrder : strings.noOrdersMatch}
-          </div>
-        )}
-      </div>
-
-      {isMobileDetailsOpen && selectedOrder && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setIsMobileDetailsOpen(false)} />
-          <div className="absolute inset-y-0 right-0 w-full bg-background shadow-xl flex flex-col animate-in slide-in-from-right duration-300">
-            <div className="p-3 border-b border-border flex items-center justify-between">
-              <h2 className="text-base font-semibold">{strings.mobileDetailsTitle}</h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileDetailsOpen(false)}>
-                <X className="w-5 h-5" />
-              </Button>
+        <main className="hidden flex-1 md:flex">
+          {selectedOrder ? (
+            <div className="flex w-full flex-col rounded-[18px] bg-white p-4 shadow-md">
+              <OrderDetails
+                order={selectedOrder}
+                onUpdate={() => mutate()}
+                lang={lang}
+                dir={direction}
+                onAccept={
+                  ["pending", "queued"].includes(selectedStatus)
+                    ? () => handleStatusChange(selectedOrder.id, "in_progress", "accept")
+                    : undefined
+                }
+                onReady={
+                  ["pending", "queued", "in_progress"].includes(selectedStatus)
+                    ? () => handleStatusChange(selectedOrder.id, "ready", "ready")
+                    : undefined
+                }
+                onDeliver={
+                  ["ready", "in_progress"].includes(selectedStatus)
+                    ? () => handleStatusChange(selectedOrder.id, "delivered", "deliver")
+                    : undefined
+                }
+                onCancel={() => handleStatusChange(selectedOrder.id, "canceled", "cancel")}
+                accepting={accepting}
+                readying={readying}
+                delivering={delivering}
+                canceling={canceling}
+              />
             </div>
+          ) : (
+            <div className="flex flex-1 items-center justify-center rounded-[18px] bg-white text-muted-foreground shadow-md">
+              {displayOrders.length ? strings.selectOrder : strings.noOrdersMatch}
+            </div>
+          )}
+        </main>
+      </div>
+
+      {isDetailsOpen && selectedOrder && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-white md:hidden">
+          <div className="flex items-center gap-2 border-b border-gray-200 p-3">
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => setIsDetailsOpen(false)}>
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="text-sm font-semibold text-[#1b1b1b]">
+              Order #{selectedOrder.orderId ?? selectedOrder.id}
+            </div>
+          </div>
+          <div className="p-3">
             <OrderDetails
               order={selectedOrder}
               onUpdate={() => mutate()}

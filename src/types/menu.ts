@@ -18,6 +18,7 @@ export interface IMenuImage {
 
 export interface IMenuItem {
   _id?: Types.ObjectId
+  linkStatus?: "linked" | "unlinked" | "stopped"
   name: {
     en?: string
     ar?: string
@@ -32,6 +33,10 @@ export interface IMenuItem {
   weight?: string
   quantity?: number
   isNew?: boolean 
+  isAvailable?: boolean
+  isHidden?: boolean
+  order?: number
+  sortOrder?: number
 }
 
 export interface ICategory {

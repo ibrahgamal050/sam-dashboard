@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import mongoose from 'mongoose'
 import dbConnect from '@/lib/dbConnect'
 import Order from '@/models/Order'
 import { emitOrderEvent } from '@/lib/orderEvents'
@@ -11,11 +12,12 @@ export async function PATCH(req: NextRequest, context: RouteHandlerContext) {
     const { orderId } = await getRouteParams<{ orderId?: string }>(context)
     if (!orderId) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     await dbConnect()
-    const updated = await Order.findByIdAndUpdate(
-      orderId,
-      { status },
-      { new: true }
-    ).lean()
+    const updated =
+      (mongoose.Types.ObjectId.isValid(orderId)
+        ? await Order.findByIdAndUpdate(orderId, { status }, { new: true }).lean()
+        : null) ||
+      (await Order.findOneAndUpdate({ _id: orderId as any }, { status }, { new: true }).lean()) ||
+      (await Order.findOneAndUpdate({ orderId }, { status }, { new: true }).lean())
     if (!updated) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     emitOrderEvent(String(updated.restaurantId), 'order.updated', { orderId: String(updated._id), status })
     return NextResponse.json({ ok: true })

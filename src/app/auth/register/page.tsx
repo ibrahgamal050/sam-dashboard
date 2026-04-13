@@ -6,7 +6,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -14,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { zodFormResolver } from "@/lib/zod-form-resolver"
 
 const formSchema = z
   .object({
@@ -42,7 +42,7 @@ export default function CustomerRegisterPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodFormResolver<FormData>(formSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -76,7 +76,7 @@ export default function CustomerRegisterPage() {
       }
 
       setSuccess("تم إنشاء الحساب بنجاح! سيتم تحويلك لتسجيل الدخول")
-      setTimeout(() => router.push("/auth/signin"), 1800)
+      setTimeout(() => router.push("/auth/login"), 1800)
     } catch (err) {
       console.error("Registration error", err)
       setError("حدث خطأ غير متوقع. الرجاء المحاولة لاحقًا.")
@@ -194,7 +194,7 @@ export default function CustomerRegisterPage() {
 
           <div className="text-sm text-gray-600">
             لديك حساب بالفعل؟
-            <Link href="/auth/signin" className="mr-2 font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
+            <Link href="/auth/login" className="mr-2 font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
               تسجيل الدخول
             </Link>
           </div>

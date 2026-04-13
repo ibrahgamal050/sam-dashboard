@@ -1,7 +1,7 @@
 "use client"
 
 import { LogOut, Settings, User } from "lucide-react"
-import { useSession, signOut } from "next-auth/react"
+import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,18 +15,47 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 export default function UserMenu() {
-  const { data: session, status } = useSession()
+  const [user, setUser] = useState<any | null>(null)
 
-  if (status !== "authenticated") {
+  useEffect(() => {
+    let active = true
+    const load = async () => {
+      try {
+        const res = await fetch("/api/auth/session", { cache: "no-store" })
+        if (!active) return
+        if (!res.ok) {
+          setUser(null)
+          return
+        }
+        const data = await res.json()
+        setUser(data?.user ?? null)
+      } catch {
+        if (active) setUser(null)
+      }
+    }
+    load()
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const label = useMemo(() => {
+    if (!user) return ""
+    const fullName = [user.given_name, user.family_name].filter(Boolean).join(" ").trim()
+    return fullName || user.name || user.email || "حسابي"
+  }, [user])
+
+  const initials = useMemo(() => {
+    const source = label || "U"
+    return source.trim().charAt(0).toUpperCase()
+  }, [label])
+
+  if (!user) {
     return null
   }
 
-  const user = session.user
-  const label = `${user.name.first} ${user.name.last}`.trim() || user.email
-  const initials = (user.name.first?.[0] || user.email?.[0] || "U").toUpperCase()
-
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/auth/signin" })
+  const handleSignOut = () => {
+    window.location.href = "/auth/logout"
   }
 
   return (

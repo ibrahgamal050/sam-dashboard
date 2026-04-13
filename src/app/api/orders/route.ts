@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import mongoose from 'mongoose'
 import dbConnect from '@/lib/dbConnect'
 import Order from '@/models/Order'
+import RetailOrder from '@/models/RetailOrder'
 import DeliveryZone from '@/models/delivery-zone'
 import { resolveDeliveryZone } from '@/lib/delivery/resolve-zone'
 import type { IDeliveryZone } from '@/types/delivery-zone'
@@ -11,10 +12,17 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
     const restaurantId = searchParams.get('restaurantId')
+    const supermarketId = searchParams.get('supermarketId') || searchParams.get('branchId')
 
-    if (!restaurantId) {
+    if (!restaurantId && !supermarketId) {
       return NextResponse.json(
-        { error: 'Missing required query param: restaurantId' },
+        { error: 'Missing required query param: restaurantId or supermarketId' },
+        { status: 400 }
+      )
+    }
+    if (restaurantId && supermarketId) {
+      return NextResponse.json(
+        { error: 'Use either restaurantId or supermarketId, not both' },
         { status: 400 }
       )
     }
@@ -22,18 +30,19 @@ export async function GET(req: NextRequest) {
     await dbConnect()
 
     // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
+    const targetId = restaurantId || supermarketId || ""
+    if (!mongoose.Types.ObjectId.isValid(targetId)) {
       return NextResponse.json(
-        { error: 'Invalid restaurantId' },
+        { error: restaurantId ? 'Invalid restaurantId' : 'Invalid supermarketId' },
         { status: 400 }
       )
     }
-    const restObjectId = new mongoose.Types.ObjectId(restaurantId)
+    const targetObjectId = new mongoose.Types.ObjectId(targetId)
 
     const normalizeQueryValue = (value: string) =>
       value.trim().toLowerCase().replace(/\s+/g, '_').replace(/-+/g, '_')
 
-    const filters: any[] = [{ restaurantId: restObjectId }]
+    const filters: any[] = restaurantId ? [{ restaurantId: targetObjectId }] : [{ branchId: targetObjectId }]
 
     const status = searchParams.get('status')
     const forKitchen = searchParams.has('kitchen')
@@ -95,56 +104,129 @@ export async function GET(req: NextRequest) {
     const findQuery = buildQuery(findFilters)
 
     const sortDir = forKitchen ? 1 : -1
-    const orders = await Order.find(findQuery)
+    if (restaurantId) {
+      const orders = await Order.find(findQuery)
+        .sort({ createdAt: sortDir })
+        .limit(limit)
+        .select({
+          _id: 1,
+          restaurantId: 1,
+          userId: 1,
+          items: 1,
+          totalPrice: 1,
+          subtotal: 1,
+          deliveryFee: 1,
+          deliveryZoneId: 1,
+          deliveryLocation: 1,
+          currency: 1,
+          payment: 1,
+          paymentStatus: 1,
+          paymentMethod: 1,
+          customer: 1,
+          status: 1,
+          type: 1,
+          table: 1,
+          eta: 1,
+          notes: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          orderNumber: 1,
+          meta: 1,
+        })
+        .lean()
+
+      const data = orders.map((o) => ({
+        orderId: o._id.toString(),
+        restaurantId: o.restaurantId?.toString?.() ?? o.restaurantId,
+        userId: o.userId ? o.userId.toString() : null,
+        items: (o.items || []).map((it: any) => ({
+          productId: it.productId?.toString?.() ?? it.productId,
+          name: it.name,
+          quantity: it.quantity,
+          price: it.price,
+        })),
+        totalPrice: o.totalPrice,
+        status: o.status,
+        paymentStatus: o.payment?.status ?? (o as any).paymentStatus ?? null,
+        paymentMethod: o.payment?.method ?? (o as any).paymentMethod ?? null,
+        customer: (o as any).customer ?? null,
+        type: o.type,
+        table: o.table,
+        eta: o.eta,
+        notes: o.notes,
+        deliveryFee: o.deliveryFee ?? 0,
+        deliveryZoneId: o.deliveryZoneId ? o.deliveryZoneId.toString() : null,
+        deliveryLocation: o.deliveryLocation ?? null,
+        createdAt: o.createdAt,
+        orderNumber: (o as any).orderNumber ?? (o as any)?.meta?.orderNumber ?? null,
+        meta: (o as any).meta ?? null,
+      }))
+
+      const nextCursor = data.length === limit ? data[data.length - 1].createdAt : null
+      return NextResponse.json({ orders: data, nextCursor }, { headers: { 'Cache-Control': 'no-store' } })
+    }
+
+    const retailOrders = await RetailOrder.find(findQuery)
       .sort({ createdAt: sortDir })
       .limit(limit)
-      .select({
-        _id: 1,
-        restaurantId: 1,
-        userId: 1,
-        items: 1,
-        totalPrice: 1,
-        subtotal: 1,
-        deliveryFee: 1,
-        deliveryZoneId: 1,
-        deliveryLocation: 1,
-        currency: 1,
-        payment: 1,
-        paymentStatus: 1,
-        paymentMethod: 1,
-        status: 1,
-        type: 1,
-        table: 1,
-        eta: 1,
-        notes: 1,
-        createdAt: 1,
-      })
       .lean()
 
-    // Format response to required shape
-    const data = orders.map((o) => ({
-      orderId: o._id.toString(),
-      restaurantId: o.restaurantId?.toString?.() ?? o.restaurantId,
-      userId: o.userId ? o.userId.toString() : null,
-      items: (o.items || []).map((it: any) => ({
-        productId: it.productId?.toString?.() ?? it.productId,
-        name: it.name,
-        quantity: it.quantity,
-        price: it.price,
-      })),
-      totalPrice: o.totalPrice,
-      status: o.status,
-      paymentStatus: o.payment?.status ?? (o as any).paymentStatus ?? null,
-      paymentMethod: o.payment?.method ?? (o as any).paymentMethod ?? null,
-      type: o.type,
-      table: o.table,
-      eta: o.eta,
-      notes: o.notes,
-      deliveryFee: o.deliveryFee ?? 0,
-      deliveryZoneId: o.deliveryZoneId ? o.deliveryZoneId.toString() : null,
-      deliveryLocation: o.deliveryLocation ?? null,
-      createdAt: o.createdAt,
-    }))
+    const data = retailOrders.map((o: any) => {
+      const items: Array<{
+        productId: string | null
+        name: string
+        quantity: number
+        price: number
+      }> = Array.isArray(o.items)
+        ? o.items.map((it: any) => {
+            const qty = Number(it.quantity ?? 0)
+            const unitPrice =
+              Number.isFinite(it.unitPrice as number)
+                ? Number(it.unitPrice)
+                : qty
+                  ? Number(it.subtotal ?? 0) / qty
+                  : Number(it.price ?? 0)
+            return {
+              productId: it.productId?.toString?.() ?? it.productId,
+              name: it.name,
+              quantity: qty,
+              price: Number(unitPrice ?? 0),
+            }
+          })
+        : []
+      const itemsTotal =
+        Number.isFinite(o.itemsTotal as number) && o.itemsTotal !== undefined
+          ? Number(o.itemsTotal)
+          : items.reduce((sum: number, it) => sum + it.price * it.quantity, 0)
+      const deliveryFee = Number(o.deliveryFee ?? 0)
+      const totalPrice =
+        Number.isFinite(o.payableTotal as number) && o.payableTotal !== undefined
+          ? Number(o.payableTotal)
+          : itemsTotal + deliveryFee
+
+      return {
+        orderId: String(o._id ?? o.orderId ?? ""),
+        restaurantId: o.branchId?.toString?.() ?? o.branchId ?? null,
+        userId: o.userId ? o.userId.toString?.() ?? o.userId : null,
+        items,
+        subtotal: itemsTotal,
+        totalPrice,
+        currency: o.currency ?? "EGP",
+        status: o.status,
+        paymentStatus: o.paymentStatus ?? null,
+        paymentMethod: o.paymentMethod ?? null,
+        type: "delivery",
+        eta: o.eta ?? null,
+        notes: o.notes ?? null,
+        deliveryFee,
+        deliveryZoneId: o.deliveryZoneId ? o.deliveryZoneId.toString?.() ?? o.deliveryZoneId : null,
+        deliveryLocation: o.deliveryLocation ?? null,
+        deliveryAddress: o.deliveryAddress ?? null,
+        createdAt: o.createdAt,
+        orderNumber: o.orderNumber ?? o.meta?.orderNumber ?? null,
+        meta: { ...(o.meta ?? {}), branchId: o.branchId ?? null, source: "retail" },
+      }
+    })
 
     const nextCursor = data.length === limit ? data[data.length - 1].createdAt : null
     return NextResponse.json({ orders: data, nextCursor }, { headers: { 'Cache-Control': 'no-store' } })

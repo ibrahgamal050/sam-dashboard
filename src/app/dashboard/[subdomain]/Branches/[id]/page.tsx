@@ -2,7 +2,6 @@
 
 import { useEffect } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { createBranchSchema } from "@/server/validation/branch-schemas"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
@@ -10,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useRouter, useParams } from "next/navigation"
+import { zodFormResolver } from "@/lib/zod-form-resolver"
 
 type FormValues = z.infer<typeof createBranchSchema>
 
@@ -26,7 +26,7 @@ export default function BranchEditorPage() {
   const isNew = params.id === "new"
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(createBranchSchema),
+    resolver: zodFormResolver<FormValues>(createBranchSchema),
     defaultValues: {
       name: "",
       slug: "",

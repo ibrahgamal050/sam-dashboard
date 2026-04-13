@@ -2,17 +2,29 @@ import type { CreateDeliveryZoneRequest, DeliveryZone, UpdateDeliveryZoneRequest
 
 const API_BASE = "/api/zones"
 
-function requireRestaurantId(restaurantId: string): string {
-  if (!restaurantId) {
-    throw new Error("restaurantId is required for delivery zone operations")
+type EntityType = "restaurant" | "supermarket"
+
+function requireEntityId(entityId: string): string {
+  if (!entityId) {
+    throw new Error("entity id is required for delivery zone operations")
   }
-  return restaurantId
+  return entityId
+}
+
+function buildEntityParams(entityId: string, entityType: EntityType): Record<string, string> {
+  return entityType === "supermarket"
+    ? { supermarketId: requireEntityId(entityId) }
+    : { restaurantId: requireEntityId(entityId) }
 }
 
 export class ZonesAPI {
   // Fetch all zones
-  static async getZones(restaurantId: string, activeOnly = false): Promise<DeliveryZone[]> {
-    const params = new URLSearchParams({ restaurantId: requireRestaurantId(restaurantId) })
+  static async getZones(
+    entityId: string,
+    entityType: EntityType = "restaurant",
+    activeOnly = false,
+  ): Promise<DeliveryZone[]> {
+    const params = new URLSearchParams(buildEntityParams(entityId, entityType))
     if (activeOnly) {
       params.set("active", "true")
     }
@@ -30,8 +42,8 @@ export class ZonesAPI {
   }
 
   // Fetch a specific zone
-  static async getZone(restaurantId: string, id: string): Promise<DeliveryZone> {
-    const params = new URLSearchParams({ restaurantId: requireRestaurantId(restaurantId) })
+  static async getZone(entityId: string, id: string, entityType: EntityType = "restaurant"): Promise<DeliveryZone> {
+    const params = new URLSearchParams(buildEntityParams(entityId, entityType))
     const response = await fetch(`${API_BASE}/${id}?${params.toString()}`, {
       credentials: "include",
     })
@@ -49,7 +61,8 @@ export class ZonesAPI {
 
   // Create a new zone
   static async createZone(
-    restaurantId: string,
+    entityId: string,
+    entityType: EntityType = "restaurant",
     zoneData: Omit<CreateDeliveryZoneRequest, "restaurantId">,
   ): Promise<DeliveryZone> {
     const response = await fetch(API_BASE, {
@@ -58,7 +71,7 @@ export class ZonesAPI {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...zoneData, restaurantId: requireRestaurantId(restaurantId) }),
+      body: JSON.stringify({ ...zoneData, ...buildEntityParams(entityId, entityType) }),
     })
 
     if (!response.ok) {
@@ -72,11 +85,12 @@ export class ZonesAPI {
 
   // Update a zone
   static async updateZone(
-    restaurantId: string,
+    entityId: string,
     id: string,
+    entityType: EntityType = "restaurant",
     updates: Partial<UpdateDeliveryZoneRequest> | Partial<DeliveryZone>,
   ): Promise<DeliveryZone> {
-    const params = new URLSearchParams({ restaurantId: requireRestaurantId(restaurantId) })
+    const params = new URLSearchParams(buildEntityParams(entityId, entityType))
 
     const response = await fetch(`${API_BASE}/${id}?${params.toString()}`, {
       method: "PUT",
@@ -97,8 +111,8 @@ export class ZonesAPI {
   }
 
   // Delete a zone
-  static async deleteZone(restaurantId: string, id: string): Promise<void> {
-    const params = new URLSearchParams({ restaurantId: requireRestaurantId(restaurantId) })
+  static async deleteZone(entityId: string, id: string, entityType: EntityType = "restaurant"): Promise<void> {
+    const params = new URLSearchParams(buildEntityParams(entityId, entityType))
     const response = await fetch(`${API_BASE}/${id}?${params.toString()}`, {
       method: "DELETE",
       credentials: "include",
@@ -112,9 +126,10 @@ export class ZonesAPI {
 
   // Check delivery availability for a location
   static async checkDelivery(
-    restaurantId: string,
+    entityId: string,
     lat: number,
     lng: number,
+    entityType: EntityType = "restaurant",
   ): Promise<{
     isDeliveryAvailable: boolean
     zones: DeliveryZone[]
@@ -127,7 +142,7 @@ export class ZonesAPI {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ restaurantId: requireRestaurantId(restaurantId), lat, lng }),
+      body: JSON.stringify({ ...buildEntityParams(entityId, entityType), lat, lng }),
     })
 
     if (!response.ok) {

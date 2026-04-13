@@ -4,7 +4,6 @@ import Link from "next/link"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Mail } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -13,6 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { requestPasswordReset } from "@/lib/auth-client"
+import { zodFormResolver } from "@/lib/zod-form-resolver"
 
 const formSchema = z.object({
   email: z.string().email({ message: "أدخل بريدًا إلكترونيًا صالحًا" }),
@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<ForgotPasswordForm>({
-    resolver: zodResolver(formSchema),
+    resolver: zodFormResolver<ForgotPasswordForm>(formSchema),
     defaultValues: { email: "" },
   })
 
@@ -106,7 +106,7 @@ export default function ForgotPasswordPage() {
 
           <p className="text-xs leading-6 text-gray-500">
             تذكرت الرقم السري؟{' '}
-            <Link href="/auth/signin" className="font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
+            <Link href="/auth/login" className="font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
               العودة لتسجيل الدخول
             </Link>
           </p>

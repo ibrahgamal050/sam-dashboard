@@ -1,68 +1,89 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation";
 
-import { MenuEditor } from "@/components/dashboard/menu/menu-editor"
-import dbConnect from "@/lib/dbConnect"
-import Restaurant from "@/models/Restaurant"
-import RestaurantMenu from "@/models/RestaurantMenu"
-import type { IMenu } from "@/types/menu"
+import dbConnect from "@/lib/dbConnect";
+import Brand from "@/models/Brand";
+import Restaurant from "@/models/Restaurant";
+import SuperMarket from "@/models/SuperMarket";
+import { MenuEditor } from "@/components/dashboard/menu/menu-editor";
 
 type MenuPageProps = {
   params: Promise<{
-    subdomain?: string | string[]
-  }>
+    subdomain?: string | string[];
+  }>;
+};
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-export default async function MenuPage({ params }: MenuPageProps) {
-  const { subdomain: rawSubdomain } = await params
-  const subdomain = Array.isArray(rawSubdomain) ? rawSubdomain[0] : rawSubdomain
-
-  if (!subdomain) {
-    notFound()
+const normalizeBrandId = (value: unknown) => {
+  if (!value) return null;
+  if (typeof value === "string") return value;
+  if (typeof value === "object") {
+    const record = value as { _id?: unknown; $oid?: unknown };
+    if (record.$oid) return String(record.$oid);
+    if (record._id) return String(record._id);
   }
+  return String(value);
+};
+
+export default async function MenuPage({ params }: MenuPageProps) {
+  const { subdomain: rawSubdomain } = await params;
+  const subdomain = Array.isArray(rawSubdomain) ? rawSubdomain[0] : rawSubdomain;
+
+  if (!subdomain) notFound();
 
   try {
-    await dbConnect()
+    await dbConnect();
 
-    const escapedSubdomain = escapeRegExp(subdomain)
+    const escapedSubdomain = escapeRegExp(subdomain);
+
     const restaurant = await Restaurant.findOne({
-      subdomain: { $regex: new RegExp(`^${escapedSubdomain}$`, "i") },
-    })
+      $or: [
+        { subdomain: { $regex: new RegExp(`^${escapedSubdomain}$`, "i") } },
+        { slug: { $regex: new RegExp(`^${escapedSubdomain}$`, "i") } },
+      ],
+    }).lean();
 
     if (!restaurant) {
-      notFound()
+      const market = await SuperMarket.findOne({
+        slug: { $regex: new RegExp(`^${escapedSubdomain}$`, "i") },
+      }).lean();
+      if (market) {
+        redirect(`/dashboard/${encodeURIComponent(subdomain)}/retail`);
+      }
+      notFound();
     }
 
-    let menu = await RestaurantMenu.findOne({ restaurantId: restaurant._id })
-
-    if (!menu) {
-      const restName = restaurant.name?.ar || restaurant.name?.en || restaurant.subdomain
-      menu = await RestaurantMenu.create({
-        restaurantId: restaurant._id,
-        name: restName,
-        categories: [],
-        menuImages: [],
-      })
+    const brandId = normalizeBrandId((restaurant as any).brandId);
+    if (!brandId) {
+      notFound();
     }
 
-    const menuId = menu._id.toString()
-    const serializedMenu = JSON.parse(JSON.stringify(menu)) as IMenu
+    const brand = await Brand.findById(brandId).lean();
+    if (!brand) {
+      notFound();
+    }
 
-    return <MenuEditor menuId={menuId} initialMenu={serializedMenu} />
+    return (
+      <MenuEditor
+        menuId={brand._id.toString()}
+        restaurantslug={subdomain}
+        restaurantId={(restaurant as any)._id.toString()}
+      />
+    );
   } catch (error: unknown) {
+    // نفس handling بتاعك
     if (
       error instanceof Error &&
       "digest" in error &&
       typeof (error as { digest?: string }).digest === "string" &&
       (error as { digest?: string }).digest === "NEXT_NOT_FOUND"
     ) {
-      throw error
+      throw error;
     }
 
-    console.error("Error loading menu page:", error)
-    throw new Error("Failed to load menu page")
+    console.error("Error loading menu page:", error);
+    throw new Error("Failed to load menu page");
   }
-}
-
-function escapeRegExp(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }

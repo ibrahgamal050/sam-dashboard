@@ -2,7 +2,7 @@ import { describe, it } from "node:test"
 import assert from "node:assert/strict"
 
 import { pointInPolygon } from "../src/lib/geo/point-in-polygon.js"
-import type { IGeoJSONPolygon } from "../src/types/delivery-zone"
+import type { IGeoJSONPolygon } from "../src/types/delivery-zone.js"
 
 describe("pointInPolygon", () => {
   const square: IGeoJSONPolygon = {

@@ -1,100 +1,93 @@
 import { NextResponse } from "next/server"
-import { Types } from "mongoose"
-
+import mongoose from "mongoose"
 import dbConnect from "@/lib/dbConnect"
-import RestaurantMenu from "@/models/RestaurantMenu"
-import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
+import Brand from "@/models/Brand"
+import BrandMenuCategory from "@/models/BrandMenuCategory"
+import Restaurant from "@/models/Restaurant"
 
-export async function POST(request: Request, context: RouteHandlerContext) {
-  const { menuId, categoryId } = await getRouteParams<{ menuId?: string; categoryId?: string }>(context)
+const resolveBrand = async (menuId: string) => {
+  if (mongoose.Types.ObjectId.isValid(menuId)) {
+    return Brand.findById(menuId).lean<{ _id: mongoose.Types.ObjectId } | null>()
+  }
+  return Brand.findOne({ slug: menuId.toLowerCase() }).lean<{ _id: mongoose.Types.ObjectId } | null>()
+}
 
-  if (!menuId || !categoryId) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+
+const resolveRestaurantFromRequest = async (req: Request) => {
+  const headerId = req.headers.get("x-restaurant-id")
+  if (headerId && mongoose.Types.ObjectId.isValid(headerId)) {
+    return Restaurant.findById(headerId).lean<{
+      _id: mongoose.Types.ObjectId
+      brandId?: mongoose.Types.ObjectId | null
+    } | null>()
   }
 
-  if (!Types.ObjectId.isValid(menuId) || !Types.ObjectId.isValid(categoryId)) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
-  }
+  const referer = req.headers.get("referer")
+  if (!referer) return null
 
-  const payload = await request.json()
+  try {
+    const pathname = new URL(referer).pathname
+    const match = pathname.match(/\/dashboard\/([^/]+)\/menu/)
+    if (!match) return null
+    const slug = decodeURIComponent(match[1])
+    const escaped = escapeRegExp(slug)
+    return Restaurant.findOne({
+      $or: [
+        { subdomain: { $regex: new RegExp(`^${escaped}$`, "i") } },
+        { slug: { $regex: new RegExp(`^${escaped}$`, "i") } },
+      ],
+    }).lean<{
+      _id: mongoose.Types.ObjectId
+      brandId?: mongoose.Types.ObjectId | null
+    } | null>()
+  } catch {
+    return null
+  }
+}
+
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ menuId: string; categoryId: string }> },
+) {
+  const resolvedParams = await params
+  const menuId = decodeURIComponent(resolvedParams.menuId || "")
+  const categoryId = resolvedParams.categoryId
+
+  if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+    return NextResponse.json({ error: "Invalid category id." }, { status: 400 })
+  }
 
   await dbConnect()
 
-  const menu = await RestaurantMenu.findById(menuId)
-
-  if (!menu) {
-    return NextResponse.json({ error: "Menu not found" }, { status: 404 })
+  const restaurant =
+    (await resolveRestaurantFromRequest(req)) ||
+    (mongoose.Types.ObjectId.isValid(menuId)
+      ? await Restaurant.findById(menuId).lean<{
+          _id: mongoose.Types.ObjectId
+          brandId?: mongoose.Types.ObjectId | null
+        } | null>()
+      : null)
+  if (!restaurant) {
+    return NextResponse.json({ error: "Restaurant not found." }, { status: 404 })
   }
 
-  const category = menu.categories.id(categoryId)
+  const brand = restaurant?.brandId
+    ? await Brand.findById(restaurant.brandId).lean()
+    : await resolveBrand(menuId)
+  if (!brand) {
+    return NextResponse.json({ error: "Brand not found." }, { status: 404 })
+  }
 
+  const category = await BrandMenuCategory.findOne({ _id: categoryId, brandId: brand._id }).lean()
   if (!category) {
-    return NextResponse.json({ error: "Category not found" }, { status: 404 })
+    return NextResponse.json({ error: "Category not found." }, { status: 404 })
   }
 
-  const newItemId = new Types.ObjectId()
-  const newItem: any = {
-    _id: newItemId,
-    name: normalizeTranslatable(payload?.name, {}),
-    description: normalizeTranslatable(payload?.description, {}),
-    price: payload?.price ?? null,
-    image: payload?.image ?? "",
-    sizes: normalizeSizes(payload?.sizes),
-    weight: payload?.weight ?? null,
-    quantity: payload?.quantity ?? null,
-    isNew: payload?.isNew ?? false,
-  }
-
-  category.menuItems.push(newItem)
-  menu.markModified("categories")
-  await menu.save()
-
-  const createdItem = category.menuItems.id(newItemId) ?? newItem
-
-  const serialized = createdItem ? JSON.parse(JSON.stringify(createdItem)) : null
-
-  return NextResponse.json(serialized)
-}
-
-function normalizeSizes(sizes: any): any[] {
-  if (!Array.isArray(sizes)) return []
-
-  return sizes.map(normalizeSizeDocument)
-}
-
-function normalizeSizeDocument(size: any) {
-  if (!size) {
-    return {
-      name: { en: "Size", ar: "حجم" },
-      price: 0,
-    }
-  }
-
-  const normalized: any = {
-    name: {
-      en: (size?.name?.en ?? "").trim() || (size?.name?.ar ?? "").trim() || "Size",
-      ar: (size?.name?.ar ?? "").trim() || (size?.name?.en ?? "").trim() || "حجم",
+  return NextResponse.json(
+    {
+      error: "Items must be created in the brand catalog before overriding a branch menu.",
     },
-    price: Number.isFinite(Number(size?.price)) ? Number(size?.price) : 0,
-  }
-
-  if (size?._id && Types.ObjectId.isValid(size._id)) {
-    normalized._id = new Types.ObjectId(size._id)
-  }
-
-  return normalized
-}
-
-function normalizeTranslatable(value: any, fallback: any = {}) {
-  if (!value || typeof value !== "object") {
-    return {
-      en: (fallback?.en ?? "").trim(),
-      ar: (fallback?.ar ?? "").trim(),
-    }
-  }
-
-  return {
-    en: (value?.en ?? fallback?.en ?? "").trim(),
-    ar: (value?.ar ?? fallback?.ar ?? "").trim(),
-  }
+    { status: 400 },
+  )
 }

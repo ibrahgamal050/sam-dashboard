@@ -15,7 +15,8 @@ export async function GET(req: NextRequest, context: RouteHandlerContext) {
     }
     await dbConnect()
     const byObjectId = mongoose.Types.ObjectId.isValid(id) ? await Order.findById(id).lean() : null
-    const order = byObjectId || await Order.findOne({ orderId: id }).lean()
+    const byPlainId = !byObjectId ? await Order.findOne({ _id: id as any }).lean() : null
+    const order = byObjectId || byPlainId || await Order.findOne({ orderId: id }).lean()
     if (!order) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     const tenantCheck = assertTenantOrThrow(req as any, order.restaurantId as any)
     if (!tenantCheck.ok) return NextResponse.json({ error: tenantCheck.reason }, { status: 403 })
@@ -41,6 +42,7 @@ export async function PATCH(req: NextRequest, context: RouteHandlerContext) {
       existing = await Order.findById(id)
       if (!existing) existing = await Order.findOne({ _id: id as any })
     }
+    if (!existing) existing = await Order.findOne({ _id: id as any })
     if (!existing) existing = await Order.findOne({ orderId: id })
     if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     const tenantCheck = assertTenantOrThrow(req as any, existing.restaurantId as any)

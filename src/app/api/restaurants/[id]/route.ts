@@ -22,9 +22,11 @@ export async function GET(_request: Request, context: RouteHandlerContext) {
     const { id } = await getRouteParams<{ id?: string }>(context)
     if (!id) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
-    }
+    } 
+    console.log(id)
 
-    const restaurant = await Restaurant.findOne({ subdomain: id }).lean()
+    const normalized = id.trim().toLowerCase()
+    const restaurant = await Restaurant.findOne({ subdomain: normalized }).lean()
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
@@ -47,7 +49,8 @@ export async function PUT(request: Request, context: RouteHandlerContext) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
 
-    const restaurant = await Restaurant.findOne({ subdomain: id })
+    const normalized = id.trim().toLowerCase()
+    const restaurant = await Restaurant.findOne({ subdomain: normalized })
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
@@ -69,7 +72,8 @@ export async function DELETE(_request: Request, context: RouteHandlerContext) {
     if (!id) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
-    const restaurant = await Restaurant.findOneAndDelete({ subdomain: id })
+    const normalized = id.trim().toLowerCase()
+    const restaurant = await Restaurant.findOneAndDelete({ subdomain: normalized })
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 })
     }
@@ -91,9 +95,24 @@ function mapRestaurantToClient(restaurant: any) {
     logo: restaurant.logo ?? '',
     coverImage: restaurant.coverImage ?? '',
     description: restaurant.description ?? '',
+    address: restaurant.address ?? '',
+    city: restaurant.city ?? '',
+    country: restaurant.country ?? '',
+    cuisines: Array.isArray(restaurant.cuisines) ? restaurant.cuisines : [],
+    tags: Array.isArray(restaurant.tags) ? restaurant.tags : [],
+    gallery: Array.isArray(restaurant.gallery) ? restaurant.gallery : [],
+    brandColors: restaurant.brandColors ?? {},
+    delivery: restaurant.delivery ?? {},
+    orderSettings: restaurant.orderSettings ?? {},
+    openingHours: Array.isArray(restaurant.openingHours) ? restaurant.openingHours : [],
+    contact: restaurant.contact ?? {},
     social: restaurant.social ?? {},
+    menuSettings: restaurant.menuSettings ?? {},
     branches: Array.isArray(restaurant.branches) ? restaurant.branches : [],
     isPublished: restaurant.isPublished ?? false,
+    status: restaurant.status ?? 'draft',
+    featured: restaurant.featured ?? false,
+    isActive: restaurant.isActive ?? true,
     phones: Array.isArray(restaurant.phones) ? restaurant.phones : [],
     fulfillmentSettings: {
       ...DEFAULT_FULFILLMENT_SETTINGS,
@@ -127,6 +146,18 @@ function applyRestaurantUpdates(restaurant: any, payload: any) {
     restaurant.description = payload.description === null ? restaurant.description : String(payload.description)
   }
 
+  if (payload.address !== undefined) {
+    restaurant.address = String(payload.address ?? '').trim()
+  }
+
+  if (payload.city !== undefined) {
+    restaurant.city = String(payload.city ?? '').trim()
+  }
+
+  if (payload.country !== undefined) {
+    restaurant.country = String(payload.country ?? '').trim()
+  }
+
   if (payload.logo !== undefined) {
     const trimmed = String(payload.logo ?? '').trim()
     if (trimmed) {
@@ -139,6 +170,55 @@ function applyRestaurantUpdates(restaurant: any, payload: any) {
     if (trimmed) {
       restaurant.coverImage = trimmed
     }
+  }
+
+  if (Array.isArray(payload.gallery)) {
+    restaurant.gallery = payload.gallery.map((item: any) => String(item ?? '').trim()).filter(Boolean)
+  }
+
+  if (Array.isArray(payload.cuisines)) {
+    restaurant.cuisines = payload.cuisines.map((item: any) => String(item ?? '').trim()).filter(Boolean)
+  }
+
+  if (Array.isArray(payload.tags)) {
+    restaurant.tags = payload.tags.map((item: any) => String(item ?? '').trim()).filter(Boolean)
+  }
+
+  if (payload.brandColors && typeof payload.brandColors === 'object') {
+    restaurant.brandColors = {
+      ...(restaurant.brandColors ?? {}),
+      ...(payload.brandColors ?? {}),
+    }
+    restaurant.markModified?.('brandColors')
+  }
+
+  if (payload.delivery && typeof payload.delivery === 'object') {
+    restaurant.delivery = {
+      ...(restaurant.delivery ?? {}),
+      ...(payload.delivery ?? {}),
+    }
+    restaurant.markModified?.('delivery')
+  }
+
+  if (payload.orderSettings && typeof payload.orderSettings === 'object') {
+    restaurant.orderSettings = {
+      ...(restaurant.orderSettings ?? {}),
+      ...(payload.orderSettings ?? {}),
+    }
+    restaurant.markModified?.('orderSettings')
+  }
+
+  if (Array.isArray(payload.openingHours)) {
+    restaurant.openingHours = payload.openingHours
+    restaurant.markModified?.('openingHours')
+  }
+
+  if (payload.contact && typeof payload.contact === 'object') {
+    restaurant.contact = {
+      ...(restaurant.contact ?? {}),
+      ...(payload.contact ?? {}),
+    }
+    restaurant.markModified?.('contact')
   }
 
   if (payload.subdomain !== undefined && typeof payload.subdomain === 'string' && payload.subdomain.trim()) {
@@ -170,6 +250,14 @@ function applyRestaurantUpdates(restaurant: any, payload: any) {
     restaurant.markModified?.('fulfillmentSettings')
   }
 
+  if (payload.menuSettings && typeof payload.menuSettings === 'object') {
+    restaurant.menuSettings = {
+      ...(restaurant.menuSettings ?? {}),
+      ...(payload.menuSettings ?? {}),
+    }
+    restaurant.markModified?.('menuSettings')
+  }
+
   if (Array.isArray(payload.branches)) {
     restaurant.branches = payload.branches
     restaurant.markModified?.('branches')
@@ -177,6 +265,18 @@ function applyRestaurantUpdates(restaurant: any, payload: any) {
 
   if (payload.isPublished !== undefined) {
     restaurant.isPublished = Boolean(payload.isPublished)
+  }
+
+  if (payload.status !== undefined && typeof payload.status === 'string') {
+    restaurant.status = payload.status
+  }
+
+  if (payload.featured !== undefined) {
+    restaurant.featured = Boolean(payload.featured)
+  }
+
+  if (payload.isActive !== undefined) {
+    restaurant.isActive = Boolean(payload.isActive)
   }
 
   restaurant.updatedAt = new Date()

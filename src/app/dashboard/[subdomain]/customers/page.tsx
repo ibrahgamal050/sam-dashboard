@@ -1,7 +1,8 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { Search, UserPlus } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useParams } from "next/navigation"
+import { ArrowRight, Filter, Search, UserCircle2, UserPlus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,116 +15,315 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const MOCK_CUSTOMERS = [
-  {
-    id: "CUS-001",
-    name: "Sara Ahmed",
-    email: "sara.ahmed@example.com",
-    phone: "+20 101 234 5678",
-    orders: 12,
-    lastOrder: "2024-06-18",
-  },
-  {
-    id: "CUS-002",
-    name: "Mohamed Ali",
-    email: "mohamed.ali@example.com",
-    phone: "+20 112 987 6543",
-    orders: 4,
-    lastOrder: "2024-06-12",
-  },
-  {
-    id: "CUS-003",
-    name: "Laila Hassan",
-    email: "laila.hassan@example.com",
-    phone: "+20 109 321 8765",
-    orders: 19,
-    lastOrder: "2024-06-10",
-  },
-  {
-    id: "CUS-004",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+20 100 555 8821",
-    orders: 2,
-    lastOrder: "2024-05-28",
-  },
-]
+type ApiOrder = {
+  orderId: string
+  createdAt?: string
+  customer?: {
+    name?: string
+    phone?: string
+    email?: string
+  } | null
+  userId?: string | null
+  totalPrice?: number
+  deliveryAddress?: string | null
+}
+
+type CustomerRow = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  orders: number
+  lastOrder: string
+  totalSpent: number
+}
+
+const formatDate = (value?: string) => {
+  if (!value) return ""
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return new Intl.DateTimeFormat("ar-EG").format(date)
+}
+
+const resolveCustomerKey = (order: ApiOrder) => {
+  if (order.customer?.phone) return `phone:${order.customer.phone}`
+  if (order.customer?.email) return `email:${order.customer.email}`
+  if (order.userId) return `user:${order.userId}`
+  if (order.deliveryAddress) return `addr:${order.deliveryAddress}`
+  return `order:${order.orderId}`
+}
+
+const buildCustomerName = (order: ApiOrder) => {
+  if (order.customer?.name) return order.customer.name
+  if (order.userId) return `عميل ${order.userId.slice(-4)}`
+  return "عميل مجهول"
+}
 
 export default function CustomersPage() {
+  const params = useParams()
+  const subdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : (params?.subdomain as string) ?? ""
+  const [customers, setCustomers] = useState<CustomerRow[]>([])
   const [query, setQuery] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
+
+  const fetchCustomers = useCallback(async (): Promise<CustomerRow[]> => {
+    if (!subdomain) return []
+
+    if (abortRef.current) abortRef.current.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    const restaurantRes = await fetch(`/api/restaurants/${encodeURIComponent(subdomain)}`, {
+      signal: controller.signal,
+    })
+    if (restaurantRes.ok) {
+      const restaurant = await restaurantRes.json()
+      const restaurantId = restaurant?._id
+      if (!restaurantId) throw new Error("معرّف المطعم غير متوفر")
+
+      const ordersRes = await fetch(`/api/orders?restaurantId=${restaurantId}&limit=200`, {
+        signal: controller.signal,
+      })
+      if (!ordersRes.ok) throw new Error("تعذر جلب طلبات المطعم")
+
+      const data = await ordersRes.json()
+      return mapOrdersToCustomers(data?.orders || [])
+    }
+
+    if (restaurantRes.status !== 404) {
+      throw new Error("تعذر تحديد المطعم")
+    }
+
+    const marketRes = await fetch(`/api/retail/supermarkets/slug/${encodeURIComponent(subdomain)}`, {
+      signal: controller.signal,
+    })
+    if (!marketRes.ok) throw new Error("تعذر تحديد السوبرماركت")
+
+    const market = await marketRes.json()
+    const supermarketId = market?._id
+    if (!supermarketId) throw new Error("معرّف السوبرماركت غير متوفر")
+
+    const ordersRes = await fetch(`/api/orders?supermarketId=${supermarketId}&limit=200`, {
+      signal: controller.signal,
+    })
+    if (!ordersRes.ok) throw new Error("تعذر جلب طلبات السوبرماركت")
+
+    const data = await ordersRes.json()
+    return mapOrdersToCustomers(data?.orders || [])
+  }, [subdomain])
+
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      if (!subdomain) return
+      try {
+        setLoading(true)
+        setError(null)
+        const rows = await fetchCustomers()
+        if (!cancelled) setCustomers(rows)
+      } catch (err) {
+        console.error(err)
+        if (!cancelled) {
+          setCustomers([])
+          setError("تعذر جلب العملاء من الخادم.")
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+      abortRef.current?.abort()
+    }
+  }, [fetchCustomers, subdomain])
+
+  const stats = useMemo(() => {
+    const total = customers.length
+    const top = [...customers].sort((a, b) => b.totalSpent - a.totalSpent)[0]
+    return { total, top }
+  }, [customers])
 
   const filteredCustomers = useMemo(() => {
-    if (!query.trim()) return MOCK_CUSTOMERS
+    if (!query.trim()) return customers
     const q = query.toLowerCase()
-    return MOCK_CUSTOMERS.filter((customer) =>
+    return customers.filter((customer) =>
       [customer.name, customer.email, customer.phone, customer.id].some((value) =>
         value.toLowerCase().includes(q),
       ),
     )
-  }, [query])
+  }, [customers, query])
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">Customers</h1>
-          <p className="text-sm text-slate-500">Track guest details, engagement, and order history.</p>
-        </div>
-        <Button className="gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500">
-          <UserPlus className="h-4 w-4" />
-          Add Customer
-        </Button>
+    <section className="relative space-y-6">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -right-10 top-8 h-64 w-64 rounded-full bg-emerald-200/60 blur-3xl" />
+        <div className="absolute left-0 top-0 h-52 w-52 rounded-full bg-lime-200/50 blur-3xl" />
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex flex-col gap-4 border-b border-slate-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full sm:max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              type="search"
-              placeholder="Search customers"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="h-10 rounded-full border-slate-300 pl-9 text-sm"
-            />
+      <div className="relative space-y-6">
+        <div className="overflow-hidden rounded-3xl border-none bg-gradient-to-r from-emerald-800 via-emerald-700 to-emerald-600 p-5 text-white shadow-2xl">
+          <div className="flex flex-col gap-4 sm:flex-row-reverse sm:items-center sm:justify-between">
+            <div className="space-y-2 text-right">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100/80">تفاعل العملاء</p>
+              <h1 className="text-2xl font-semibold sm:text-3xl">العملاء</h1>
+              <p className="max-w-xl text-sm text-emerald-50/90">تابع تواصل الضيوف، تكرار الطلبات، وأفضل العملاء.</p>
+              <div className="flex flex-wrap gap-2 text-xs font-semibold text-emerald-50/90">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
+                  <UserCircle2 className="h-4 w-4" /> الإجمالي: {stats.total}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
+                  <ArrowRight className="h-4 w-4" /> أعلى إنفاق: {stats.top?.name || "—"}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                className="flex-row-reverse gap-2 rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20"
+              >
+                <Filter className="h-4 w-4" /> فلترة
+              </Button>
+              <Button className="flex-row-reverse gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-emerald-800 shadow-lg shadow-emerald-500/30 hover:bg-emerald-50">
+                <UserPlus className="h-4 w-4" />
+                إضافة عميل
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-32">Customer ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead className="text-right">Orders</TableHead>
-                <TableHead className="text-right">Last Order</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredCustomers.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="py-8 text-center text-sm text-slate-500">
-                    No customers match your search.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredCustomers.map((customer) => (
-                  <TableRow key={customer.id}>
-                    <TableCell className="font-medium text-slate-900">{customer.id}</TableCell>
-                    <TableCell>{customer.name}</TableCell>
-                    <TableCell className="text-slate-500">{customer.email}</TableCell>
-                    <TableCell className="text-slate-500">{customer.phone}</TableCell>
-                    <TableCell className="text-right font-medium text-slate-900">{customer.orders}</TableCell>
-                    <TableCell className="text-right text-slate-500">{customer.lastOrder}</TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+        <div className="rounded-3xl border border-emerald-100/80 bg-white/85 shadow-xl backdrop-blur">
+          <div className="flex flex-col gap-4 border-b border-emerald-50/80 px-4 py-4 sm:flex-row-reverse sm:items-center sm:justify-between">
+            <div className="relative w-full sm:max-w-sm">
+              <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-400" />
+              <Input
+                type="search"
+                placeholder="ابحث عن عميل"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                className="h-10 rounded-full border-emerald-200 bg-white/80 pr-9 text-right text-sm"
+              />
+            </div>
+            <Button variant="ghost" className="rounded-full border border-emerald-100 bg-emerald-50/80 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-100">
+              تصدير القائمة
+            </Button>
+          </div>
+
+          {loading ? (
+            <div className="px-4 py-10 text-center text-sm text-emerald-700">جارٍ تحميل العملاء...</div>
+          ) : error ? (
+            <div className="px-4 py-10 text-center text-sm text-rose-600">{error}</div>
+          ) : null}
+
+          {!loading && !error ? (
+            <>
+              <div className="hidden overflow-x-auto sm:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-emerald-50/60">
+                      <TableHead className="w-32 text-right">معرف العميل</TableHead>
+                      <TableHead className="text-right">الاسم</TableHead>
+                      <TableHead className="text-right">البريد الإلكتروني</TableHead>
+                      <TableHead className="text-right">الهاتف</TableHead>
+                      <TableHead className="text-right">الطلبات</TableHead>
+                      <TableHead className="text-right">آخر طلب</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredCustomers.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="py-8 text-center text-sm text-emerald-700">
+                          لا يوجد عملاء مطابقون لبحثك.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredCustomers.map((customer) => (
+                        <TableRow key={customer.id} className="hover:bg-emerald-50/60">
+                          <TableCell className="text-right font-semibold text-emerald-900">{customer.id}</TableCell>
+                          <TableCell className="text-right font-semibold text-emerald-900">{customer.name}</TableCell>
+                          <TableCell className="text-right text-emerald-700/90">{customer.email}</TableCell>
+                          <TableCell className="text-right text-emerald-700/90">{customer.phone}</TableCell>
+                          <TableCell className="text-right font-semibold text-emerald-900">{customer.orders}</TableCell>
+                          <TableCell className="text-right text-emerald-700/80">
+                            {formatDate(customer.lastOrder)}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div className="space-y-3 px-4 py-4 sm:hidden">
+                {filteredCustomers.length === 0 ? (
+                  <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 px-4 py-6 text-center text-sm text-emerald-800">
+                    لا يوجد عملاء مطابقون لبحثك.
+                  </div>
+                ) : (
+                  filteredCustomers.map((customer) => (
+                    <div
+                      key={customer.id}
+                      className="rounded-2xl border border-emerald-100 bg-white/80 p-4 shadow-sm backdrop-blur"
+                    >
+                      <div className="flex items-center justify-between text-right">
+                        <div>
+                          <p className="text-sm font-semibold text-emerald-900">{customer.name}</p>
+                          <p className="text-xs text-emerald-700/80">{customer.email}</p>
+                        </div>
+                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
+                          {customer.orders} طلبات
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs text-emerald-700/80">{customer.phone}</p>
+                      <div className="mt-3 flex items-center justify-between text-xs text-emerald-700/80">
+                        <span>المعرف: {customer.id}</span>
+                        <span>آخر طلب: {formatDate(customer.lastOrder)}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
     </section>
   )
+}
+
+function mapOrdersToCustomers(orders: ApiOrder[]): CustomerRow[] {
+  const map = new Map<string, CustomerRow>()
+
+  orders.forEach((order) => {
+    const key = resolveCustomerKey(order)
+    const createdAt = order.createdAt || new Date().toISOString()
+    const existing = map.get(key)
+    const totalPrice = Number(order.totalPrice ?? 0)
+
+    if (!existing) {
+      map.set(key, {
+        id: key.replace(/^(phone|email|user|addr|order):/, "CUS-"),
+        name: buildCustomerName(order),
+        email: order.customer?.email || "",
+        phone: order.customer?.phone || "",
+        orders: 1,
+        lastOrder: createdAt,
+        totalSpent: totalPrice,
+      })
+      return
+    }
+
+    existing.orders += 1
+    existing.totalSpent += totalPrice
+    const prevDate = new Date(existing.lastOrder || 0).getTime()
+    const nextDate = new Date(createdAt).getTime()
+    if (!Number.isNaN(nextDate) && (Number.isNaN(prevDate) || nextDate > prevDate)) {
+      existing.lastOrder = createdAt
+    }
+    map.set(key, existing)
+  })
+
+  return Array.from(map.values()).sort((a, b) => b.orders - a.orders)
 }

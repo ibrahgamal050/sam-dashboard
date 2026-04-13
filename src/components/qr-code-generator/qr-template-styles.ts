@@ -2,6 +2,8 @@ export const templates = [
   {
     id: "minimal",
     name: "Minimal",
+    tag: "Most flexible",
+    description: "Clean block ready for brand colors",
     className: "p-4",
     headerClass: "",
     qrWrapperClass: "",
@@ -10,6 +12,8 @@ export const templates = [
   {
     id: "rounded",
     name: "Rounded corners",
+    tag: "Cards",
+    description: "Soft edges with centered copy",
     className: "p-4 flex flex-col items-center gap-2",
     headerClass: "",
     qrWrapperClass: "",
@@ -18,6 +22,8 @@ export const templates = [
   {
     id: "banner",
     name: "Banner top",
+    tag: "Signage",
+    description: "Bold stripe for quick scanning",
     className: "overflow-hidden rounded-xl",
     headerClass: "bg-(--qr-accent-color) p-3 text-center text-xs font-semibold uppercase tracking-wide",
     qrWrapperClass: "p-4",
@@ -26,6 +32,8 @@ export const templates = [
   {
     id: "pocket",
     name: "Pocket",
+    tag: "Table tent",
+    description: "Dual side accents framing the QR",
     className: "relative overflow-hidden rounded-lg p-4",
     headerClass: "",
     qrWrapperClass: "relative z-10",
@@ -36,6 +44,8 @@ export const templates = [
   {
     id: "wave",
     name: "Wave",
+    tag: "Playful",
+    description: "Organic blob highlight behind the code",
     className: "relative overflow-hidden rounded-lg p-4",
     headerClass: "",
     qrWrapperClass: "relative z-10",
@@ -45,6 +55,8 @@ export const templates = [
   {
     id: "arc",
     name: "Arc highlight",
+    tag: "Top glow",
+    description: "Gradient arc pulling focus to the QR",
     className: "relative overflow-hidden rounded-lg p-4",
     headerClass: "",
     qrWrapperClass: "relative z-10",
@@ -54,6 +66,8 @@ export const templates = [
   {
     id: "frame",
     name: "Border frame",
+    tag: "Framed",
+    description: "Thick outline for posters",
     className: "p-2",
     headerClass: "",
     qrWrapperClass: "rounded-xl border-4 border-[var(--qr-accent-color)] p-4",

@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { Check, ImageIcon, Trash2, Upload, AlertCircle } from "lucide-react"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -18,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { zodFormResolver } from "@/lib/zod-form-resolver"
 
 // Define the schema for form validation
 const menuItemSchema = z.object({
@@ -96,7 +96,7 @@ export default function EditMenuItem({
 
   // Initialize the form with react-hook-form
   const form = useForm<MenuItemFormValues>({
-    resolver: zodResolver(menuItemSchema),
+    resolver: zodFormResolver<MenuItemFormValues>(menuItemSchema),
     defaultValues: {
       name: {
         en: item.name.en,

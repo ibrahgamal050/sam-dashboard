@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server"
 import mongoose from "mongoose"
-import { getServerSession } from "next-auth"
 
 import Restaurant from "@/models/Restaurant"
-import { authOptions } from "@/server/auth/nextauth-options"
+import { getMeelzaUser } from "@/lib/auth/meelza-session"
 
 const GLOBAL_KEY = "__global__"
 
@@ -33,12 +32,12 @@ const normalizeAssignments = (input: unknown): RoleAssignment[] => {
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getMeelzaUser()
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const assignments = normalizeAssignments((session.user as any).roleAssignments)
+    const assignments = normalizeAssignments((user as any).roleAssignments)
     if (!assignments.length) {
       return NextResponse.json({ restaurants: [] }, { status: 200 })
     }

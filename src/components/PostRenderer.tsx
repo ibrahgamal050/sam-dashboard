@@ -6,7 +6,7 @@ import React from "react"
 import Link from "next/link"
 
 // 👇 لو عندك API حقيقي بيجيب المنيو استخدمه بدل الـ mock
-const mockMenuData = {
+const mockMenuData: Record<string, Array<{ id: string; name: string; price: number }>> = {
   shawarma: [
     { id: "1", name: "شاورما فراخ رول", price: 60 },
     { id: "2", name: "شاورما لحم رول", price: 75 },

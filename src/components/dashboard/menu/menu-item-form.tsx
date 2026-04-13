@@ -5,13 +5,13 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm, useFieldArray } from "react-hook-form"
 import { z } from "zod"
 import { useState, useEffect } from "react"
 import type { IMenuItem } from "@/types/menu"
 import { Trash } from "lucide-react"
+import { zodFormResolver } from "@/lib/zod-form-resolver"
 
 const formSchema = z.object({
   nameEn: z.string().min(2, {
@@ -57,7 +57,7 @@ export function MenuItemForm({ restaurantId, categoryId, menuItem }: MenuItemFor
     })) || []
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodFormResolver<z.infer<typeof formSchema>>(formSchema),
     defaultValues: {
       nameEn: menuItem?.name.en || "",
       nameAr: menuItem?.name.ar || "",

@@ -1,157 +1,232 @@
 import { NextResponse } from "next/server"
-import { Types } from "mongoose"
-
+import mongoose from "mongoose"
+import type { FilterQuery } from "mongoose"
 import dbConnect from "@/lib/dbConnect"
-import RestaurantMenu from "@/models/RestaurantMenu"
-import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
+import Brand from "@/models/Brand"
+import BrandMenuCategory from "@/models/BrandMenuCategory"
+import BrandMenuItem from "@/models/BrandMenuItem"
+import Restaurant from "@/models/Restaurant"
+import RestaurantMenuItem, { type IRestaurantMenuItem } from "@/models/RestaurantMenuItem"
+import { normalizeMenuType } from "@/lib/menu-types"
+
+const resolveBrand = async (menuId: string) => {
+  if (mongoose.Types.ObjectId.isValid(menuId)) {
+    return Brand.findById(menuId).lean<{ _id: mongoose.Types.ObjectId } | null>()
+  }
+  return Brand.findOne({ slug: menuId.toLowerCase() }).lean<{ _id: mongoose.Types.ObjectId } | null>()
+}
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+
+const resolveRestaurantFromRequest = async (req: Request) => {
+  const headerId = req.headers.get("x-restaurant-id")
+  if (headerId && mongoose.Types.ObjectId.isValid(headerId)) {
+    return Restaurant.findById(headerId).lean<{
+      _id: mongoose.Types.ObjectId
+      brandId?: mongoose.Types.ObjectId | null
+    } | null>()
+  }
+
+  const referer = req.headers.get("referer")
+  if (!referer) return null
+
+  try {
+    const pathname = new URL(referer).pathname
+    const match = pathname.match(/\/dashboard\/([^/]+)\/menu/)
+    if (!match) return null
+    const slug = decodeURIComponent(match[1])
+    const escaped = escapeRegExp(slug)
+    return Restaurant.findOne({
+      $or: [
+        { subdomain: { $regex: new RegExp(`^${escaped}$`, "i") } },
+        { slug: { $regex: new RegExp(`^${escaped}$`, "i") } },
+      ],
+    }).lean<{
+      _id: mongoose.Types.ObjectId
+      brandId?: mongoose.Types.ObjectId | null
+    } | null>()
+  } catch {
+    return null
+  }
+}
+
+const buildOverrideFilter = (
+  restaurantId: mongoose.Types.ObjectId,
+  brandMenuItemId: mongoose.Types.ObjectId,
+  menuType: string,
+): FilterQuery<IRestaurantMenuItem> => {
+  if (menuType === "delivery") {
+    return {
+      restaurantId,
+      brandMenuItemId,
+      $or: [{ menuType }, { menuType: { $exists: false } }],
+    }
+  }
+  return { restaurantId, brandMenuItemId, menuType }
+}
 
 export async function PUT(
-  request: Request,
-  context: RouteHandlerContext,
+  req: Request,
+  { params }: { params: Promise<{ menuId: string; categoryId: string; itemId: string }> },
 ) {
-  const { menuId, categoryId, itemId } = await getRouteParams<{ menuId?: string; categoryId?: string; itemId?: string }>(context)
+  const resolvedParams = await params
+  const menuId = decodeURIComponent(resolvedParams.menuId || "")
+  const categoryId = resolvedParams.categoryId
+  const itemId = resolvedParams.itemId
+  const body = await req.json().catch(() => ({}))
+  const menuType = normalizeMenuType(new URL(req.url).searchParams.get("menuType"))
 
-  if (!menuId || !categoryId || !itemId) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+  if (!mongoose.Types.ObjectId.isValid(categoryId) || !mongoose.Types.ObjectId.isValid(itemId)) {
+    return NextResponse.json({ error: "Invalid ids." }, { status: 400 })
   }
-
-  if (!Types.ObjectId.isValid(menuId) || !Types.ObjectId.isValid(categoryId) || !Types.ObjectId.isValid(itemId)) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+  if (!menuType) {
+    return NextResponse.json({ error: "Invalid menuType." }, { status: 400 })
   }
-
-  const payload = await request.json()
 
   await dbConnect()
 
-  const menu = await RestaurantMenu.findById(menuId)
-
-  if (!menu) {
-    return NextResponse.json({ error: "Menu not found" }, { status: 404 })
+  const restaurant =
+    (await resolveRestaurantFromRequest(req)) ||
+    (mongoose.Types.ObjectId.isValid(menuId)
+      ? await Restaurant.findById(menuId).lean<{
+          _id: mongoose.Types.ObjectId
+          brandId?: mongoose.Types.ObjectId | null
+        } | null>()
+      : null)
+  if (!restaurant) {
+    return NextResponse.json({ error: "Restaurant not found." }, { status: 404 })
   }
 
-  const category = menu.categories.id(categoryId)
+  const brand = restaurant?.brandId
+    ? await Brand.findById(restaurant.brandId).lean()
+    : await resolveBrand(menuId)
+  if (!brand) {
+    return NextResponse.json({ error: "Brand not found." }, { status: 404 })
+  }
 
+  const category = await BrandMenuCategory.findOne({ _id: categoryId, brandId: brand._id }).lean()
   if (!category) {
-    return NextResponse.json({ error: "Category not found" }, { status: 404 })
+    return NextResponse.json({ error: "Category not found." }, { status: 404 })
   }
 
-  const item = category.menuItems.id(itemId)
-
-  if (!item) {
-    return NextResponse.json({ error: "Menu item not found" }, { status: 404 })
+  const baseItem = await BrandMenuItem.findOne({ _id: itemId, brandId: brand._id }).lean()
+  if (!baseItem) {
+    return NextResponse.json({ error: "Menu item not found." }, { status: 404 })
   }
 
-  const normalizedPayload = normalizeItemPayload(payload, item)
+  const existingOverride = await RestaurantMenuItem.findOne(
+    buildOverrideFilter(restaurant._id, new mongoose.Types.ObjectId(itemId), menuType),
+  ).lean()
 
-  const normalizedSizes =
-    payload?.sizes !== undefined
-      ? normalizeSizes(payload.sizes)
-      : item.sizes?.map((size: any) => normalizeSizeDocument(size))
+  const nextPrice =
+    typeof body.price === "number"
+      ? body.price
+      : typeof existingOverride?.price === "number"
+        ? existingOverride.price
+        : baseItem.price ?? 0
+  const nextIsAvailable =
+    typeof body.isAvailable === "boolean"
+      ? body.isAvailable
+      : typeof existingOverride?.isAvailable === "boolean"
+        ? existingOverride.isAvailable
+        : baseItem.isAvailable ?? true
+  const nextIsHidden =
+    typeof body.isHidden === "boolean"
+      ? body.isHidden
+      : typeof existingOverride?.isHidden === "boolean"
+        ? existingOverride.isHidden
+        : existingOverride?.isActive === false
+  const nextOrder =
+    typeof body.sortOrder === "number"
+      ? body.sortOrder
+      : typeof body.order === "number"
+        ? body.order
+        : typeof existingOverride?.order === "number"
+          ? existingOverride.order
+          : baseItem.order ?? 0
 
-  item.set({
-    ...item.toObject(),
-    ...normalizedPayload,
-    name: normalizedPayload.name,
-    description: normalizedPayload.description,
-    sizes: normalizedSizes,
-  })
-
-  menu.markModified("categories")
-  await menu.save()
-
-  return NextResponse.json(JSON.parse(JSON.stringify(item)))
-}
-
-function normalizeSizes(sizes: any): any[] {
-  if (!Array.isArray(sizes)) return []
-
-  return sizes.map(normalizeSizeDocument)
-}
-
-function normalizeTranslatable(value: any, fallback: any = {}) {
-  if (!value || typeof value !== "object") {
-    return {
-      en: (fallback?.en ?? "").trim(),
-      ar: (fallback?.ar ?? "").trim(),
-    }
-  }
-
-  return {
-    en: (value?.en ?? fallback?.en ?? "").trim(),
-    ar: (value?.ar ?? fallback?.ar ?? "").trim(),
-  }
-}
-
-function normalizeSizeDocument(size: any) {
-  if (!size) {
-    return {
-      name: { en: "Size", ar: "حجم" },
-      price: 0,
-    }
-  }
-
-  const normalized: any = {
-    name: {
-      en: (size?.name?.en ?? "").trim() || (size?.name?.ar ?? "").trim() || "Size",
-      ar: (size?.name?.ar ?? "").trim() || (size?.name?.en ?? "").trim() || "حجم",
+  await RestaurantMenuItem.updateOne(
+    buildOverrideFilter(restaurant._id, new mongoose.Types.ObjectId(String(baseItem._id)), menuType),
+    {
+      $set: {
+        restaurantId: restaurant._id,
+        brandMenuItemId: baseItem._id,
+        menuType,
+        price: nextPrice,
+        order: nextOrder,
+        isAvailable: nextIsAvailable,
+        isActive: !nextIsHidden,
+      },
     },
-    price: Number.isFinite(Number(size?.price)) ? Number(size?.price) : 0,
-  }
+    { upsert: true },
+  )
 
-  if (size?._id && Types.ObjectId.isValid(size._id)) {
-    normalized._id = new Types.ObjectId(size._id)
-  }
-
-  return normalized
-}
-
-function normalizeItemPayload(payload: any, item: any) {
-  const safePayload = payload && typeof payload === "object" ? payload : {}
-
-  return {
-    ...safePayload,
-    name: normalizeTranslatable(safePayload?.name, item?.name || {}),
-    description: normalizeTranslatable(safePayload?.description, item?.description || {}),
-  }
+  return NextResponse.json({
+    _id: baseItem._id,
+    name: baseItem.name,
+    description: baseItem.description,
+    price: nextPrice,
+    image: baseItem.images?.[0]?.url || "",
+    sizes: (baseItem.sizes || []).map((size) => ({
+      _id: new mongoose.Types.ObjectId(),
+      name: { ar: size.label, en: size.label },
+      price: size.price,
+    })),
+    isAvailable: nextIsAvailable,
+    isHidden: nextIsHidden,
+    sortOrder: nextOrder,
+  })
 }
 
 export async function DELETE(
-  _request: Request,
-  context: RouteHandlerContext,
+  req: Request,
+  { params }: { params: Promise<{ menuId: string; categoryId: string; itemId: string }> },
 ) {
-  const { menuId, categoryId, itemId } = await getRouteParams<{ menuId?: string; categoryId?: string; itemId?: string }>(context)
+  const resolvedParams = await params
+  const menuId = decodeURIComponent(resolvedParams.menuId || "")
+  const itemId = resolvedParams.itemId
+  const menuType = normalizeMenuType(new URL(req.url).searchParams.get("menuType"))
 
-  if (!menuId || !categoryId || !itemId) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return NextResponse.json({ error: "Invalid item id." }, { status: 400 })
   }
-
-  if (!Types.ObjectId.isValid(menuId) || !Types.ObjectId.isValid(categoryId) || !Types.ObjectId.isValid(itemId)) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+  if (!menuType) {
+    return NextResponse.json({ error: "Invalid menuType." }, { status: 400 })
   }
 
   await dbConnect()
 
-  const menu = await RestaurantMenu.findById(menuId)
-
-  if (!menu) {
-    return NextResponse.json({ error: "Menu not found" }, { status: 404 })
+  const restaurant =
+    (await resolveRestaurantFromRequest(req)) ||
+    (mongoose.Types.ObjectId.isValid(menuId)
+      ? await Restaurant.findById(menuId).lean<{
+          _id: mongoose.Types.ObjectId
+          brandId?: mongoose.Types.ObjectId | null
+        } | null>()
+      : null)
+  if (!restaurant) {
+    return NextResponse.json({ error: "Restaurant not found." }, { status: 404 })
   }
 
-  const category = menu.categories.id(categoryId)
-
-  if (!category) {
-    return NextResponse.json({ error: "Category not found" }, { status: 404 })
+  const brand = restaurant?.brandId
+    ? await Brand.findById(restaurant.brandId).lean()
+    : await resolveBrand(menuId)
+  if (!brand) {
+    return NextResponse.json({ error: "Brand not found." }, { status: 404 })
   }
 
-  const item = category.menuItems.id(itemId)
+  await RestaurantMenuItem.updateOne(
+    buildOverrideFilter(restaurant._id, new mongoose.Types.ObjectId(itemId), menuType),
+    {
+      $set: {
+        restaurantId: restaurant._id,
+        brandMenuItemId: itemId,
+        menuType,
+        isActive: false,
+      },
+    },
+    { upsert: true },
+  )
 
-  if (!item) {
-    return NextResponse.json({ error: "Menu item not found" }, { status: 404 })
-  }
-
-  item.deleteOne()
-  menu.markModified("categories")
-  await menu.save()
-
-  return new NextResponse(null, { status: 204 })
+  return NextResponse.json({ ok: true })
 }

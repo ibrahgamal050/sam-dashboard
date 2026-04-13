@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowDown, ArrowUp, Code2, Copy, Loader2, Plus, Trash2 } from 'lucide-react'
 
-import { BuilderDesigner } from '@/components/builder-designer'
+import { BuilderDesigner, type BuilderSectionState } from '@/components/builder-designer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -57,7 +57,8 @@ type ComponentFormState = {
   component_id: string
   type: string
   position: number
-  props: string
+  props: Record<string, any>
+  propsJson: string
 }
 
 type BuilderSectionFormState = BuilderSection & {
@@ -136,6 +137,8 @@ const toJsonInput = (value: unknown, fallback: unknown = undefined) => {
   return JSON.stringify(normalized, null, 2)
 }
 
+const formatPropsJson = (value: Record<string, any>) => toJsonInput(value, {})
+
 const createDefaultComponent = (position: number): ComponentFormState => ({
   component_id: `component-${
     typeof globalThis !== 'undefined' &&
@@ -146,7 +149,11 @@ const createDefaultComponent = (position: number): ComponentFormState => ({
   }`,
   type: 'custom-component',
   position,
-  props: '{\n  "title": "New block",\n  "content": "Update component props"\n}',
+  props: {
+    title: "New block",
+    content: "Update component props",
+  },
+  propsJson: '{\n  "title": "New block",\n  "content": "Update component props"\n}',
 })
 
 const createDefaultBuilderSection = (position: number): BuilderSectionFormState => {
@@ -270,6 +277,21 @@ export default function PageEditor() {
   const setBuilderSectionsFromDesigner = useCallback(
     (updater: (prev: BuilderSectionFormState[]) => BuilderSectionFormState[]) => {
       setBuilderSections((prev) => normalizeSectionsForDesigner(updater(prev)))
+    },
+    [],
+  )
+
+  const handleDesignerSectionsChange = useCallback(
+    (updater: (prev: BuilderSectionState[]) => BuilderSectionState[]) => {
+      setBuilderSections((prev) =>
+        normalizeSectionsForDesigner(updater(prev).map((section) => ({
+          ...section,
+          layoutInput: toJsonInput(section.layout ?? {}, {}),
+          elementsInput: toJsonInput(section.elements ?? [], []),
+          layoutError: undefined,
+          elementsError: undefined,
+        }))),
+      )
     },
     [],
   )
@@ -477,7 +499,7 @@ const handleAddBuilderSection = () => {
         elementsInput: target.elementsInput,
         layoutError: undefined,
         elementsError: undefined,
-        position: target.position + 0.1,
+        position: (target.position ?? index + 1) + 0.1,
       }
       const next = [...prev]
       next.splice(index + 1, 0, clone)
@@ -577,7 +599,7 @@ const handleAddBuilderSection = () => {
   }
 
   const handlePropsJsonApply = (index: number) => {
-    let parseError: Error | null = null
+    let parseErrorMessage: string | null = null
 
     setComponents((prev) => {
       const next = [...prev]
@@ -593,15 +615,15 @@ const handleAddBuilderSection = () => {
         }
         return next
       } catch (error) {
-        parseError = error as Error
+        parseErrorMessage = error instanceof Error ? error.message : 'Invalid JSON'
         return prev
       }
     })
 
-    if (parseError) {
+    if (parseErrorMessage) {
       toast({
         title: 'Invalid JSON',
-        description: parseError.message,
+        description: parseErrorMessage,
         variant: 'destructive',
       })
     } else {
@@ -1118,7 +1140,7 @@ const handleAddBuilderSection = () => {
                 <TabsTrigger value="json">Raw JSON</TabsTrigger>
               </TabsList>
               <TabsContent value="canvas" className="mt-6">
-                <BuilderDesigner sections={builderSections} onSectionsChange={setBuilderSectionsFromDesigner} />
+                <BuilderDesigner sections={builderSections} onSectionsChange={handleDesignerSectionsChange} />
               </TabsContent>
               <TabsContent value="json" className="mt-6 space-y-6">
                 {builderSectionsCount > 0 && (

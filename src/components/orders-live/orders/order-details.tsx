@@ -673,144 +673,85 @@ export function OrderDetails({
     <div className="flex h-full flex-1 flex-col bg-background" lang={locale} dir={direction}>
       <ScrollArea className="h-full">
         <div className="space-y-4 p-4">
-          <Card className="space-y-4 p-4">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className={cn("space-y-2", textStart)}>
-                <div className="text-sm text-muted-foreground">
-                  {strings.summary.orderLabel} #{orderId}
-                </div>
-                <div className="text-2xl font-semibold text-foreground">
-                  {formatCurrencyValue(totals.total)}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {strings.summary.itemsCount(itemCount)}
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                <Badge variant={statusVariant}>{statusLabel}</Badge>
-                <Badge variant="outline">{typeLabel}</Badge>
-                <Badge variant="outline">
-                  {strings.payment.status}: {paymentStatusLabel}
-                </Badge>
-              </div>
-            </div>
+          <Card className="overflow-hidden border-none bg-background/50 shadow-lg backdrop-blur-sm transition-all hover:shadow-xl">
+  <div className="p-6">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      {/* القسم الأيسر: معلومات الطلب الأساسية */}
+      <div className={cn("space-y-1", textStart)}>
+        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+          {strings.summary.orderLabel} <span className="text-primary">#{orderId}</span>
+        </p>
+        <h3 className="text-3xl font-bold tracking-tight text-foreground">
+          {formatCurrencyValue(totals.total)}
+        </h3>
+        <p className="text-sm font-medium text-muted-foreground/70">
+          {strings.summary.itemsCount(itemCount)}
+        </p>
+      </div>
 
-            <Separator />
+      {/* القسم الأيمن: التسميات (Badges) بشكل عصري */}
+      <div className="flex flex-wrap gap-2 sm:justify-end">
+        <Badge 
+          variant={statusVariant} 
+          className="rounded-full px-3 py-1 text-xs font-semibold shadow-sm"
+        >
+          {statusLabel}
+        </Badge>
+        <Badge 
+          variant="secondary" 
+          className="rounded-full bg-secondary/50 px-3 py-1 text-xs font-medium"
+        >
+          {typeLabel}
+        </Badge>
+        <Badge 
+          variant="outline" 
+          className="rounded-full border-dashed px-3 py-1 text-xs font-medium"
+        >
+          {strings.payment.status}: {paymentStatusLabel}
+        </Badge>
+      </div>
+    </div>
+  </div>
 
-            <div className={cn("flex flex-wrap gap-2", justifyClass)}>
-              {onUpdate && (
-                <Button variant="outline" size="sm" onClick={onUpdate}>
-                  {strings.actions.refresh}
-                </Button>
-              )}
-              {onAccept && (
-                <Button variant="default" size="sm" onClick={onAccept} disabled={accepting}>
-                  {accepting ? strings.actions.accepting : strings.actions.accept}
-                </Button>
-              )}
-              {onReady && (
-                <Button variant="secondary" size="sm" onClick={onReady} disabled={readying}>
-                  {readying ? strings.actions.readying : strings.actions.ready}
-                </Button>
-              )}
-              {onDeliver && (
-                <Button variant="secondary" size="sm" onClick={onDeliver} disabled={delivering}>
-                  {delivering ? strings.actions.delivering : strings.actions.deliver}
-                </Button>
-              )}
-              {onCancel && (
-                <Button variant="destructive" size="sm" onClick={onCancel} disabled={canceling}>
-                  {canceling ? strings.actions.canceling : strings.actions.cancel}
-                </Button>
-              )}
-            </div>
-          </Card>
+  {/* شريط الإجراءات في الأسفل بخلفية مميزة */}
+  <div className="bg-muted/30 px-6 py-4">
+    <div className={cn("flex flex-wrap gap-3", justifyClass)}>
+      {onUpdate && (
+        <Button variant="ghost" size="sm" onClick={onUpdate} className="hover:bg-background">
+       
+          {strings.actions.refresh}
+        </Button>
+      )}
+      
+      <div className="flex flex-wrap gap-2 ml-auto">
+        {onCancel && (
+          <Button variant="ghost" size="sm" onClick={onCancel} disabled={canceling} className="text-destructive hover:bg-destructive/10">
+            {canceling ? strings.actions.canceling : strings.actions.cancel}
+          </Button>
+        )}
+        
+        {onAccept && (
+          <Button variant="default" size="sm" onClick={onAccept} disabled={accepting} className="rounded-full px-6 shadow-md hover:shadow-lg transition-transform active:scale-95">
+            {accepting ? strings.actions.accepting : strings.actions.accept}
+          </Button>
+        )}
+        
+        {onReady && (
+          <Button variant="secondary" size="sm" onClick={onReady} disabled={readying} className="rounded-full px-6 border-primary/20">
+            {readying ? strings.actions.readying : strings.actions.ready}
+          </Button>
+        )}
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Card className="space-y-4 p-4">
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-foreground">{strings.customer.title}</h3>
-                <div className="space-y-1 text-sm">
-                  <div className={textStart}>{order.customer?.name ?? strings.common.unknown}</div>
-                  {order.customer?.phone && (
-                    <div className={cn("text-muted-foreground", textStart)}>
-                      {strings.customer.phone}: {order.customer.phone}
-                    </div>
-                  )}
-                  {order.customer?.email && (
-                    <div className={cn("text-muted-foreground", textStart)}>
-                      {strings.customer.email}: {order.customer.email}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <Separator />
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-foreground">{strings.address.title}</h3>
-                <div className={cn("text-sm", textStart)}>
-                  {addressText
-                    ? addressText
-                    : typeKey === "delivery"
-                      ? strings.address.noAddress
-                      : strings.address.pickup}
-                </div>
-                {instructions && (
-                  <div className={cn("text-xs text-muted-foreground", textStart)}>
-                    {strings.address.instructions}: {instructions}
-                  </div>
-                )}
-              </div>
-              <Separator />
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-foreground">{strings.customer.notes}</h3>
-                <div className={cn("text-sm", textStart)}>
-                  {notes ? notes : strings.customer.noNotes}
-                </div>
-              </div>
-            </Card>
+        {onDeliver && (
+          <Button variant="secondary" size="sm" onClick={onDeliver} disabled={delivering} className="rounded-full px-6 bg-primary text-primary-foreground hover:bg-primary/90">
+            {delivering ? strings.actions.delivering : strings.actions.deliver}
+          </Button>
+        )}
+      </div>
+    </div>
+  </div>
+</Card>
 
-            <Card className="space-y-4 p-4">
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-foreground">{strings.payment.title}</h3>
-                <div className="space-y-1 text-sm">
-                  <div className={textStart}>
-                    {strings.payment.method}: {paymentMethodLabel}
-                  </div>
-                  <div className={textStart}>
-                    {strings.payment.status}: {paymentStatusLabel}
-                  </div>
-                </div>
-              </div>
-              <Separator />
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-foreground">{strings.totals.title}</h3>
-                <div className="space-y-1">
-                  {totalsRows.map((row) => (
-                    <div key={row.key} className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{row.label}</span>
-                      <span className={textEnd}>{formatCurrencyValue(row.value)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {metaEntries.length > 0 && (
-                <>
-                  <Separator />
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-semibold text-foreground">{strings.meta.title}</h3>
-                    <div className="space-y-1 text-sm">
-                      {metaEntries.map((entry) => (
-                        <div key={entry.label} className={cn("flex items-center justify-between gap-2", textStart)}>
-                          <span className="text-muted-foreground">{entry.label}</span>
-                          <span className={textEnd}>{entry.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-            </Card>
-          </div>
 
           <Card className="space-y-4 p-4">
             <div className="flex items-center justify-between">

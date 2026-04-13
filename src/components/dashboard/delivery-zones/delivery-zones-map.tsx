@@ -40,7 +40,7 @@ export function DeliveryZonesMap({
           <div className="absolute inset-0 flex items-center justify-center bg-muted">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading map...</p>
+              <p className="text-muted-foreground">جاري تحميل الخريطة...</p>
             </div>
           </div>
         ) : (
@@ -101,7 +101,7 @@ export function DeliveryZonesMap({
 
               {/* Legend */}
               <div className="absolute bottom-4 left-4 bg-card border border-border rounded-lg p-4 shadow-sm max-w-xs">
-                <h4 className="font-medium text-sm mb-3 text-card-foreground">Active Zones</h4>
+                <h4 className="font-medium text-sm mb-3 text-card-foreground">المناطق النشطة</h4>
                 <div className="space-y-2">
                   {zones
                     .filter((zone) => zone.is_active)
@@ -111,7 +111,7 @@ export function DeliveryZonesMap({
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: zone.color }} />
                           <span className="text-card-foreground">{zone.name}</span>
                         </div>
-                        <span className="text-muted-foreground">€{zone.delivery_fee.toFixed(2)}</span>
+                        <span className="text-muted-foreground">{zone.delivery_fee.toFixed(2)} ج</span>
                       </div>
                     ))}
                 </div>
@@ -119,7 +119,7 @@ export function DeliveryZonesMap({
 
               {/* Attribution */}
               <div className="absolute bottom-2 right-2 text-xs text-muted-foreground bg-card/80 px-2 py-1 rounded">
-                Map data © OpenStreetMap contributors
+                بيانات الخريطة © OpenStreetMap contributors
               </div>
             </div>
           </>

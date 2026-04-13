@@ -1,83 +1,94 @@
 import { NextResponse } from "next/server"
-import { Types } from "mongoose"
-
+import mongoose from "mongoose"
 import dbConnect from "@/lib/dbConnect"
-import RestaurantMenu from "@/models/RestaurantMenu"
-import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
+import Brand from "@/models/Brand"
+import BrandMenuCategory from "@/models/BrandMenuCategory"
+import BrandMenuItem from "@/models/BrandMenuItem"
 
-export async function PUT(request: Request, context: RouteHandlerContext) {
-  const { menuId, categoryId } = await getRouteParams<{ menuId?: string; categoryId?: string }>(context)
-
-  if (!menuId || !categoryId) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+const resolveBrand = async (menuId: string) => {
+  if (mongoose.Types.ObjectId.isValid(menuId)) {
+    return Brand.findById(menuId).lean()
   }
+  return Brand.findOne({ slug: menuId.toLowerCase() }).lean()
+}
 
-  if (!Types.ObjectId.isValid(menuId) || !Types.ObjectId.isValid(categoryId)) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+export async function PUT(
+  req: Request,
+  { params }: { params: Promise<{ menuId: string; categoryId: string }> },
+) {
+  const resolvedParams = await params
+  const menuId = decodeURIComponent(resolvedParams.menuId || "")
+  const categoryId = resolvedParams.categoryId
+  const body = await req.json().catch(() => ({}))
+
+  if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+    return NextResponse.json({ error: "Invalid category id." }, { status: 400 })
   }
-
-  const payload = await request.json()
 
   await dbConnect()
 
-  const menu = await RestaurantMenu.findById(menuId)
-
-  if (!menu) {
-    return NextResponse.json({ error: "Menu not found" }, { status: 404 })
+  const brand = await resolveBrand(menuId)
+  if (!brand) {
+    return NextResponse.json({ error: "Brand not found." }, { status: 404 })
   }
 
-  const category = menu.categories.id(categoryId)
-
+  const category = await BrandMenuCategory.findOne({ _id: categoryId, brandId: brand._id })
   if (!category) {
-    return NextResponse.json({ error: "Category not found" }, { status: 404 })
+    return NextResponse.json({ error: "Category not found." }, { status: 404 })
   }
 
-  category.set({
-    ...category.toObject(),
-    ...payload,
-    name: {
-      en: payload?.name?.en ?? category.name?.en,
-      ar: payload?.name?.ar ?? category.name?.ar,
-    },
-    updatedAt: new Date(),
+  const prevName = category.name?.ar
+  category.name = body.name ?? category.name
+  await category.save()
+
+  const nextName = category.name?.ar
+  if (prevName && nextName && prevName !== nextName) {
+    await BrandMenuItem.updateMany(
+      { brandId: brand._id, category: prevName },
+      { $set: { category: nextName } },
+    )
+  }
+
+  return NextResponse.json({
+    _id: category._id,
+    name: category.name,
+    menuItems: [],
   })
-
-  menu.markModified("categories")
-  await menu.save()
-
-  return NextResponse.json(JSON.parse(JSON.stringify(category)))
 }
 
 export async function DELETE(
-  _request: Request,
-  context: RouteHandlerContext,
+  req: Request,
+  { params }: { params: Promise<{ menuId: string; categoryId: string }> },
 ) {
-  const { menuId, categoryId } = await getRouteParams<{ menuId?: string; categoryId?: string }>(context)
+  const resolvedParams = await params
+  const menuId = decodeURIComponent(resolvedParams.menuId || "")
+  const categoryId = resolvedParams.categoryId
 
-  if (!menuId || !categoryId) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
-  }
-
-  if (!Types.ObjectId.isValid(menuId) || !Types.ObjectId.isValid(categoryId)) {
-    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 })
+  if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+    return NextResponse.json({ error: "Invalid category id." }, { status: 400 })
   }
 
   await dbConnect()
 
-  const menu = await RestaurantMenu.findById(menuId)
-
-  if (!menu) {
-    return NextResponse.json({ error: "Menu not found" }, { status: 404 })
+  const brand = await resolveBrand(menuId)
+  if (!brand) {
+    return NextResponse.json({ error: "Brand not found." }, { status: 404 })
   }
 
-  const category = menu.categories.id(categoryId)
-
+  const category = await BrandMenuCategory.findOne({ _id: categoryId, brandId: brand._id })
   if (!category) {
-    return NextResponse.json({ error: "Category not found" }, { status: 404 })
+    return NextResponse.json({ error: "Category not found." }, { status: 404 })
   }
 
-  category.deleteOne()
-  await menu.save()
+  const categoryName = category.name?.ar
+  await BrandMenuCategory.deleteOne({ _id: categoryId, brandId: brand._id })
 
-  return new NextResponse(null, { status: 204 })
+  if (categoryName) {
+    await BrandMenuItem.updateMany(
+      { brandId: brand._id, category: categoryName },
+      { $set: { category: "غير مصنف" } },
+    )
+  }
+
+  return NextResponse.json({ ok: true })
 }

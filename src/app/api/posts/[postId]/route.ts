@@ -6,9 +6,13 @@ import { z } from "zod"
 
 const IdSchema = z.object({ postId: z.string().refine((v)=>mongoose.Types.ObjectId.isValid(v),"Invalid id") })
 
-export async function GET(_: Request, { params }: { params: { postId: string } }) {
+export async function GET(
+  _: Request,
+  { params }: { params: Promise<{ postId: string }> }
+) {
   try {
-    const { postId } = IdSchema.parse(params)
+    const resolvedParams = await params
+    const { postId } = IdSchema.parse(resolvedParams)
     await dbConnect()
     const doc = await Post.findById(postId).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
@@ -18,9 +22,13 @@ export async function GET(_: Request, { params }: { params: { postId: string } }
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { postId: string } }) {
+export async function PUT(
+  req: Request,
+  { params }: { params: Promise<{ postId: string }> }
+) {
   try {
-    const { postId } = IdSchema.parse(params)
+    const resolvedParams = await params
+    const { postId } = IdSchema.parse(resolvedParams)
     const body = await req.json()
     await dbConnect()
     const updated = await Post.findByIdAndUpdate(postId, body, { new: true, runValidators: false })

@@ -19,9 +19,10 @@ type OrderType = "Delivery" | "Pickup" | "Dine-in"
 
 type ApiOrder = {
   orderId: string
+  orderNumber?: string
   createdAt: string
   customer?: {
-    name?: string
+    name?: string | { ar?: string; en?: string }
     phone?: string
     email?: string
   }
@@ -36,6 +37,8 @@ type ApiOrder = {
 
 interface Order {
   id: string
+  rowKey: string
+  displayId: string
   createdAt: string
   customer: {
     name: string
@@ -54,10 +57,10 @@ interface Order {
 }
 
 const STATUS_FILTERS: Array<{ label: string; value: OrderStatus | "All" }> = [
-  { label: "All", value: "All" },
-  { label: "On delivery", value: "On Delivery" },
-  { label: "Delivered", value: "Delivered" },
-  { label: "Canceled", value: "Canceled" },
+  { label: "الكل", value: "All" },
+  { label: "قيد التوصيل", value: "On Delivery" },
+  { label: "تم التسليم", value: "Delivered" },
+  { label: "ملغي", value: "Canceled" },
 ]
 
 const PAGE_SIZE = 10
@@ -69,7 +72,7 @@ export default function OrdersPage() {
 
   const [orders, setOrders] = useState<Order[]>([])
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "All">("All")
-  const [dateRange, setDateRange] = useState("Last 7 days")
+  const [dateRange, setDateRange] = useState("آخر 7 أيام")
   const [search, setSearch] = useState("")
   const deferredSearch = useDeferredValue(search)
   const [loading, setLoading] = useState(true)
@@ -89,18 +92,19 @@ export default function OrdersPage() {
     const controller = new AbortController()
     abortRef.current = controller
 
-    const doFetch = async () => {
-      const restaurantRes = await fetch(`/api/restaurants/${subdomain}`, { signal: controller.signal })
-      if (!restaurantRes.ok) throw new Error("Failed to resolve restaurant")
-      const restaurant = await restaurantRes.json()
-      const restaurantId = restaurant?._id
-      if (!restaurantId) throw new Error("Restaurant id missing")
+    const resolveText = (value: unknown) => {
+      if (!value) return ""
+      if (typeof value === "string") return value
+      if (typeof value === "number") return String(value)
+      if (typeof value === "object") {
+        const localized = value as { ar?: string; en?: string }
+        return localized.ar || localized.en || ""
+      }
+      return ""
+    }
 
-      const ordersRes = await fetch(`/api/orders?restaurantId=${restaurantId}`, { signal: controller.signal })
-      if (!ordersRes.ok) throw new Error("Failed to fetch orders")
-      const data = await ordersRes.json()
-
-      const mapped: Order[] = (data.orders || []).map((order: ApiOrder) => {
+    const mapOrders = (data: { orders?: ApiOrder[] }, addressFallback?: unknown): Order[] =>
+      (data.orders || []).map((order: ApiOrder) => {
         const items = (order.items || []).map((item) => ({
           name: item.name,
           qty: item.quantity,
@@ -116,22 +120,62 @@ export default function OrdersPage() {
           return "On Delivery"
         })()
 
+        const displayId = order.orderNumber || order.orderId
+        const rowKey = order.orderId || displayId || `${order.createdAt}-${itemsTotal}`
+
         return {
-          id: order.orderId,
+          id: displayId,
+          rowKey,
+          displayId,
           createdAt: order.createdAt,
           customer: {
-            name: order.customer?.name || "Guest",
+            name: resolveText(order.customer?.name) || "ضيف",
             phone: order.customer?.phone || "",
             email: order.customer?.email || "",
           },
           status: normalizedStatus,
-          address: undefined,
+          address: resolveText(addressFallback) || "—",
           items,
           deliveryFee,
-          type: "Delivery",
+          type: "Delivery" as OrderType,
         }
       })
-      return mapped
+
+    const doFetch = async () => {
+      const restaurantRes = await fetch(`/api/restaurants/${encodeURIComponent(subdomain)}`, {
+        signal: controller.signal,
+      })
+      if (restaurantRes.ok) {
+        const restaurant = await restaurantRes.json()
+        const restaurantId = restaurant?._id
+        if (!restaurantId) throw new Error("معرّف المطعم غير متوفر")
+
+        const ordersRes = await fetch(`/api/orders?restaurantId=${restaurantId}&limit=200`, {
+          signal: controller.signal,
+        })
+        if (!ordersRes.ok) throw new Error("تعذر جلب الطلبات")
+        const data = await ordersRes.json()
+        return mapOrders(data)
+      }
+
+      if (restaurantRes.status !== 404) {
+        throw new Error("تعذر تحديد المطعم")
+      }
+
+      const marketRes = await fetch(`/api/retail/supermarkets/slug/${encodeURIComponent(subdomain)}`, {
+        signal: controller.signal,
+      })
+      if (!marketRes.ok) throw new Error("تعذر تحديد السوبرماركت")
+      const market = await marketRes.json()
+      const supermarketId = market?._id
+      if (!supermarketId) throw new Error("معرّف السوبرماركت غير متوفر")
+
+      const ordersRes = await fetch(`/api/orders?supermarketId=${supermarketId}&limit=200`, {
+        signal: controller.signal,
+      })
+      if (!ordersRes.ok) throw new Error("تعذر جلب الطلبات")
+      const data = await ordersRes.json()
+      return mapOrders(data, market?.address?.ar || market?.address || undefined)
     }
 
     try {
@@ -158,10 +202,12 @@ export default function OrdersPage() {
         const mapped = await fetchOrders()
         if (!cancelled) setOrders(mapped)
       } catch (error) {
-        console.error(error)
-        if (!cancelled) {
-          setOrders(demoOrders)
-          toast({ title: "Using demo orders", description: "Could not fetch orders from the API." })
+        if ((error as any)?.name !== "AbortError") {
+          console.error(error)
+        }
+        if (!cancelled && (error as any)?.name !== "AbortError") {
+          setOrders([])
+          toast({ title: "تعذر جلب الطلبات", description: "حدث خطأ أثناء تحميل الطلبات." })
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -176,12 +222,12 @@ export default function OrdersPage() {
 
   const now = Date.now()
   const minDate = useMemo(() => {
-    if (dateRange === "Today") {
+    if (dateRange === "اليوم") {
       const d = new Date()
       d.setHours(0, 0, 0, 0)
       return d.getTime()
     }
-    if (dateRange === "Last 30 days") return now - 30 * 86400000
+    if (dateRange === "آخر 30 يوم") return now - 30 * 86400000
     return now - 7 * 86400000
   }, [dateRange, now])
 
@@ -222,8 +268,10 @@ export default function OrdersPage() {
       const total = itemsTotal + (order.deliveryFee || 0)
       return {
         id: order.id,
+        rowKey: order.rowKey,
+        displayId: order.displayId,
         date: new Date(order.createdAt).toLocaleString(),
-        customer: order.customer.name || "Guest",
+        customer: order.customer.name || "ضيف",
         location: order.address || "—",
         amount: formatCurrency(total, "EGP"),
         status: order.status,
@@ -252,17 +300,17 @@ export default function OrdersPage() {
 
     return [
       {
-        label: "Total revenue",
+        label: "إجمالي الإيرادات",
         value: formatCurrency(totals.revenue, "EGP"),
         icon: DollarSign,
       },
       {
-        label: "Orders",
+        label: "الطلبات",
         value: `${totals.orders}`,
         icon: RefreshCw,
       },
       {
-        label: "Delivered",
+        label: "تم التسليم",
         value: `${totals.delivered}`,
         icon: CalendarRange,
       },
@@ -271,7 +319,7 @@ export default function OrdersPage() {
 
   const downloadCsv = () => {
     const rows = [
-      ["ID", "Date", "Customer", "Phone", "Email", "Status", "Address", "Items", "Delivery Fee", "Total"],
+      ["رقم الطلب", "التاريخ", "العميل", "الهاتف", "البريد", "الحالة", "العنوان", "الأصناف", "رسوم التوصيل", "الإجمالي"],
       ...orders.map((o) => {
         const itemsTotal = o.items.reduce((sum, i) => sum + i.qty * i.price, 0)
         const total = itemsTotal + o.deliveryFee
@@ -301,136 +349,113 @@ export default function OrdersPage() {
   }
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">Orders</h1>
-          <p className="text-sm text-slate-500">Monitor live operations, delays, and customer activity.</p>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Select value={dateRange} onValueChange={(v) => { setDateRange(v); }}>
-            <SelectTrigger className="h-10 w-44 rounded-full border-slate-300 text-sm">
-              <SelectValue placeholder="Select range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Today">Today</SelectItem>
-              <SelectItem value="Last 7 days">Last 7 days</SelectItem>
-              <SelectItem value="Last 30 days">Last 30 days</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button onClick={downloadCsv} variant="outline" className="gap-2 rounded-full border-slate-300 text-sm">
-            <Download className="h-4 w-4" /> Export CSV
-          </Button>
-          <Button className="gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500">
-            Create order
-          </Button>
-        </div>
+    <section className="relative space-y-6 text-right">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-12 top-10 h-56 w-56 rounded-full bg-sky-200/50 blur-3xl" />
+        <div className="absolute right-0 top-0 h-48 w-48 rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="absolute bottom-0 right-16 h-48 w-48 rounded-full bg-indigo-100/60 blur-3xl" />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {summary.map((metric) => (
-          <Card key={metric.label} className="border border-slate-200">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                {metric.label}
-              </CardTitle>
-              <metric.icon className="h-4 w-4 text-slate-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-semibold text-slate-900">{metric.value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <div className="relative space-y-6">
+       
 
-      <Card className="border border-slate-200">
-        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
-            {STATUS_FILTERS.map((filter) => (
-              <button
-                key={filter.value}
-                type="button"
-                onClick={() => setStatusFilter(filter.value)}
-                className={cn(
-                  "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-                  statusFilter === filter.value
-                    ? "bg-blue-50 text-blue-600"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200",
-                )}
-              >
-                <span className="inline-flex items-center gap-2">
-                  {filter.label}
-                  <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs text-slate-500">
-                    {filter.value === "All"
-                      ? statusCounts.all
-                      : filter.value === "Delivered"
-                      ? statusCounts.delivered
-                      : filter.value === "Canceled"
-                      ? statusCounts.canceled
-                      : statusCounts.onDelivery}
+
+        <Card className="border-slate-200/80 bg-white/90 shadow-[0_20px_50px_rgba(15,23,42,0.12)] backdrop-blur">
+          <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              {STATUS_FILTERS.map((filter) => (
+                <button
+                  key={filter.value}
+                  type="button"
+                  onClick={() => setStatusFilter(filter.value)}
+                  className={cn(
+                    "rounded-full border px-4 py-1.5 text-sm font-semibold transition-all",
+                    statusFilter === filter.value
+                      ? "border-sky-200 bg-[#e9f4ff] text-slate-900 shadow"
+                      : "border-transparent bg-slate-100 text-slate-600 hover:border-slate-200 hover:bg-white",
+                  )}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    {filter.label}
+                    <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs text-slate-600">
+                      {filter.value === "All"
+                        ? statusCounts.all
+                        : filter.value === "Delivered"
+                        ? statusCounts.delivered
+                        : filter.value === "Canceled"
+                        ? statusCounts.canceled
+                        : statusCounts.onDelivery}
+                    </span>
                   </span>
-                </span>
-              </button>
-            ))}
-          </div>
-          <div className="relative w-full sm:max-w-xs">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search orders or customers"
-              className="h-10 rounded-full border-slate-300 pl-9 text-sm"
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="flex flex-col items-center gap-3 py-12 text-sm text-slate-500">
-              <Loader2 className="h-5 w-5 animate-spin" />
-              Loading orders…
+                </button>
+              ))}
             </div>
-          ) : pageOrders.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 py-14 text-center text-slate-500">
-              <PackageOpen className="h-8 w-8" />
-              <p className="text-sm">No orders match your filters.</p>
+            <div className="relative w-full sm:max-w-xs">
+              <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="ابحث في الطلبات أو العملاء"
+                className="h-10 rounded-full border-slate-200 bg-white pr-9 text-sm text-right"
+              />
             </div>
-          ) : (
-            <>
-              <OrdersTable orders={pageOrders} />
-              <div className="mt-4 flex items-center justify-between">
-                <p className="text-xs text-slate-500">
-                  Showing <span className="font-medium text-slate-700">{(page - 1) * PAGE_SIZE + 1}</span>
-                  –<span className="font-medium text-slate-700">{Math.min(page * PAGE_SIZE, tableOrders.length)}</span>
-                  
-                  of <span className="font-medium text-slate-700">{tableOrders.length}</span>
-                </p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                  >
-                    Prev
-                  </Button>
-                  <span className="text-xs text-slate-600">Page {page} / {pageCount}</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full"
-                    onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-                    disabled={page === pageCount}
-                  >
-                    Next
-                  </Button>
-                </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex flex-col items-center gap-3 py-12 text-sm text-slate-600">
+                <Loader2 className="h-5 w-5 animate-spin" />
+                جارٍ تحميل الطلبات...
               </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+            ) : pageOrders.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center text-slate-700">
+                <PackageOpen className="h-8 w-8" />
+                <p className="text-sm font-semibold">لا توجد طلبات مطابقة للفلاتر.</p>
+                <p className="text-xs text-slate-500">جرّب تغيير التاريخ أو حالة الطلب.</p>
+              </div>
+            ) : (
+              <>
+                <OrdersTable orders={pageOrders} />
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs text-slate-500">
+                    عرض{" "}
+                    <span className="font-medium text-slate-800">{(page - 1) * PAGE_SIZE + 1}</span>
+                    {" "}إلى{" "}
+                    <span className="font-medium text-slate-800">
+                      {Math.min(page * PAGE_SIZE, tableOrders.length)}
+                    </span>
+                    {" "}من{" "}
+                    <span className="font-medium text-slate-800">{tableOrders.length}</span>
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full border-slate-200"
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                    >
+                      السابق
+                    </Button>
+                    <span className="text-xs text-slate-500">
+                      صفحة {page} / {pageCount}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full border-slate-200"
+                      onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+                      disabled={page === pageCount}
+                    >
+                      التالي
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </section>
   )
 }
@@ -449,42 +474,3 @@ function escapeCsv(val: string) {
   const escaped = val.replace(/"/g, '""')
   return hasComma ? `"${escaped}"` : escaped
 }
-
-const demoOrders: Order[] = [
-  {
-    id: "ORD-1001",
-    createdAt: new Date().toISOString(),
-    customer: { name: "John Doe", phone: "555-1234", email: "john@example.com" },
-    status: "On Delivery",
-    address: "123 Main St, Springfield",
-    items: [
-      { name: "Burger", qty: 2, price: 8.5 },
-      { name: "Fries", qty: 1, price: 3 },
-    ],
-    deliveryFee: 2.5,
-    type: "Delivery",
-  },
-  {
-    id: "ORD-1002",
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    customer: { name: "Jane Smith", phone: "555-5678", email: "jane@example.com" },
-    status: "Delivered",
-    address: "In-store pickup",
-    items: [
-      { name: "Salad", qty: 1, price: 6 },
-      { name: "Juice", qty: 1, price: 2.5 },
-    ],
-    deliveryFee: 0,
-    type: "Pickup",
-  },
-  {
-    id: "ORD-1003",
-    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-    customer: { name: "Ahmed Ali", phone: "555-9012", email: "ahmed@example.com" },
-    status: "Canceled",
-    address: "456 Elm St, Metropolis",
-    items: [{ name: "Pizza", qty: 1, price: 12 }],
-    deliveryFee: 3,
-    type: "Delivery",
-  },
-]

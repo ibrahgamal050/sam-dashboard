@@ -22,6 +22,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     }
   }
 
-  // حذف التحقق من الـ session والـ provider
-  return <>{children}</>
+  // ضبط الـ dashboard على العربية والـ RTL
+  return (
+    <div dir="rtl" lang="ar" className="min-h-screen">
+      {children}
+    </div>
+  )
 }

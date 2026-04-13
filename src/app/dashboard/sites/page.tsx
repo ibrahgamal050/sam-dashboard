@@ -24,14 +24,14 @@ type AccessibleRestaurant = {
 }
 
 const ROLE_LABELS: Record<string, string> = {
-  meelza_admin: 'Administrator',
-  owner: 'Owner',
-  staff: 'Staff',
+  meelza_admin: 'مدير النظام',
+  owner: 'مالك',
+  staff: 'فريق العمل',
 }
 
 const STATUS_LABELS = {
-  published: { label: 'Published', variant: 'default' as const },
-  draft: { label: 'Draft', variant: 'secondary' as const },
+  published: { label: 'منشور', variant: 'default' as const },
+  draft: { label: 'مسودة', variant: 'secondary' as const },
 }
 
 const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'meelza.com'
@@ -50,12 +50,12 @@ export default function SitesPage() {
         setLoading(true)
         const res = await fetch('/api/me/restaurants', { cache: 'no-store' })
         if (!res.ok) {
-          throw new Error('Failed to load sites')
+          throw new Error('تعذر تحميل المواقع')
         }
         const payload = await res.json()
         setSites(payload.restaurants ?? [])
       } catch (err: any) {
-        setError(err?.message || 'Unable to load your restaurants')
+        setError(err?.message || 'تعذر تحميل مطاعمك')
       } finally {
         setLoading(false)
       }
@@ -64,11 +64,12 @@ export default function SitesPage() {
   }, [])
 
   const filteredSites = useMemo(() => {
+    const q = search.trim().toLowerCase()
     return sites.filter((site) => {
       const matchesSearch =
-        site.name.en.toLowerCase().includes(search.toLowerCase()) ||
+        site.name.en.toLowerCase().includes(q) ||
         site.name.ar.includes(search) ||
-        site.subdomain.toLowerCase().includes(search.toLowerCase())
+        site.subdomain.toLowerCase().includes(q)
 
       const matchesRole = roleFilter === 'all' || site.role === roleFilter
 
@@ -80,10 +81,10 @@ export default function SitesPage() {
   }, [sites, search, roleFilter, statusFilter])
 
   return (
-    <div className="space-y-6 p-6">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="space-y-6 p-6 text-right">
+      <header className="flex flex-col gap-4 lg:flex-row-reverse lg:items-center lg:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-500">Sites</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-500">المواقع</p>
           <h1 className="text-3xl font-semibold text-slate-900">إدارة المطاعم المرتبطة بحسابك</h1>
           <p className="text-sm text-slate-500">عرض كل المواقع التي تمتلك فيها دوراً والنقر للدخول إلى لوحة التحكم الخاصة بكل مطعم.</p>
         </div>
@@ -94,12 +95,12 @@ export default function SitesPage() {
         </div>
       </header>
 
-      <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white/80 p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white/80 p-4 shadow-sm lg:flex-row-reverse lg:items-center lg:justify-between">
         <div className="relative w-full lg:max-w-md">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+          <Search className="absolute right-3 top-3 h-4 w-4 text-slate-400" />
           <Input
             placeholder="ابحث بالإسم أو النطاق الفرعي"
-            className="rounded-full pl-10"
+            className="rounded-full pr-10 text-right"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -114,9 +115,9 @@ export default function SitesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">كل الأدوار</SelectItem>
-              <SelectItem value="meelza_admin">Administrator</SelectItem>
-              <SelectItem value="owner">Owner</SelectItem>
-              <SelectItem value="staff">Staff</SelectItem>
+              <SelectItem value="meelza_admin">مدير النظام</SelectItem>
+              <SelectItem value="owner">مالك</SelectItem>
+              <SelectItem value="staff">فريق العمل</SelectItem>
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as any)}>
@@ -125,8 +126,8 @@ export default function SitesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">الكل</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="published">منشور</SelectItem>
+              <SelectItem value="draft">مسودة</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -156,7 +157,7 @@ export default function SitesPage() {
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-slate-400">
-                    {site.name.en
+                    {(site.name.ar || site.name.en)
                       .split(' ')
                       .map((word) => word[0])
                       .slice(0, 2)
@@ -168,9 +169,9 @@ export default function SitesPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-medium uppercase text-indigo-500">
-                      {site.role ? ROLE_LABELS[site.role] || site.role : 'No role assigned'}
+                      {site.role ? ROLE_LABELS[site.role] || site.role : 'بدون دور'}
                     </p>
-                    <h3 className="text-lg font-semibold text-slate-900">{site.name.en}</h3>
+                    <h3 className="text-lg font-semibold text-slate-900">{site.name.ar || site.name.en}</h3>
                     <p className="text-xs text-slate-500">{site.subdomain}.{rootDomain}</p>
                   </div>
                   <Badge variant={site.isPublished ? STATUS_LABELS.published.variant : STATUS_LABELS.draft.variant}>

@@ -67,6 +67,10 @@ export default function LeafletMap({
   } | null>(null)
   const snapToGridRef = useRef(snapToGrid)
   const gridSizeRef = useRef(snapGridSize)
+  const editModeRef = useRef(editMode)
+  const drawingModeRef = useRef(drawingMode)
+  const onMapClickRef = useRef(onMapClick)
+  const onPolygonCompleteRef = useRef(onPolygonComplete)
   const [isLoading, setIsLoading] = useState(true)
 
   const getPolygonLatLngs = (geometry: PolygonGeometry) => {
@@ -165,6 +169,22 @@ export default function LeafletMap({
     gridSizeRef.current = snapGridSize
   }, [snapGridSize])
 
+  useEffect(() => {
+    editModeRef.current = editMode
+  }, [editMode])
+
+  useEffect(() => {
+    drawingModeRef.current = drawingMode
+  }, [drawingMode])
+
+  useEffect(() => {
+    onMapClickRef.current = onMapClick
+  }, [onMapClick])
+
+  useEffect(() => {
+    onPolygonCompleteRef.current = onPolygonComplete
+  }, [onPolygonComplete])
+
   // Load Leaflet dynamically
   useEffect(() => {
     const loadLeaflet = async () => {
@@ -219,18 +239,19 @@ export default function LeafletMap({
 
     // Handle map clicks
     map.on("click", (e: any) => {
-      if (!editMode) return
+      if (!editModeRef.current) return
 
-      if (drawingMode === "circle") {
-        onMapClick?.(e.latlng.lat, e.latlng.lng)
-      } else if (drawingMode === "polygon") {
+      const mode = drawingModeRef.current
+      if (mode === "circle") {
+        onMapClickRef.current?.(e.latlng.lat, e.latlng.lng)
+      } else if (mode === "polygon") {
         handlePolygonClick(e.latlng.lat, e.latlng.lng)
       }
     })
 
     // Handle double click to finish polygon
     map.on("dblclick", (e: any) => {
-      if (drawingMode === "polygon" && polygonPointsRef.current.length >= 3) {
+      if (drawingModeRef.current === "polygon" && polygonPointsRef.current.length >= 3) {
         finishPolygon()
         L.DomEvent.preventDefault(e)
       }
@@ -246,13 +267,30 @@ export default function LeafletMap({
     }
   // Dependencies intentionally limited; handlers are stable across renders during edit sessions.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leafletLoaded, center, zoom, editMode, drawingMode])
+  }, [leafletLoaded])
 
   const handlePolygonClick = (lat: number, lng: number) => {
     if (!mapInstanceRef.current) return
 
+    const map = mapInstanceRef.current
+    const clickLatLng = L.latLng(lat, lng)
+    const points = polygonPointsRef.current
+    const lastPoint = points.length ? L.latLng(points[points.length - 1][0], points[points.length - 1][1]) : null
+    const firstPoint = points.length ? L.latLng(points[0][0], points[0][1]) : null
+    const closeThresholdMeters = 25
+    const minPointDistanceMeters = 8
+
+    if (lastPoint && map.distance(lastPoint, clickLatLng) <= minPointDistanceMeters) {
+      return
+    }
+
+    if (firstPoint && points.length >= 3 && map.distance(firstPoint, clickLatLng) <= closeThresholdMeters) {
+      finishPolygon()
+      return
+    }
+
     const point: [number, number] = [lat, lng]
-    polygonPointsRef.current.push(point)
+    points.push(point)
 
     // Add temporary marker for the point
     const marker = L.circleMarker([lat, lng], {
@@ -295,7 +333,7 @@ export default function LeafletMap({
   const finishPolygon = () => {
     if (polygonPointsRef.current.length < 3) return
 
-    onPolygonComplete?.(polygonPointsRef.current)
+    onPolygonCompleteRef.current?.(polygonPointsRef.current)
 
     // Clear drawing state
     clearDrawingState()
@@ -646,7 +684,7 @@ export default function LeafletMap({
         <div class="p-2">
           <h3 class="font-semibold text-sm">${zone.name}</h3>
           ${zone.description ? `<p class="text-xs text-gray-600 mt-1">${zone.description}</p>` : ""}
-          <p class="text-xs font-medium mt-2">Delivery Fee: €${zone.delivery_fee}</p>
+          <p class="text-xs font-medium mt-2">رسوم التوصيل: ${zone.delivery_fee} ج</p>
         </div>
       `)
 
@@ -711,7 +749,7 @@ export default function LeafletMap({
       <div className={`${className} flex items-center justify-center bg-muted`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-          <p className="text-sm text-muted-foreground">Loading map...</p>
+          <p className="text-sm text-muted-foreground">جاري تحميل الخريطة...</p>
         </div>
       </div>
     )
@@ -725,14 +763,14 @@ export default function LeafletMap({
         <div className="absolute top-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border max-w-xs">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-            <p className="font-medium text-sm">Drawing Polygon Zone</p>
+            <p className="font-medium text-sm">رسم منطقة مضلعة</p>
           </div>
           <div className="text-xs text-gray-600 space-y-1">
-            <p>• Click to add points</p>
-            <p>• Double-click to finish</p>
-            <p>• Need at least 3 points</p>
+            <p>• انقر لإضافة نقاط</p>
+            <p>• انقر مرتين للإنهاء</p>
+            <p>• تحتاج إلى 3 نقاط على الأقل</p>
             {polygonPointsRef.current.length > 0 && (
-              <p className="text-blue-600 font-medium">Points: {polygonPointsRef.current.length}</p>
+              <p className="text-blue-600 font-medium">النقاط: {polygonPointsRef.current.length}</p>
             )}
           </div>
         </div>

@@ -17,64 +17,64 @@ import { Input } from "@/components/ui/input"
 
 const SUMMARY_METRICS = [
   {
-    label: "Total revenue",
-    value: "362,450 EGP",
-    change: "+12.4% vs last month",
+    label: "إجمالي الإيرادات",
+    value: "362,450 ج.م",
+    change: "+12.4% مقارنة بالشهر الماضي",
     icon: DollarSign,
   },
   {
-    label: "Orders",
+    label: "الطلبات",
     value: "1,284",
-    change: "+8.1% vs last month",
+    change: "+8.1% مقارنة بالشهر الماضي",
     icon: RefreshCw,
   },
   {
-    label: "Active customers",
+    label: "عملاء نشطون",
     value: "742",
-    change: "+5.6% vs last month",
+    change: "+5.6% مقارنة بالشهر الماضي",
     icon: Users,
   },
   {
-    label: "Average ticket",
-    value: "282.5 EGP",
-    change: "+3.2% vs last month",
+    label: "متوسط الفاتورة",
+    value: "282.5 ج.م",
+    change: "+3.2% مقارنة بالشهر الماضي",
     icon: CalendarRange,
   },
 ]
 
 const TOP_ITEMS = [
-  { id: "IT-041", name: "Mixed Grill Platter", orders: 182, revenue: "42,360 EGP" },
-  { id: "IT-023", name: "Chicken Shawarma", orders: 156, revenue: "28,704 EGP" },
-  { id: "IT-015", name: "Seafood Paella", orders: 96, revenue: "31,680 EGP" },
-  { id: "IT-067", name: "Falafel Wrap", orders: 221, revenue: "19,890 EGP" },
+  { id: "IT-041", name: "مشويات مشكلة", orders: 182, revenue: "42,360 ج.م" },
+  { id: "IT-023", name: "شاورما دجاج", orders: 156, revenue: "28,704 ج.م" },
+  { id: "IT-015", name: "بايلا سي فود", orders: 96, revenue: "31,680 ج.م" },
+  { id: "IT-067", name: "راب فلافل", orders: 221, revenue: "19,890 ج.م" },
 ]
 
 const BRANCH_PERFORMANCE = [
-  { branch: "Maadi", orders: 542, revenue: "126,900 EGP", growth: "+9%" },
-  { branch: "Nasr City", orders: 318, revenue: "83,240 EGP", growth: "+5%" },
-  { branch: "6th October", orders: 198, revenue: "46,880 EGP", growth: "+4%" },
+  { branch: "المعادي", orders: 542, revenue: "126,900 ج.م", growth: "+9%" },
+  { branch: "مدينة نصر", orders: 318, revenue: "83,240 ج.م", growth: "+5%" },
+  { branch: "6 أكتوبر", orders: 198, revenue: "46,880 ج.م", growth: "+4%" },
 ]
 
 export default function AnalyticsDashboard() {
-  const [range, setRange] = useState("Last 30 days")
+  const [range, setRange] = useState("آخر 30 يوم")
 
   const activeMetrics = useMemo(() => SUMMARY_METRICS, [])
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+    <section className="space-y-6 text-right">
+      <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row-reverse sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">Analytics</h1>
-          <p className="text-sm text-slate-500">Key metrics across orders, revenue, and customer engagement.</p>
+          <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">التحليلات</h1>
+          <p className="text-sm text-slate-500">مؤشرات الأداء الرئيسية للطلبات والإيرادات وتفاعل العملاء.</p>
         </div>
         <div className="flex items-center gap-3">
           <Input
             value={range}
             onChange={(event) => setRange(event.target.value)}
-            className="h-10 w-40 rounded-full border-slate-300 text-sm"
+            className="h-10 w-40 rounded-full border-slate-300 text-sm text-right"
           />
           <Button className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500">
-            Export report
+            تصدير التقرير
           </Button>
         </div>
       </div>
@@ -97,16 +97,16 @@ export default function AnalyticsDashboard() {
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <Card className="border border-slate-200">
           <CardHeader>
-            <CardTitle className="text-base font-semibold text-slate-900">Top menu items</CardTitle>
+            <CardTitle className="text-base font-semibold text-slate-900">أفضل عناصر المنيو</CardTitle>
           </CardHeader>
           <CardContent className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-32">Item ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="text-right">Orders</TableHead>
-                  <TableHead className="text-right">Revenue</TableHead>
+                  <TableHead className="w-32 text-right">معرّف الصنف</TableHead>
+                  <TableHead className="text-right">الاسم</TableHead>
+                  <TableHead className="text-right">الطلبات</TableHead>
+                  <TableHead className="text-right">الإيرادات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -125,7 +125,7 @@ export default function AnalyticsDashboard() {
 
         <Card className="border border-slate-200">
           <CardHeader>
-            <CardTitle className="text-base font-semibold text-slate-900">Branch performance</CardTitle>
+            <CardTitle className="text-base font-semibold text-slate-900">أداء الفروع</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {BRANCH_PERFORMANCE.map((branch) => (
@@ -135,7 +135,7 @@ export default function AnalyticsDashboard() {
                   <span className="text-xs text-emerald-500">{branch.growth}</span>
                 </div>
                 <div className="mt-2 flex items-center justify-between text-sm text-slate-600">
-                  <span>{branch.orders} orders</span>
+                  <span>{branch.orders} طلب</span>
                   <span className="font-medium text-slate-900">{branch.revenue}</span>
                 </div>
               </div>

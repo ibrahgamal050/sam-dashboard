@@ -4,13 +4,14 @@ import { Types } from "mongoose"
 
 import dbConnect from "@/lib/dbConnect"
 import DeliveryZoneLegacy from "@/models/delivery-zone-legacy"
+import SupermarketDeliveryZone from "@/models/SupermarketDeliveryZone"
 import { serializeDeliveryZone } from "@/lib/delivery-zones/serialize"
 import type { UpdateDeliveryZoneRequest } from "@/types/delivery-zones"
 import { getRouteParams, type RouteHandlerContext } from "@/lib/route-params"
 
 const INVALID_ZONE_TYPE_MESSAGE = 'Invalid zone_type. Must be "circle" or "polygon"'
 
-function buildUpdatePayload(body: Partial<UpdateDeliveryZoneRequest>) {
+function buildLegacyUpdatePayload(body: Partial<UpdateDeliveryZoneRequest>) {
   const updateData: Record<string, unknown> = {}
 
   if (body.name !== undefined) updateData.name = body.name?.trim()
@@ -24,6 +25,41 @@ function buildUpdatePayload(body: Partial<UpdateDeliveryZoneRequest>) {
   return updateData
 }
 
+function buildSupermarketUpdatePayload(body: Partial<UpdateDeliveryZoneRequest>) {
+  const updateData: Record<string, unknown> = {}
+
+  if (body.name !== undefined) updateData.name = body.name?.trim()
+  if (body.delivery_fee !== undefined) updateData.fee = body.delivery_fee
+  if (body.color !== undefined) updateData.color = body.color
+  if (body.geometry !== undefined) updateData.polygon = body.geometry
+  if (body.is_active !== undefined) updateData.isActive = body.is_active
+  if (body.min_order !== undefined) updateData.minOrder = body.min_order
+  if (body.eta_mins !== undefined) updateData.etaMins = body.eta_mins
+  if (body.priority !== undefined) updateData.priority = body.priority
+
+  return updateData
+}
+
+function serializeSupermarketZone(zone: any) {
+  return {
+    id: zone?._id?.toString?.() ?? String(zone?._id ?? ""),
+    restaurantId: undefined,
+    supermarketId: zone?.supermarketId?.toString?.() ?? String(zone?.supermarketId ?? ""),
+    name: zone?.name ?? "",
+    description: undefined,
+    delivery_fee: Number(zone?.fee ?? 0),
+    color: zone?.color ?? "#3B82F6",
+    zone_type: "polygon" as const,
+    geometry: zone?.polygon,
+    is_active: zone?.isActive ?? true,
+    created_at: zone?.createdAt ? new Date(zone.createdAt).toISOString() : new Date().toISOString(),
+    updated_at: zone?.updatedAt ? new Date(zone.updatedAt).toISOString() : new Date().toISOString(),
+    min_order: zone?.minOrder ?? undefined,
+    eta_mins: zone?.etaMins ?? undefined,
+    priority: zone?.priority ?? undefined,
+  }
+}
+
 // GET /api/zones/[id] - Fetch a specific delivery zone
 export async function GET(request: NextRequest, context: RouteHandlerContext) {
   try {
@@ -32,17 +68,44 @@ export async function GET(request: NextRequest, context: RouteHandlerContext) {
       return NextResponse.json({ error: "Zone id is required" }, { status: 400 })
     }
     const restaurantId = request.nextUrl.searchParams.get("restaurantId")
+    const supermarketId = request.nextUrl.searchParams.get("supermarketId")
 
-    if (!restaurantId || !Types.ObjectId.isValid(restaurantId)) {
+    if (restaurantId && supermarketId) {
+      return NextResponse.json({ error: "Use either restaurantId or supermarketId" }, { status: 400 })
+    }
+
+    if (!restaurantId && !supermarketId) {
+      return NextResponse.json({ error: "Valid restaurantId or supermarketId is required" }, { status: 400 })
+    }
+
+    if (restaurantId && !Types.ObjectId.isValid(restaurantId)) {
       return NextResponse.json({ error: "Valid restaurantId is required" }, { status: 400 })
+    }
+
+    if (supermarketId && !Types.ObjectId.isValid(supermarketId)) {
+      return NextResponse.json({ error: "Valid supermarketId is required" }, { status: 400 })
     }
     if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid zone id" }, { status: 400 })
     }
     await dbConnect()
 
-    const restaurantObjectId = new Types.ObjectId(restaurantId)
+    const restaurantObjectId = restaurantId ? new Types.ObjectId(restaurantId) : null
+    const supermarketObjectId = supermarketId ? new Types.ObjectId(supermarketId) : null
     const zoneObjectId = new Types.ObjectId(id)
+
+    if (supermarketObjectId) {
+      const zone = await SupermarketDeliveryZone.findOne({
+        _id: zoneObjectId,
+        supermarketId: supermarketObjectId,
+      })
+
+      if (!zone) {
+        return NextResponse.json({ error: "Delivery zone not found" }, { status: 404 })
+      }
+
+      return NextResponse.json({ zone: serializeSupermarketZone(zone) })
+    }
 
     const zone = await DeliveryZoneLegacy.findOne({
       _id: zoneObjectId,
@@ -68,8 +131,18 @@ export async function PUT(request: NextRequest, context: RouteHandlerContext) {
       return NextResponse.json({ error: "Zone id is required" }, { status: 400 })
     }
     const restaurantId = request.nextUrl.searchParams.get("restaurantId")
-    if (!restaurantId || !Types.ObjectId.isValid(restaurantId)) {
+    const supermarketId = request.nextUrl.searchParams.get("supermarketId")
+    if (restaurantId && supermarketId) {
+      return NextResponse.json({ error: "Use either restaurantId or supermarketId" }, { status: 400 })
+    }
+    if (!restaurantId && !supermarketId) {
+      return NextResponse.json({ error: "Valid restaurantId or supermarketId is required" }, { status: 400 })
+    }
+    if (restaurantId && !Types.ObjectId.isValid(restaurantId)) {
       return NextResponse.json({ error: "Valid restaurantId is required" }, { status: 400 })
+    }
+    if (supermarketId && !Types.ObjectId.isValid(supermarketId)) {
+      return NextResponse.json({ error: "Valid supermarketId is required" }, { status: 400 })
     }
     if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid zone id" }, { status: 400 })
@@ -88,16 +161,43 @@ export async function PUT(request: NextRequest, context: RouteHandlerContext) {
       return NextResponse.json({ error: "Color must be a valid hex value" }, { status: 400 })
     }
 
-    const updateData = buildUpdatePayload(body)
+    await dbConnect()
+
+    const restaurantObjectId = restaurantId ? new Types.ObjectId(restaurantId) : null
+    const supermarketObjectId = supermarketId ? new Types.ObjectId(supermarketId) : null
+    const zoneObjectId = new Types.ObjectId(id)
+
+    if (supermarketObjectId) {
+      if (body.zone_type && body.zone_type !== "polygon") {
+        return NextResponse.json({ error: "Supermarket zones must be polygons" }, { status: 400 })
+      }
+      if (body.geometry && body.geometry.type !== "Polygon") {
+        return NextResponse.json({ error: "Supermarket zones must be polygons" }, { status: 400 })
+      }
+
+      const updateData = buildSupermarketUpdatePayload(body)
+      if (Object.keys(updateData).length === 0) {
+        return NextResponse.json({ error: "No valid fields provided for update" }, { status: 400 })
+      }
+
+      const zone = await SupermarketDeliveryZone.findOneAndUpdate(
+        { _id: zoneObjectId, supermarketId: supermarketObjectId },
+        updateData,
+        { new: true },
+      )
+
+      if (!zone) {
+        return NextResponse.json({ error: "Delivery zone not found or access denied" }, { status: 404 })
+      }
+
+      return NextResponse.json({ zone: serializeSupermarketZone(zone) })
+    }
+
+    const updateData = buildLegacyUpdatePayload(body)
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json({ error: "No valid fields provided for update" }, { status: 400 })
     }
-
-    await dbConnect()
-
-    const restaurantObjectId = new Types.ObjectId(restaurantId)
-    const zoneObjectId = new Types.ObjectId(id)
 
     const zone = await DeliveryZoneLegacy.findOneAndUpdate(
       { _id: zoneObjectId, restaurantId: restaurantObjectId },
@@ -124,16 +224,40 @@ export async function DELETE(request: NextRequest, context: RouteHandlerContext)
       return NextResponse.json({ error: "Zone id is required" }, { status: 400 })
     }
     const restaurantId = request.nextUrl.searchParams.get("restaurantId")
-    if (!restaurantId || !Types.ObjectId.isValid(restaurantId)) {
+    const supermarketId = request.nextUrl.searchParams.get("supermarketId")
+    if (restaurantId && supermarketId) {
+      return NextResponse.json({ error: "Use either restaurantId or supermarketId" }, { status: 400 })
+    }
+    if (!restaurantId && !supermarketId) {
+      return NextResponse.json({ error: "Valid restaurantId or supermarketId is required" }, { status: 400 })
+    }
+    if (restaurantId && !Types.ObjectId.isValid(restaurantId)) {
       return NextResponse.json({ error: "Valid restaurantId is required" }, { status: 400 })
+    }
+    if (supermarketId && !Types.ObjectId.isValid(supermarketId)) {
+      return NextResponse.json({ error: "Valid supermarketId is required" }, { status: 400 })
     }
     if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid zone id" }, { status: 400 })
     }
     await dbConnect()
 
-    const restaurantObjectId = new Types.ObjectId(restaurantId)
+    const restaurantObjectId = restaurantId ? new Types.ObjectId(restaurantId) : null
+    const supermarketObjectId = supermarketId ? new Types.ObjectId(supermarketId) : null
     const zoneObjectId = new Types.ObjectId(id)
+
+    if (supermarketObjectId) {
+      const result = await SupermarketDeliveryZone.findOneAndDelete({
+        _id: zoneObjectId,
+        supermarketId: supermarketObjectId,
+      })
+
+      if (!result) {
+        return NextResponse.json({ error: "Delivery zone not found or access denied" }, { status: 404 })
+      }
+
+      return NextResponse.json({ message: "Delivery zone deleted successfully" })
+    }
 
     const result = await DeliveryZoneLegacy.findOneAndDelete({
       _id: zoneObjectId,

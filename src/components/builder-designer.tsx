@@ -224,7 +224,7 @@ const BuilderDesignerComponent = ({ sections, onSectionsChange }: BuilderDesigne
     })
   }
 
-  const addWidget = (sectionIndex: number, columnId?: string, kind: string = 'text') => {
+  const addWidget = (sectionIndex: number, columnId: string | null, kind: string = 'text') => {
     applyChange((draft) => {
       const section = draft[sectionIndex]
       if (!section) return

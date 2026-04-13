@@ -27,13 +27,19 @@ import { subtractPolygonOverlaps } from "@/lib/zone-topology"
 
 interface DeliveryZonesManagerProps {
   className?: string
-  restaurantId: string | null
+  entityId: string | null
+  entityType?: "restaurant" | "supermarket"
 }
 
 const SNAP_GRID_SIZE_METERS = 50
 const CAIRO_CENTER: [number, number] = [30.0444, 31.2357]
 
-export default function DeliveryZonesManager({ className = "", restaurantId }: DeliveryZonesManagerProps) {
+export default function DeliveryZonesManager({
+  className = "",
+  entityId,
+  entityType = "restaurant",
+}: DeliveryZonesManagerProps) {
+  const isSupermarket = entityType === "supermarket"
   const [zones, setZones] = useState<DeliveryZone[]>([])
   const [selectedZone, setSelectedZone] = useState<DeliveryZone | null>(null)
   const [editingZone, setEditingZone] = useState<DeliveryZone | null>(null)
@@ -49,31 +55,31 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
   const [snapToGrid, setSnapToGrid] = useState(true)
 
   const loadZones = useCallback(
-    async (currentRestaurantId: string) => {
+    async (currentEntityId: string) => {
       try {
         setIsLoading(true)
-        const fetchedZones = await ZonesAPI.getZones(currentRestaurantId)
+        const fetchedZones = await ZonesAPI.getZones(currentEntityId, entityType)
         setZones(fetchedZones)
         console.log("[v0] Loaded zones:", fetchedZones.length)
       } catch (error) {
         console.error("[v0] Error loading zones:", error)
-        toast.error("Failed to load delivery zones")
+        toast.error("تعذّر تحميل مناطق التوصيل")
       } finally {
         setIsLoading(false)
       }
     },
-    [],
+    [entityType],
   )
 
   useEffect(() => {
-    if (!restaurantId) {
+    if (!entityId) {
       setZones([])
       setIsLoading(false)
       return
     }
 
-    void loadZones(restaurantId)
-  }, [loadZones, restaurantId])
+    void loadZones(entityId)
+  }, [loadZones, entityId])
 
   const sanitizeGeometryForZone = useCallback(
     (
@@ -122,6 +128,7 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
   const handleMapClick = useCallback(
     async (lat: number, lng: number) => {
       if (!drawingMode || !isCreatingZone) return
+      if (isSupermarket && drawingMode === "circle") return
 
       console.log("[v0] Map clicked for zone creation:", lat, lng, drawingMode)
 
@@ -135,7 +142,8 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
 
         const newZone: DeliveryZone = {
           id: "new",
-          restaurantId: restaurantId ?? "",
+          restaurantId: entityType === "restaurant" ? entityId ?? "" : undefined,
+          supermarketId: entityType === "supermarket" ? entityId ?? "" : undefined,
           name: `New circle zone`,
           description: "",
           delivery_fee: 0,
@@ -151,7 +159,7 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
         setDrawingMode(null)
       }
     },
-    [drawingMode, isCreatingZone, beginGeometryEditing, restaurantId],
+    [drawingMode, isCreatingZone, beginGeometryEditing, entityId, entityType, isSupermarket],
   )
 
   const handlePolygonComplete = useCallback(
@@ -171,7 +179,8 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
 
       const newZone: DeliveryZone = {
         id: "new",
-        restaurantId: restaurantId ?? "",
+        restaurantId: entityType === "restaurant" ? entityId ?? "" : undefined,
+        supermarketId: entityType === "supermarket" ? entityId ?? "" : undefined,
         name: `New polygon zone`,
         description: "",
         delivery_fee: 0,
@@ -186,7 +195,7 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
       beginGeometryEditing(newZone, { markPending: true })
       setDrawingMode(null)
     },
-    [isCreatingZone, drawingMode, beginGeometryEditing, restaurantId],
+    [isCreatingZone, drawingMode, beginGeometryEditing, entityId, entityType],
   )
 
   const handleGeometryDraftChange = useCallback(
@@ -218,26 +227,26 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
 
   const handleConfirmGeometryChanges = useCallback(async () => {
     if (!editingZone || !draftGeometry || editingZone.id === "new") return
-    if (!restaurantId) {
-      toast.error("Missing restaurant context for delivery zones")
+    if (!entityId) {
+      toast.error("بيانات الجهة غير مكتملة")
       return
     }
 
     try {
       setIsSaving(true)
-      const updatedZone = await ZonesAPI.updateZone(restaurantId, editingZone.id, {
+      const updatedZone = await ZonesAPI.updateZone(entityId, editingZone.id, entityType, {
         geometry: draftGeometry,
       })
       setZones((prev) => prev.map((z) => (z.id === updatedZone.id ? updatedZone : z)))
       beginGeometryEditing(updatedZone)
-      toast.success("Zone geometry saved")
+      toast.success("تم حفظ شكل المنطقة")
     } catch (error) {
       console.error("[v0] Error saving geometry:", error)
-      toast.error("Failed to save geometry changes")
+      toast.error("تعذّر حفظ تعديلات الشكل")
     } finally {
       setIsSaving(false)
     }
-  }, [beginGeometryEditing, draftGeometry, editingZone, restaurantId])
+  }, [beginGeometryEditing, draftGeometry, editingZone, entityId, entityType])
 
   const handleCancelEdit = useCallback(() => {
     setEditingZone(null)
@@ -312,20 +321,20 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
   }
 
   const handleZoneToggle = async (zone: DeliveryZone) => {
-    if (!restaurantId) {
-      toast.error("Missing restaurant context for delivery zones")
+    if (!entityId) {
+      toast.error("بيانات الجهة غير مكتملة")
       return
     }
     try {
-      const updatedZone = await ZonesAPI.updateZone(restaurantId, zone.id, {
+      const updatedZone = await ZonesAPI.updateZone(entityId, zone.id, entityType, {
         is_active: !zone.is_active,
       })
 
       setZones((prev) => prev.map((z) => (z.id === zone.id ? updatedZone : z)))
-      toast.success(`Zone ${updatedZone.is_active ? "activated" : "deactivated"}`)
+      toast.success(updatedZone.is_active ? "تم تفعيل المنطقة" : "تم تعطيل المنطقة")
     } catch (error) {
       console.error("[v0] Error toggling zone:", error)
-      toast.error("Failed to update zone status")
+      toast.error("تعذّر تحديث حالة المنطقة")
     }
   }
 
@@ -350,8 +359,8 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
   const handleSaveZone = async (
     zoneData: CreateDeliveryZoneRequest | (Partial<DeliveryZone> & { id: string }),
   ) => {
-    if (!restaurantId) {
-      toast.error("Missing restaurant context for delivery zones")
+    if (!entityId) {
+      toast.error("بيانات الجهة غير مكتملة")
       return
     }
     try {
@@ -360,20 +369,21 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
       if ("id" in zoneData && zoneData.id !== "new") {
         const payload: Partial<DeliveryZone> = {
           ...zoneData,
-          restaurantId,
+          restaurantId: entityType === "restaurant" ? entityId : zoneData.restaurantId,
+          supermarketId: entityType === "supermarket" ? entityId : zoneData.supermarketId,
         }
 
         if (draftGeometry) {
           payload.geometry = draftGeometry
         }
 
-        const updatedZone = await ZonesAPI.updateZone(restaurantId, zoneData.id, payload)
+        const updatedZone = await ZonesAPI.updateZone(entityId, zoneData.id, entityType, payload)
         setZones((prev) => prev.map((z) => (z.id === zoneData.id ? updatedZone : z)))
         beginGeometryEditing(updatedZone)
-        toast.success("Zone updated successfully")
+        toast.success("تم تحديث المنطقة بنجاح")
       } else {
         if (!draftGeometry) {
-          toast.error("Draw the delivery zone on the map before saving")
+          toast.error("ارسم منطقة التوصيل على الخريطة قبل الحفظ")
           return
         }
 
@@ -388,30 +398,30 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
           is_active: source.is_active,
         }
 
-        const newZone = await ZonesAPI.createZone(restaurantId, newZonePayload)
+        const newZone = await ZonesAPI.createZone(entityId, entityType, newZonePayload)
         setZones((prev) => [...prev, newZone])
         beginGeometryEditing(newZone)
         setIsCreatingZone(false)
-        toast.success("Zone created successfully")
+        toast.success("تم إنشاء المنطقة بنجاح")
       }
 
       setHasPendingGeometryChanges(false)
       setDrawingMode(null)
     } catch (error) {
       console.error("[v0] Error saving zone:", error)
-      toast.error("Failed to save zone")
+      toast.error("تعذّر حفظ المنطقة")
     } finally {
       setIsSaving(false)
     }
   }
 
   const handleDeleteZone = useCallback(async (zoneId: string) => {
-    if (!restaurantId) {
-      toast.error("Missing restaurant context for delivery zones")
+    if (!entityId) {
+      toast.error("بيانات الجهة غير مكتملة")
       return
     }
     try {
-      await ZonesAPI.deleteZone(restaurantId, zoneId)
+      await ZonesAPI.deleteZone(entityId, zoneId, entityType)
       setZones((prev) => prev.filter((z) => z.id !== zoneId))
       setEditingZone(null)
       setSelectedZone(null)
@@ -420,27 +430,28 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
       setGeometryMetrics(null)
       setHasPendingGeometryChanges(false)
       setIsCreatingZone(false)
-      toast.success("Zone deleted successfully")
+      toast.success("تم حذف المنطقة بنجاح")
     } catch (error) {
       console.error("[v0] Error deleting zone:", error)
-      toast.error("Failed to delete zone")
+      toast.error("تعذّر حذف المنطقة")
     }
-  }, [restaurantId])
+  }, [entityId, entityType])
 
   const handleDeleteCurrentZone = useCallback(() => {
     if (!editingZone || editingZone.id === "new") return
-    if (window.confirm(`Delete "${editingZone.name}"? This action cannot be undone.`)) {
+    if (window.confirm(`حذف "${editingZone.name}"؟ لا يمكن التراجع عن هذه العملية.`)) {
       void handleDeleteZone(editingZone.id)
     }
   }, [editingZone, handleDeleteZone])
 
   const startCreatingZone = () => {
-    if (!restaurantId) {
-      toast.error("Missing restaurant context for delivery zones")
+    if (!entityId) {
+      toast.error("Missing delivery zone context")
       return
     }
     setIsCreatingZone(true)
     setEditMode(true)
+    setDrawingMode(isSupermarket ? "polygon" : "circle")
     setEditingZone(null)
     setSelectedZone(null)
     setDraftGeometry(null)
@@ -454,7 +465,7 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
       <div className={`${className} flex items-center justify-center`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-          <p className="text-sm text-muted-foreground">Loading delivery zones...</p>
+          <p className="text-sm text-muted-foreground">جاري تحميل مناطق التوصيل...</p>
         </div>
       </div>
     )
@@ -463,25 +474,34 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
   return (
     <div className={`${className} flex flex-col lg:flex-row gap-4 h-full`}>
       {/* Sidebar */}
-      <div className="w-full lg:w-80 flex flex-col gap-4">
+      <div className="w-full lg:w-[360px] flex flex-col gap-4 lg:sticky lg:top-6 lg:max-h-[calc(100vh-6rem)]">
         {/* Create Zone Button */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Delivery Zones</h1>
-          <Button onClick={startCreatingZone} disabled={isCreatingZone || !restaurantId}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Zone
-          </Button>
+        <div className="rounded-2xl border bg-card p-4 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h1 className="text-lg font-semibold">مناطق التوصيل</h1>
+              <p className="text-xs text-muted-foreground">
+                حدد نطاقات التوصيل واضبط الرسوم.
+              </p>
+            </div>
+            <Button onClick={startCreatingZone} disabled={isCreatingZone || !entityId}>
+              <Plus className="h-4 w-4 mr-2" />
+              منطقة جديدة
+            </Button>
+          </div>
         </div>
 
         {/* Zone Editor Form */}
-        {editingZone && restaurantId && (
+        {editingZone && entityId && (
           <ZoneEditorForm
             zone={editingZone.id === "new" ? null : editingZone}
-            restaurantId={restaurantId}
+            entityId={entityId}
+            entityType={entityType}
             onSave={handleSaveZone}
             onDelete={editingZone.id !== "new" ? handleDeleteZone : undefined}
             onCancel={handleCancelEdit}
             isLoading={isSaving}
+            allowedZoneTypes={isSupermarket ? ["polygon"] : ["circle", "polygon"]}
           />
         )}
 
@@ -492,6 +512,7 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
             selectedZone={selectedZone}
             onZoneSelect={handleZoneClick}
             onZoneToggle={handleZoneToggle}
+            className="flex-1 min-h-[280px] lg:min-h-0"
           />
         )}
 
@@ -500,15 +521,17 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
           <div className="p-4 bg-muted rounded-lg">
             <div className="flex items-center gap-2 mb-2">
               <MapPin className="h-4 w-4 text-primary" />
-              <p className="font-medium text-sm">Creating {drawingMode} zone</p>
+              <p className="font-medium text-sm">
+                جارٍ إنشاء منطقة {drawingMode === "circle" ? "دائرية" : "مضلعة"}
+              </p>
             </div>
             {drawingMode === "circle" ? (
-              <p className="text-xs text-muted-foreground">Click on the map to place your circle zone</p>
+              <p className="text-xs text-muted-foreground">اضغط على الخريطة لتحديد مركز المنطقة الدائرية</p>
             ) : (
               <div className="text-xs text-muted-foreground space-y-1">
-                <p>• Click points on the map to draw polygon</p>
-                <p>• Double-click to finish drawing</p>
-                <p>• Need at least 3 points for a valid zone</p>
+                <p>• انقر على نقاط الخريطة لرسم المضلع</p>
+                <p>• انقر مرتين لإنهاء الرسم</p>
+                <p>• تحتاج إلى 3 نقاط على الأقل لمنطقة صالحة</p>
               </div>
             )}
           </div>
@@ -542,6 +565,7 @@ export default function DeliveryZonesManager({ className = "", restaurantId }: D
           onSetDrawingMode={setDrawingMode}
           snapToGrid={snapToGrid}
           onToggleSnap={setSnapToGrid}
+          allowCircle={!isSupermarket}
           className="absolute top-4 right-4 z-[1000]"
         />
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { Loader2 } from 'lucide-react'
@@ -20,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
+import { zodFormResolver } from '@/lib/zod-form-resolver'
 
 // This would typically be in a separate file
 const restaurantSchema = z.object({
@@ -73,7 +73,7 @@ export function BlockPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   const form = useForm<RestaurantFormValues>({
-    resolver: zodResolver(restaurantSchema),
+    resolver: zodFormResolver<RestaurantFormValues>(restaurantSchema),
     defaultValues: {
       nameEn: '',
       nameAr: '',

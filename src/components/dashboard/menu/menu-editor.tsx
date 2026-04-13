@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef, useMemo } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import {
   ChevronDown,
   ChevronRight,
@@ -22,18 +23,25 @@ import { EditItemModal } from "./edit-item-modal"
 import { EditSectionModal } from "./edit-section-modal"
 import { MenuImageManager } from "./menu-image-manager"
 import { MenuPreview } from "./menu-preview"
+import { MenuTypeSwitcher } from "./menu-type-switcher"
 import { cn } from "@/lib/utils"
 import type { IMenu, ICategory, IMenuItem, IMenuImage } from "@/types/menu"
 import { MenuLoadingState } from "./menu-loading-state"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { MenuService } from "@/lib/menu-service"
+import { type MenuType, normalizeMenuType } from "@/lib/menu-types"
 
 type MenuEditorProps = {
   menuId: string
+  restaurantslug: string
   initialMenu?: IMenu
+  restaurantId?: string
 }
 
-export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
+export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }: MenuEditorProps) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [menu, setMenu] = useState<IMenu | null>(initialMenu || null)
   const [categories, setCategories] = useState<ICategory[]>([])
   const [menuImages, setMenuImages] = useState<IMenuImage[]>([])
@@ -44,41 +52,104 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
   const [currentLanguage, setCurrentLanguage] = useState<"ar" | "en">("ar")
   const [imageManagerOpen, setImageManagerOpen] = useState(false)
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({})
+  const [showStoppedItems, setShowStoppedItems] = useState(false)
   const [loading, setLoading] = useState(!initialMenu)
   const [saving, setSaving] = useState(false)
+  const [orderSaving, setOrderSaving] = useState(false)
+  const [importing, setImporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
+  const orderSaveTimerRef = useRef<number | null>(null)
 
-  // Fetch menu data if not provided initially
+  const rawMenuType = searchParams.get("menuType")
+  const resolvedMenuType = normalizeMenuType(rawMenuType)
+  const menuType = resolvedMenuType ?? "delivery"
+
   useEffect(() => {
-    if (!initialMenu && menuId) {
-      fetchMenu()
-    } else if (initialMenu) {
-      setMenu(initialMenu)
-      setCategories(initialMenu.categories || [])
-      setMenuImages(initialMenu.menuImages || [])
+    if (restaurantId) {
+      MenuService.setRestaurantId(restaurantId)
     }
-  }, [menuId, initialMenu])
+  }, [restaurantId])
 
-  const fetchMenu = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-
-      const menuData = await MenuService.getMenu(menuId)
-
-      setMenu(menuData)
-      setCategories(menuData.categories || [])
-      setMenuImages(menuData.menuImages || [])
-    } catch (error: any) {
-      console.error("Failed to load menu:", error)
-      setError(`Failed to load menu: ${error.message || "Unknown error"}`)
-      toast.error("Failed to load menu", {
-        description: error.message || "Please try again later",
-      })
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    if (!rawMenuType || !resolvedMenuType) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set("menuType", "delivery")
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
     }
-  }
+  }, [rawMenuType, resolvedMenuType, pathname, router, searchParams])
+
+  const fetchMenu = useCallback(
+    async (activeMenuType: MenuType, showHidden: boolean) => {
+      abortRef.current?.abort()
+      const controller = new AbortController()
+      abortRef.current = controller
+      try {
+        setLoading(true)
+        setError(null)
+
+        const menuData = await MenuService.getMenu(restaurantslug, activeMenuType, {
+          signal: controller.signal,
+          showHidden,
+        })
+
+        setMenu(menuData)
+        setCategories(menuData.categories || [])
+        setMenuImages(menuData.menuImages || [])
+      } catch (error: any) {
+        if (error?.name === "AbortError") return
+        console.error("Failed to load menu:", error)
+        const status = typeof error?.status === "number" ? error.status : null
+        if (status === 401 || status === 403) {
+          setError("ليست لديك صلاحية لعرض هذا المنيو.")
+          toast.error("غير مصرح", {
+            description: "يرجى التأكد من الصلاحيات ثم المحاولة مرة أخرى.",
+          })
+        } else {
+          setError(`Failed to load menu: ${error.message || "Unknown error"}`)
+          toast.error("Failed to load menu", {
+            description: error.message || "Please try again later",
+          })
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
+      }
+    },
+    [restaurantslug],
+  )
+
+  useEffect(() => {
+    if (!restaurantslug) return
+    fetchMenu(menuType, showStoppedItems)
+  }, [restaurantslug, menuType, showStoppedItems, fetchMenu])
+
+  useEffect(() => {
+    if (!initialMenu) return
+    setMenu(initialMenu)
+    setCategories(initialMenu.categories || [])
+    setMenuImages(initialMenu.menuImages || [])
+  }, [initialMenu])
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort()
+      if (orderSaveTimerRef.current) {
+        window.clearTimeout(orderSaveTimerRef.current)
+      }
+    }
+  }, [])
+
+  const previewCategories = useMemo(() => {
+    if (!showStoppedItems) return categories
+    return categories
+      .map((category) => ({
+        ...category,
+        menuItems: (category.menuItems || []).filter((item) => !item.isHidden),
+      }))
+      .filter((category) => category.menuItems.length > 0)
+  }, [categories, showStoppedItems])
 
   // Toggle section collapse state
   const toggleSectionCollapse = useCallback((sectionId: string) => {
@@ -88,67 +159,110 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
     }))
   }, [])
 
-  const handleDragEnd = useCallback((result: any) => {
-    if (!result.destination) return
+  const scheduleOrderSave = useCallback(
+    (nextCategories: ICategory[]) => {
+      if (orderSaveTimerRef.current) {
+        window.clearTimeout(orderSaveTimerRef.current)
+      }
+      setOrderSaving(true)
+      orderSaveTimerRef.current = window.setTimeout(async () => {
+        try {
+          await MenuService.saveMenuOrder(restaurantslug, nextCategories, menuType)
+        } catch (error: any) {
+          console.error("Failed to auto-save order:", error)
+          toast.error("فشل حفظ الترتيب", {
+            description: "يرجى المحاولة مرة أخرى.",
+          })
+        } finally {
+          setOrderSaving(false)
+          orderSaveTimerRef.current = null
+        }
+      }, 600)
+    },
+    [restaurantslug, menuType],
+  )
 
-    const { source, destination, type } = result
-
-    // Handle section reordering
-    if (type === "section") {
-      setCategories((prevCategories) => {
-        const reorderedCategories = [...prevCategories]
-        const [removed] = reorderedCategories.splice(source.index, 1)
-        reorderedCategories.splice(destination.index, 0, removed)
-        return reorderedCategories
+  const importFromBrand = useCallback(async () => {
+    if (!restaurantslug) return
+    setImporting(true)
+    try {
+      const result = await MenuService.importMenuItems(restaurantslug, menuType)
+      await fetchMenu(menuType, showStoppedItems)
+      toast.success("تم استيراد المنيو من البراند", {
+        description: result.imported ? `تم ربط ${result.imported} صنف` : "لم يتم العثور على أصناف جديدة",
       })
-      return
-    }
-
-    // Handle item reordering within the same section
-    if (source.droppableId === destination.droppableId) {
-      setCategories((prevCategories) => {
-        const sectionIndex = prevCategories.findIndex((s) => s._id?.toString() === source.droppableId)
-        if (sectionIndex === -1) return prevCategories
-
-        const newCategories = [...prevCategories]
-        const sectionCopy = { ...newCategories[sectionIndex] }
-        const items = [...sectionCopy.menuItems]
-        const [removed] = items.splice(source.index, 1)
-        items.splice(destination.index, 0, removed)
-        sectionCopy.menuItems = items
-        newCategories[sectionIndex] = sectionCopy
-
-        return newCategories
+    } catch (error: any) {
+      console.error("Failed to import menu items:", error)
+      toast.error("فشل استيراد المنيو", {
+        description: error.message || "يرجى المحاولة مرة أخرى.",
       })
+    } finally {
+      setImporting(false)
     }
-    // Handle item moving between sections
-    else {
+  }, [restaurantslug, menuType, fetchMenu, showStoppedItems])
+
+  const handleDragEnd = useCallback(
+    (result: any) => {
+      if (!result.destination) return
+
+      const { source, destination, type } = result
+
       setCategories((prevCategories) => {
-        const sourceSectionIndex = prevCategories.findIndex((s) => s._id?.toString() === source.droppableId)
-        const destSectionIndex = prevCategories.findIndex((s) => s._id?.toString() === destination.droppableId)
+        let nextCategories = prevCategories
 
-        if (sourceSectionIndex === -1 || destSectionIndex === -1) return prevCategories
+        if (type === "section") {
+          const reorderedCategories = [...prevCategories]
+          const [removed] = reorderedCategories.splice(source.index, 1)
+          reorderedCategories.splice(destination.index, 0, removed)
+          nextCategories = reorderedCategories
+        } else if (source.droppableId === destination.droppableId) {
+          const sectionIndex = prevCategories.findIndex(
+            (s) => s._id?.toString() === source.droppableId,
+          )
+          if (sectionIndex === -1) return prevCategories
 
-        const newCategories = [...prevCategories]
-        const sourceSectionCopy = { ...newCategories[sourceSectionIndex] }
-        const destSectionCopy = { ...newCategories[destSectionIndex] }
+          const newCategories = [...prevCategories]
+          const sectionCopy = { ...newCategories[sectionIndex] }
+          const items = [...sectionCopy.menuItems]
+          const [removed] = items.splice(source.index, 1)
+          items.splice(destination.index, 0, removed)
+          sectionCopy.menuItems = items
+          newCategories[sectionIndex] = sectionCopy
+          nextCategories = newCategories
+        } else {
+          const sourceSectionIndex = prevCategories.findIndex(
+            (s) => s._id?.toString() === source.droppableId,
+          )
+          const destSectionIndex = prevCategories.findIndex(
+            (s) => s._id?.toString() === destination.droppableId,
+          )
 
-        const sourceItems = [...sourceSectionCopy.menuItems]
-        const destItems = [...destSectionCopy.menuItems]
+          if (sourceSectionIndex === -1 || destSectionIndex === -1) return prevCategories
 
-        const [removed] = sourceItems.splice(source.index, 1)
-        destItems.splice(destination.index, 0, removed)
+          const newCategories = [...prevCategories]
+          const sourceSectionCopy = { ...newCategories[sourceSectionIndex] }
+          const destSectionCopy = { ...newCategories[destSectionIndex] }
 
-        sourceSectionCopy.menuItems = sourceItems
-        destSectionCopy.menuItems = destItems
+          const sourceItems = [...sourceSectionCopy.menuItems]
+          const destItems = [...destSectionCopy.menuItems]
 
-        newCategories[sourceSectionIndex] = sourceSectionCopy
-        newCategories[destSectionIndex] = destSectionCopy
+          const [removed] = sourceItems.splice(source.index, 1)
+          destItems.splice(destination.index, 0, removed)
 
-        return newCategories
+          sourceSectionCopy.menuItems = sourceItems
+          destSectionCopy.menuItems = destItems
+
+          newCategories[sourceSectionIndex] = sourceSectionCopy
+          newCategories[destSectionIndex] = destSectionCopy
+          nextCategories = newCategories
+        }
+
+        scheduleOrderSave(nextCategories)
+        return nextCategories
       })
-    }
-  }, [])
+    },
+    [scheduleOrderSave],
+  )
 
   const addNewSection = useCallback(async () => {
     try {
@@ -241,13 +355,18 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
         setEditingItemSectionId(sectionId)
 
         // If we have a menu ID, save to the API
-        if (menuId) {
-          try {
-            const savedItem = await MenuService.addMenuItem(menuId, sectionId, {
-              name: newItem.name,
-              description: newItem.description,
-              price: newItem.price,
-            })
+      if (menuId) {
+        try {
+          const savedItem = await MenuService.addMenuItem(
+            menuId,
+            sectionId,
+            {
+            name: newItem.name,
+            description: newItem.description,
+            price: newItem.price,
+            },
+            menuType,
+          )
 
             // Update the local state with the saved item that has a real ID
             setCategories((prevCategories) => {
@@ -285,28 +404,29 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
         })
       }
     },
-    [menuId],
+    [menuId, menuType],
   )
+
+  const applyItemUpdate = useCallback((updatedItem: IMenuItem) => {
+    setCategories((prevCategories) => {
+      return prevCategories.map((category) => {
+        const itemIndex = category.menuItems.findIndex((item) => item._id?.toString() === updatedItem._id?.toString())
+        if (itemIndex !== -1) {
+          const newItems = [...category.menuItems]
+          newItems[itemIndex] = updatedItem
+          return { ...category, menuItems: newItems }
+        }
+        return category
+      })
+    })
+  }, [])
 
   const updateItem = useCallback(
     async (updatedItem: IMenuItem) => {
-      // Optimistically update UI
-      setCategories((prevCategories) => {
-        return prevCategories.map((category) => {
-          const itemIndex = category.menuItems.findIndex((item) => item._id?.toString() === updatedItem._id?.toString())
-          if (itemIndex !== -1) {
-            const newItems = [...category.menuItems]
-            newItems[itemIndex] = updatedItem
-            return { ...category, menuItems: newItems }
-          }
-          return category
-        })
-      })
-
+      applyItemUpdate(updatedItem)
       setEditingItem(null)
       setEditingItemSectionId(null)
 
-      // If we have a menu ID and category ID, save to the API
       if (menuId && editingItemSectionId && updatedItem._id) {
         try {
           await MenuService.updateMenuItem(
@@ -314,6 +434,7 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
             editingItemSectionId.toString(),
             updatedItem._id.toString(),
             updatedItem,
+            menuType,
           )
 
           toast.success("Item updated successfully")
@@ -325,7 +446,7 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
         }
       }
     },
-    [menuId, editingItemSectionId],
+    [menuId, editingItemSectionId, applyItemUpdate, menuType],
   )
 
   const updateSection = useCallback(
@@ -381,7 +502,7 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
       // If we have a menu ID and category ID, delete from the API
       if (menuId && categoryId) {
         try {
-          await MenuService.deleteMenuItem(menuId, categoryId, itemId)
+          await MenuService.deleteMenuItem(menuId, categoryId, itemId, menuType)
 
           toast.success("Item deleted successfully")
         } catch (error: any) {
@@ -407,7 +528,7 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
         }
       }
     },
-    [menuId, categories],
+    [menuId, categories, menuType],
   )
 
   const deleteSection = useCallback(
@@ -456,7 +577,7 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
       }
 
       // Save to API
-      await MenuService.saveMenu(updatedMenu)
+      await MenuService.saveMenuOrder(restaurantslug, categories, menuType)
 
       // Update local state
       setMenu(updatedMenu)
@@ -471,11 +592,31 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
     } finally {
       setSaving(false)
     }
-  }, [menu, categories, menuImages])
+  }, [menu, categories, menuImages, restaurantslug, menuType])
 
   const toggleLanguage = useCallback(() => {
     setCurrentLanguage((prev) => (prev === "en" ? "ar" : "en"))
   }, [])
+
+  const handleMenuTypeChange = useCallback(
+    (nextType: MenuType) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set("menuType", nextType)
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    },
+    [pathname, router, searchParams],
+  )
+
+  const handleMenuTypeAdd = useCallback(
+    (nextType: MenuType) => {
+      handleMenuTypeChange(nextType)
+      toast.success("تم تفعيل نوع المنيو", {
+        description:
+          nextType === "delivery" ? "دليفري" : nextType === "dinein" ? "صالة" : "تيك أواي",
+      })
+    },
+    [handleMenuTypeChange],
+  )
 
   if (loading) {
     return <MenuLoadingState />
@@ -486,7 +627,7 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
       <div className="container mx-auto py-12">
         <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>Menu not found</AlertDescription>
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       </div>
     )
@@ -494,70 +635,44 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
 
   return (
     <div className="min-h-screen bg-[#f4f6fb] pb-12">
-      <div className="w-full bg-[#2e6fe6]">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 text-sm text-white">
-          <span className="font-medium">Maximize holiday sales: Explore 12 key features to boost your store&apos;s revenue.</span>
-          <Button variant="secondary" size="sm" className="bg-white/10 text-white hover:bg-white/20">
-            Learn more
-          </Button>
-        </div>
-      </div>
+      
 
       <div className="mx-auto mt-8 max-w-6xl px-6">
         <header className="flex flex-wrap items-start justify-between gap-6 rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-slate-200/60">
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Restaurant Menus</span>
-              <ChevronRight className="h-4 w-4" />
-              <span className="text-muted-foreground">{menu?.name || "Menu"}</span>
-            </div>
+            
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl font-semibold text-slate-900">{menu?.name || "Dinner Menu"}</h1>
-              <Button variant="link" className="flex items-center gap-1 px-0 text-sm font-medium text-[#2e6fe6]">
-                Change Menu
-                <ChevronDown className="h-3.5 w-3.5" />
+              <Button
+                variant="outline"
+                onClick={() => setShowStoppedItems((prev) => !prev)}
+                className={cn(
+                  "rounded-full border-slate-200 px-5",
+                  showStoppedItems && "border-[#2e6fe6] bg-[#edf2ff] text-[#2e6fe6]",
+                )}
+              >
+                {showStoppedItems ? "إخفاء الأصناف المتوقفة" : "إظهار الأصناف المتوقفة"}
               </Button>
+              <Button
+                variant="outline"
+                onClick={importFromBrand}
+                disabled={importing}
+                className="rounded-full border-slate-200 px-5"
+              >
+                {importing ? "جاري الاستيراد..." : "استيراد من البراند"}
+              </Button>
+              {orderSaving ? (
+                <span className="text-xs font-medium text-slate-500">جاري حفظ الترتيب...</span>
+              ) : null}
+              <MenuTypeSwitcher
+                value={menuType}
+                onChange={handleMenuTypeChange}
+                onAdd={handleMenuTypeAdd}
+              />
             </div>
-            <p className="max-w-xl text-sm text-muted-foreground">
-              A clear, layered view of your sections and items helps guests discover the perfect dishes quickly.
-            </p>
+           
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setImageManagerOpen(true)}
-              className="flex items-center gap-2 rounded-full border-slate-200 px-5"
-            >
-              <ImageIcon className="h-4 w-4" />
-              Manage Images
-            </Button>
-            <Button variant="outline" onClick={toggleLanguage} className="rounded-full border-slate-200 px-5">
-              {currentLanguage === "en" ? "العربية" : "English"}
-            </Button>
-            <div className="flex items-center gap-2 rounded-full bg-slate-100 p-1">
-              <Button
-                variant={activeView === "editor" ? "default" : "ghost"}
-                className={cn(
-                  "rounded-full px-4",
-                  activeView === "editor" ? "bg-white text-[#2e6fe6] shadow" : "text-slate-600 hover:bg-white",
-                )}
-                onClick={() => setActiveView("editor")}
-              >
-                Editor
-              </Button>
-              <Button
-                variant={activeView === "preview" ? "default" : "ghost"}
-                className={cn(
-                  "rounded-full px-4",
-                  activeView === "preview" ? "bg-white text-[#2e6fe6] shadow" : "text-slate-600 hover:bg-white",
-                )}
-                onClick={() => setActiveView("preview")}
-              >
-                Preview
-              </Button>
-            </div>
-          </div>
+          
         </header>
 
         {error && (
@@ -570,7 +685,7 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
         <div className="mt-8">
           {activeView === "preview" ? (
             menu ? (
-              <MenuPreview menu={menu} categories={categories} currentLanguage={currentLanguage} />
+              <MenuPreview menu={menu} categories={previewCategories} currentLanguage={currentLanguage} />
             ) : (
               <div className="rounded-3xl bg-white p-6 text-center text-sm text-muted-foreground">
                 Loading menu preview...
@@ -666,7 +781,10 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
                                             <div
                                               ref={provided.innerRef}
                                               {...provided.draggableProps}
-                                              className="group flex items-center justify-between gap-4 bg-white px-6 py-5 transition hover:bg-[#f1f6ff]"
+                                              className={cn(
+                                                "group flex items-center justify-between gap-4 bg-white px-6 py-5 transition hover:bg-[#f1f6ff]",
+                                                item.isHidden ? "opacity-60" : "",
+                                              )}
                                             >
                                               <div className="flex items-start gap-4">
                                                 <div
@@ -676,9 +794,39 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
                                                   <GripVertical className="h-4 w-4" />
                                                 </div>
                                                 <div className="space-y-1">
-                                                  <h4 className="text-base font-semibold text-slate-900">
-                                                    {item.name[currentLanguage] || item.name.en || "New Item"}
-                                                  </h4>
+                                                  <div className="flex flex-wrap items-center gap-2">
+                                                    <h4 className="text-base font-semibold text-slate-900">
+                                                      {item.name[currentLanguage] || item.name.en || "New Item"}
+                                                    </h4>
+                                                    {(() => {
+                                                      const status =
+                                                        item.linkStatus ?? (item.isHidden ? "stopped" : "linked")
+                                                      if (status === "linked") {
+                                                        return (
+                                                          <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                                            مرتبط بالمطعم
+                                                          </span>
+                                                        )
+                                                      }
+                                                      if (status === "unlinked") {
+                                                        return (
+                                                          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                                                            غير مرتبط
+                                                          </span>
+                                                        )
+                                                      }
+                                                      return (
+                                                        <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-600">
+                                                          متوقف
+                                                        </span>
+                                                      )
+                                                    })()}
+                                                    {item.isAvailable === false ? (
+                                                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                                                        غير متاح
+                                                      </span>
+                                                    ) : null}
+                                                  </div>
                                                   {item.description && item.description[currentLanguage] && (
                                                     <p className="max-w-2xl text-sm text-slate-500 line-clamp-2">
                                                       {item.description[currentLanguage]}
@@ -787,8 +935,14 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
         <EditItemModal
           item={editingItem}
           currency={menu.currency}
-          menuImages={menuImages}
-          onSave={updateItem}
+          restaurantslug={restaurantslug}
+          restaurantId={restaurantId}
+          initialMenuType={menuType}
+          onSave={(updated) => {
+            applyItemUpdate(updated)
+            setEditingItem(null)
+            setEditingItemSectionId(null)
+          }}
           onCancel={() => {
             setEditingItem(null)
             setEditingItemSectionId(null)
@@ -798,7 +952,6 @@ export function MenuEditor({ menuId, initialMenu }: MenuEditorProps) {
             setEditingItem(null)
             setEditingItemSectionId(null)
           }}
-          onImagesChange={setMenuImages}
         />
       )}
 

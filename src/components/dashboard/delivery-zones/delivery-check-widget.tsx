@@ -28,7 +28,7 @@ export default function DeliveryCheckWidget({ restaurantId }: DeliveryCheckWidge
 
   const handleCheck = async () => {
     if (!restaurantId) {
-      setError("Restaurant context missing")
+      setError("لم يتم تحديد المطعم")
       return
     }
     if (!address.trim()) return
@@ -46,7 +46,7 @@ export default function DeliveryCheckWidget({ restaurantId }: DeliveryCheckWidge
       const checkResult = await ZonesAPI.checkDelivery(restaurantId, lat, lng)
       setResult(checkResult)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to check delivery")
+      setError(err instanceof Error ? err.message : "تعذّر فحص التوصيل")
     } finally {
       setIsChecking(false)
     }
@@ -57,13 +57,13 @@ export default function DeliveryCheckWidget({ restaurantId }: DeliveryCheckWidge
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="h-5 w-5" />
-          Check Delivery
+          فحص التوصيل
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
           <Input
-            placeholder="Enter address..."
+            placeholder="أدخل العنوان..."
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleCheck()}
@@ -91,19 +91,19 @@ export default function DeliveryCheckWidget({ restaurantId }: DeliveryCheckWidge
             >
               {result.isDeliveryAvailable ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
               <p className="text-sm font-medium">
-                {result.isDeliveryAvailable ? "Delivery Available!" : "No delivery to this location"}
+                {result.isDeliveryAvailable ? "التوصيل متاح" : "لا يوجد توصيل لهذا الموقع"}
               </p>
             </div>
 
             {result.isDeliveryAvailable && (
               <>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Lowest delivery fee:</span>
-                  <Badge variant="secondary">€{result.lowestDeliveryFee?.toFixed(2)}</Badge>
+                  <span className="text-sm text-muted-foreground">أقل رسوم توصيل:</span>
+                  <Badge variant="secondary">{result.lowestDeliveryFee?.toFixed(2)} ج</Badge>
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Available zones:</p>
+                  <p className="text-sm font-medium">المناطق المتاحة:</p>
                   {result.zones.map((zone) => (
                     <div key={zone.id} className="flex items-center justify-between p-2 bg-muted rounded">
                       <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export default function DeliveryCheckWidget({ restaurantId }: DeliveryCheckWidge
                         <span className="text-sm">{zone.name}</span>
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        €{zone.delivery_fee}
+                        {zone.delivery_fee} ج
                       </Badge>
                     </div>
                   ))}

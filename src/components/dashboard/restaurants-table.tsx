@@ -34,18 +34,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
-import {IRestaurant} from '@/types/restaurant'
+import { IRestaurant } from "@/types/restaurant"
 
 
 interface RestaurantsTableProps {
   data: IRestaurant[]
   isLoading?: boolean
+  className?: string
 }
 
 type SortField = "name" | "subdomain" | "status" | "createdAt"
 type SortDirection = "asc" | "desc"
 
-export function RestaurantsTable({ data, isLoading = false }: RestaurantsTableProps) {
+export function RestaurantsTable({ data, isLoading = false, className }: RestaurantsTableProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all")
   const [sortField, setSortField] = useState<SortField>("name")
@@ -55,10 +56,11 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
 
   // Filter data based on search query and status
   const filteredData = data.filter((restaurant) => {
+    const q = searchQuery.trim().toLowerCase()
     const matchesSearch =
-      restaurant.name.en.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      restaurant.name.en.toLowerCase().includes(q) ||
       restaurant.name.ar.includes(searchQuery) ||
-      restaurant.subdomain.toLowerCase().includes(searchQuery.toLowerCase())
+      restaurant.subdomain.toLowerCase().includes(q)
 
     const matchesStatus =
       statusFilter === "all" ||
@@ -71,7 +73,9 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
   // Sort data
   const sortedData = [...filteredData].sort((a, b) => {
     if (sortField === "name") {
-      return sortDirection === "asc" ? a.name.en.localeCompare(b.name.en) : b.name.en.localeCompare(a.name.en)
+      const aName = a.name.ar || a.name.en
+      const bName = b.name.ar || b.name.en
+      return sortDirection === "asc" ? aName.localeCompare(bName) : bName.localeCompare(aName)
     } else if (sortField === "subdomain") {
       return sortDirection === "asc" ? a.subdomain.localeCompare(b.subdomain) : b.subdomain.localeCompare(a.subdomain)
     } else if (sortField === "status") {
@@ -112,21 +116,34 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Restaurants</CardTitle>
-        <CardDescription>Manage your restaurant listings and their settings.</CardDescription>
+    <Card className={cn("w-full border-[#d9ecff] bg-white/80 text-right shadow-2xl backdrop-blur", className)}>
+      <CardHeader className="flex flex-col gap-3 border-b border-[#edf6ff] pb-5 sm:flex-row-reverse sm:items-center sm:justify-between">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f7fb2]">المحفظة</p>
+          <CardTitle className="text-2xl">المطاعم</CardTitle>
+          <CardDescription className="max-w-xl">
+            إدارة قوائم المطاعم والحفاظ على تجربة موحدة.
+          </CardDescription>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" className="border-[#cfe6ff] text-[#256a9a] hover:bg-[#edf6ff]">
+            تصدير
+          </Button>
+          <Button variant="default" asChild className="bg-[#46b6ff] text-white hover:bg-[#3aa7df]">
+            <Link href="/dashboard/restaurants/new">إضافة مطعم</Link>
+          </Button>
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <div className="space-y-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row-reverse sm:items-center sm:justify-between">
             <div className="relative w-full sm:w-auto">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search restaurants..."
+                placeholder="ابحث عن مطعم..."
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="w-full pl-9 sm:w-[300px]"
+                className="w-full rounded-full border-[#d9ecff] pr-9 text-right sm:w-[320px]"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -134,31 +151,28 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                 value={statusFilter}
                 onValueChange={(value) => handleStatusChange(value as "all" | "published" | "draft")}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[200px] rounded-full border-[#d9ecff]">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4" />
-                    <SelectValue placeholder="Filter by status" />
+                    <SelectValue placeholder="تصفية حسب الحالة" />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Restaurants</SelectItem>
-                  <SelectItem value="published">Published Only</SelectItem>
-                  <SelectItem value="draft">Drafts Only</SelectItem>
+                  <SelectItem value="all">كل المطاعم</SelectItem>
+                  <SelectItem value="published">المنشور فقط</SelectItem>
+                  <SelectItem value="draft">المسودات فقط</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" asChild>
-                <Link href="/dashboard/restaurants/new">Add Restaurant</Link>
-              </Button>
             </div>
           </div>
 
-          <div className="rounded-md border">
+          <div className="overflow-hidden rounded-2xl border border-[#d9ecff]/80 bg-white shadow-sm">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
+                <TableRow className="bg-[#eef6ff]">
+                  <TableHead className="cursor-pointer text-xs uppercase tracking-wide text-muted-foreground" onClick={() => handleSort("name")}>
                     <div className="flex items-center gap-1">
-                      Name
+                      الاسم
                       {sortField === "name" &&
                         (sortDirection === "asc" ? (
                           <ChevronUp className="h-4 w-4" />
@@ -167,9 +181,9 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                         ))}
                     </div>
                   </TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("subdomain")}>
+                  <TableHead className="cursor-pointer text-xs uppercase tracking-wide text-muted-foreground" onClick={() => handleSort("subdomain")}>
                     <div className="flex items-center gap-1">
-                      Subdomain
+                      النطاق الفرعي
                       {sortField === "subdomain" &&
                         (sortDirection === "asc" ? (
                           <ChevronUp className="h-4 w-4" />
@@ -178,9 +192,9 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                         ))}
                     </div>
                   </TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
+                  <TableHead className="cursor-pointer text-xs uppercase tracking-wide text-muted-foreground" onClick={() => handleSort("status")}>
                     <div className="flex items-center gap-1">
-                      Status
+                      الحالة
                       {sortField === "status" &&
                         (sortDirection === "asc" ? (
                           <ChevronUp className="h-4 w-4" />
@@ -189,7 +203,7 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                         ))}
                     </div>
                   </TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-left text-xs uppercase tracking-wide text-muted-foreground">الإجراءات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -221,15 +235,15 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                     <TableCell colSpan={4} className="h-[300px] text-center">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <Store className="h-8 w-8 text-muted-foreground" />
-                        <h3 className="font-medium">No restaurants found</h3>
+                        <h3 className="font-medium">لا توجد مطاعم مطابقة</h3>
                         <p className="text-sm text-muted-foreground">
                           {searchQuery || statusFilter !== "all"
-                            ? "Try adjusting your search or filters"
-                            : "Get started by adding your first restaurant"}
+                            ? "جرّب تعديل البحث أو الفلاتر"
+                            : "ابدأ بإضافة أول مطعم"}
                         </p>
                         {!searchQuery && statusFilter === "all" && (
                           <Button variant="outline" className="mt-2" asChild>
-                            <Link href="/dashboard/restaurants/new">Add Restaurant</Link>
+                            <Link href="/dashboard/restaurants/new">إضافة مطعم</Link>
                           </Button>
                         )}
                       </div>
@@ -237,14 +251,14 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                   </TableRow>
                 ) : (
                   paginatedData.map((restaurant) => (
-                    <TableRow key={restaurant._id} className="group">
+                    <TableRow key={restaurant._id ?? restaurant.subdomain} className="group hover:bg-[#edf6ff]/50">
                      <TableCell className="font-medium">
   <div className="flex items-center gap-3 group">
-    <div className="relative h-10 w-10 overflow-hidden rounded-md border bg-muted">
+    <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-[#edf6ff] bg-muted">
       {restaurant.logo ? (
         <img
           src={`/images${restaurant?.coverImage}`}
-          alt={restaurant.name.en}
+          alt={restaurant.name.ar || restaurant.name.en}
           className="h-full w-full object-cover transition-all group-hover:scale-105"
         />
       ) : (
@@ -255,8 +269,8 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
     </div>
 
     <div>
-      <div className="font-medium flex items-center gap-1">
-        {restaurant.name.en}
+      <div className="flex items-center gap-1 font-semibold">
+        {restaurant.name.ar || restaurant.name.en}
 
         <TooltipProvider>
           <Tooltip>
@@ -268,12 +282,12 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                   className="h-6 w-6 opacity-0 group-hover:opacity-100"
                 >
                   <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="sr-only">Open Dashboard</span>
+                  <span className="sr-only">فتح لوحة التحكم</span>
                 </Button>
               </Link>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Open Dashboard</p>
+              <p>فتح لوحة التحكم</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -285,7 +299,9 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
 
                       <TableCell>
   <div className="flex items-center gap-1 group">
-    <span>{restaurant.subdomain}</span>
+    <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f7fb2]">
+      {restaurant.subdomain}
+    </span>
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
@@ -300,12 +316,12 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
               className="h-6 w-6 opacity-0 group-hover:opacity-100"
             >
               <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="sr-only">Visit site</span>
+              <span className="sr-only">زيارة الموقع</span>
             </Button>
           </a>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Visit restaurant site</p>
+          <p>زيارة موقع المطعم</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -321,23 +337,23 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                               : "hover:border-muted-foreground",
                           )}
                         >
-                          {restaurant.isPublished ? "Published" : "Draft"}
+                          {restaurant.isPublished ? "منشور" : "مسودة"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <TableCell className="text-left">
+                        <div className="flex items-center justify-start gap-2">
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                                   <Link href={`/dashboard/restaurants/${restaurant._id}`}>
                                     <Eye className="h-4 w-4" />
-                                    <span className="sr-only">View restaurant</span>
+                                    <span className="sr-only">عرض المطعم</span>
                                   </Link>
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>View details</p>
+                                <p>عرض التفاصيل</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -348,12 +364,12 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                                 <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                                   <Link href={`/dashboard/restaurants/${restaurant._id}/edit`}>
                                     <Edit className="h-4 w-4" />
-                                    <span className="sr-only">Edit restaurant</span>
+                                    <span className="sr-only">تعديل المطعم</span>
                                   </Link>
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Edit restaurant</p>
+                                <p>تعديل المطعم</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -361,32 +377,32 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <span className="sr-only">Open menu</span>
+                                <span className="sr-only">فتح القائمة</span>
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
                               <DropdownMenuItem asChild>
                                 <Link href={`/dashboard/restaurants/${restaurant._id}`}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  View Details
+                                  <Eye className="ml-2 h-4 w-4" />
+                                  عرض التفاصيل
                                 </Link>
                               </DropdownMenuItem>
                               <DropdownMenuItem asChild>
                                 <Link href={`/dashboard/restaurants/${restaurant._id}/edit`}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Edit Restaurant
+                                  <Edit className="ml-2 h-4 w-4" />
+                                  تعديل المطعم
                                 </Link>
                               </DropdownMenuItem>
                               <DropdownMenuItem>
-                                <ExternalLink className="mr-2 h-4 w-4" />
-                                Visit Website
+                                <ExternalLink className="ml-2 h-4 w-4" />
+                                زيارة الموقع
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-destructive focus:text-destructive">
-                                <Trash className="mr-2 h-4 w-4" />
-                                Delete Restaurant
+                                <Trash className="ml-2 h-4 w-4" />
+                                حذف المطعم
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -403,8 +419,8 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
           {!isLoading && totalPages > 1 && (
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
-                Showing {(currentPage - 1) * itemsPerPage + 1}-
-                {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} restaurants
+                عرض {(currentPage - 1) * itemsPerPage + 1}-
+                {Math.min(currentPage * itemsPerPage, filteredData.length)} من {filteredData.length} مطعم
               </div>
               <div className="flex items-center gap-1">
                 <Button
@@ -413,7 +429,7 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
                 >
-                  Previous
+                  السابق
                 </Button>
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   // Show pages around current page
@@ -448,7 +464,7 @@ export function RestaurantsTable({ data, isLoading = false }: RestaurantsTablePr
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
                 >
-                  Next
+                  التالي
                 </Button>
               </div>
             </div>

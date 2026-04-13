@@ -126,10 +126,10 @@ export function DeliveryZonesSidebar({
       <div className="flex-1 flex flex-col">
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-card-foreground">Active Zones</h2>
+            <h2 className="font-semibold text-card-foreground">المناطق النشطة</h2>
             <Button size="sm" onClick={handleCreateNew}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Zone
+              إضافة منطقة
             </Button>
           </div>
         </div>
@@ -187,11 +187,11 @@ export function DeliveryZonesSidebar({
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       {zone.zone_type === "circle" ? <Circle className="h-3 w-3" /> : <Polygon className="h-3 w-3" />}
-                      <span className="capitalize">{zone.zone_type}</span>
+                      <span>{zone.zone_type === "circle" ? "دائرة" : "مضلع"}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Euro className="h-3 w-3" />
-                      <span>{zone.delivery_fee.toFixed(2)}</span>
+                      <span>{zone.delivery_fee.toFixed(2)} ج</span>
                     </div>
                   </div>
                 </CardContent>
@@ -205,24 +205,26 @@ export function DeliveryZonesSidebar({
       {isEditing && (
         <div className="border-t border-border bg-muted/30">
           <div className="p-4">
-            <h3 className="font-semibold mb-4 text-card-foreground">{selectedZone ? "Edit Zone" : "Create Zone"}</h3>
+            <h3 className="font-semibold mb-4 text-card-foreground">
+              {selectedZone ? "تعديل المنطقة" : "إنشاء منطقة"}
+            </h3>
 
             <div className="space-y-4">
               <div>
                 <Label htmlFor="zone-name" className="text-sm font-medium">
-                  Zone name *
+                  اسم المنطقة *
                 </Label>
                 <Input
                   id="zone-name"
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  placeholder="Enter zone name"
+                  placeholder="اكتب اسم المنطقة"
                   className="mt-1"
                 />
               </div>
 
               <div>
-                <Label className="text-sm font-medium mb-2 block">Shape</Label>
+                <Label className="text-sm font-medium mb-2 block">نوع الشكل</Label>
                 <div className="flex gap-2">
                   <Button
                     variant={editForm.shape === "circle" ? "default" : "outline"}
@@ -231,7 +233,7 @@ export function DeliveryZonesSidebar({
                     className="flex-1"
                   >
                     <Circle className="h-4 w-4 mr-2" />
-                    Circle
+                    دائرة
                   </Button>
                   <Button
                     variant={editForm.shape === "custom" ? "default" : "outline"}
@@ -240,14 +242,14 @@ export function DeliveryZonesSidebar({
                     className="flex-1"
                   >
                     <Polygon className="h-4 w-4 mr-2" />
-                    Custom
+                    مخصص
                   </Button>
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="delivery-fee" className="text-sm font-medium">
-                  Delivery fee *
+                  رسوم التوصيل (جنيه) *
                 </Label>
                 <div className="relative mt-1">
                   <Euro className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -263,7 +265,7 @@ export function DeliveryZonesSidebar({
               </div>
 
               <div>
-                <Label className="text-sm font-medium mb-2 block">Color</Label>
+                <Label className="text-sm font-medium mb-2 block">اللون</Label>
                 <div className="flex gap-2 flex-wrap">
                   {ZONE_COLORS.map((color) => (
                     <button
@@ -285,20 +287,20 @@ export function DeliveryZonesSidebar({
                 onClick={() => setShowAdvanced(!showAdvanced)}
                 className="w-full justify-between"
               >
-                Advanced settings
+                إعدادات متقدمة
                 <ChevronDown className={cn("h-4 w-4 transition-transform", showAdvanced && "rotate-180")} />
               </Button>
 
               {showAdvanced && (
                 <div className="space-y-3 pt-2 border-t border-border">
                   <div className="text-xs text-muted-foreground">
-                    Additional zone configuration options will appear here.
+                    ستظهر هنا إعدادات إضافية للمنطقة لاحقًا.
                   </div>
                 </div>
               )}
 
               <Button onClick={handleSaveZone} className="w-full">
-                {selectedZone ? "Update Zone" : "Create Zone"}
+                {selectedZone ? "حفظ التعديلات" : "إنشاء المنطقة"}
               </Button>
             </div>
           </div>
