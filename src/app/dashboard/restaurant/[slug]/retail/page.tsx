@@ -1,1 +1,1 @@
-export { default } from "@/app/dashboard/[subdomain]/retail/page"
+export { default } from "@/app/dashboard/subdomain/retail/page"
