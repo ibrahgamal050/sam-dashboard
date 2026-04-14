@@ -1,5 +1,4 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "lib": [
@@ -7,7 +6,10 @@
       "dom.iterable",
       "esnext"
     ],
-    "typeRoots": ["./node_modules/@types", "./types"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -17,7 +19,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -27,17 +29,11 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@meelza/auth": [
-        "../../packages/auth/index.ts"
-      ],
-      "@meelza/*": [
-        "../../packages/*/index.ts"
       ]
     },
     "target": "ES2017"
   },
-  "include": [
+  "in clude": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
@@ -45,5 +41,13 @@
   ],
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts",
+    "**/*.ts",
+    "**/*.tsx"
   ]
 }
