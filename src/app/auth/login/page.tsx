@@ -9,7 +9,7 @@ const CLIENT_ID = process.env.MEELZA_ID_CLIENT_ID || "";
 const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL ||
   process.env.NEXTAUTH_URL ||
-  "http://localhost:3011";
+  "http://localhost:3001";
 const REDIRECT_URI = process.env.MEELZA_ID_REDIRECT_URI || `${APP_URL}/auth/callback`;
 
 function encodeState(returnUrl: string) {

@@ -2,14 +2,12 @@
 
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
-import { Activity, ArrowUpRight, Building2, MapPin, Plus, ShieldCheck, Sparkles, Store } from "lucide-react"
+import { ArrowUpRight, Building2, Plus, Store } from "lucide-react"
 
-import { RestaurantsTable } from "@/components/dashboard/restaurants-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
-import type { IRestaurant } from "@/types/restaurant"
 
 type AccessibleSite = {
   id: string
@@ -19,7 +17,7 @@ type AccessibleSite = {
   subdomain?: string
   logoUrl?: string | null
   coverImage?: string | null
-  description?: string | null
+  description?: { ar?: string; en?: string } | string | null
   isPublished?: boolean
   phones?: string[]
   updatedAt?: string | null
@@ -30,45 +28,45 @@ const normalizeName = (value: AccessibleSite["name"]) => {
   if (typeof value === "string") {
     return { ar: value, en: value }
   }
-  return { ar: value?.ar || value?.en || "", en: value?.en || value?.ar || "" }
+
+  return {
+    ar: value?.ar || value?.en || "",
+    en: value?.en || value?.ar || "",
+  }
 }
 
-export default function RestaurantDashboard() {
-  const [restaurants, setRestaurants] = useState<IRestaurant[]>([])
-  const [supermarkets, setSupermarkets] = useState<AccessibleSite[]>([])
+const resolveLocalizedText = (value?: { ar?: string; en?: string } | string | null) => {
+  if (!value) return ""
+  if (typeof value === "string") return value
+  return value.ar || value.en || ""
+}
+
+const formatRelativeType = (type: AccessibleSite["type"]) => {
+  return type === "restaurant" ? "مطعم" : "سوبرماركت"
+}
+
+export default function DashboardPage() {
+  const [sites, setSites] = useState<AccessibleSite[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchRestaurants()
+    void fetchSites()
   }, [])
 
-  const fetchRestaurants = async () => {
+  const fetchSites = async () => {
     try {
       setIsLoading(true)
+      setError(null)
+
       const response = await fetch("/api/me/sites", { cache: "no-store" })
       if (!response.ok) {
         throw new Error("تعذر جلب المواقع")
       }
+
       const data = await response.json()
-      const sites = Array.isArray(data?.sites) ? (data.sites as AccessibleSite[]) : []
-      const restaurantSites = sites.filter((site) => site.type === "restaurant")
-      const supermarketSites = sites.filter((site) => site.type === "supermarket")
-      setRestaurants(
-        restaurantSites.map((site) => ({
-          _id: site.id,
-          name: normalizeName(site.name),
-          subdomain: site.subdomain || site.slug,
-          logo: site.logoUrl || "",
-          coverImage: site.coverImage || "",
-          description: site.description || "",
-          branches: [],
-          isPublished: Boolean(site.isPublished),
-          phones: site.phones || [],
-          updatedAt: site.updatedAt || undefined,
-        })),
-      )
-      setSupermarkets(supermarketSites)
+      const nextSites = Array.isArray(data?.sites) ? (data.sites as AccessibleSite[]) : []
+      setSites(nextSites)
     } catch (err) {
       setError("حدث خطأ أثناء جلب المواقع")
       console.error(err)
@@ -82,30 +80,27 @@ export default function RestaurantDashboard() {
     }
   }
 
-  const totalRestaurants = restaurants.length
-  const publishedCount = restaurants.filter((restaurant) => restaurant.isPublished).length
-  const draftCount = Math.max(0, totalRestaurants - publishedCount)
-  const averageBranches =
-    totalRestaurants === 0
-      ? 0
-      : Math.round(
-          restaurants.reduce((acc, restaurant) => acc + (restaurant.branches?.length || 0), 0) / totalRestaurants,
-        )
-  const publishedRate = totalRestaurants === 0 ? 0 : Math.round((publishedCount / totalRestaurants) * 100)
-  const momentumScore = Math.min(96, Math.max(48, Math.round(publishedRate * 0.55 + averageBranches * 9)))
+  const stats = useMemo(() => {
+    const totalSites = sites.length
+    const restaurantsCount = sites.filter((site) => site.type === "restaurant").length
+    const supermarketsCount = sites.filter((site) => site.type === "supermarket").length
+    const publishedCount = sites.filter((site) => Boolean(site.isPublished)).length
 
-  const recentRestaurants = useMemo(() => {
-    return [...restaurants]
-      .sort((a, b) => {
-        const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0
-        const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0
-        return bDate - aDate
-      })
-      .slice(0, 3)
-  }, [restaurants])
+    return {
+      totalSites,
+      restaurantsCount,
+      supermarketsCount,
+      publishedCount,
+    }
+  }, [sites])
 
-  const performanceTrend = [68, 74, 79, 72, 85, 81]
-  const averagePerformance = Math.round(performanceTrend.reduce((acc, value) => acc + value, 0) / performanceTrend.length)
+  const sortedSites = useMemo(() => {
+    return [...sites].sort((a, b) => {
+      const aDate = a.updatedAt ? new Date(a.updatedAt).getTime() : 0
+      const bDate = b.updatedAt ? new Date(b.updatedAt).getTime() : 0
+      return bDate - aDate
+    })
+  }, [sites])
 
   if (isLoading) {
     return <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">جارٍ تحميل لوحة التحكم...</div>
@@ -129,7 +124,7 @@ export default function RestaurantDashboard() {
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#2f7fb2]">نظرة عامة</p>
             <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">لوحة التحكم</h1>
             <p className="max-w-2xl text-muted-foreground">
-              تابِع المطاعم والمتاجر المرتبطة بحسابك وابدأ بسرعة بلمسة واحدة.
+              تابِع المطاعم والسوبرماركت المرتبطة بحسابك من مكان واحد.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -139,174 +134,147 @@ export default function RestaurantDashboard() {
             <Button asChild className="gap-2 bg-[#46b6ff] text-white shadow-lg shadow-[0_18px_30px_rgba(70,182,255,0.35)] hover:bg-[#3aa7df]">
               <Link href="/dashboard/restaurants/new">
                 <Plus className="h-4 w-4" />
-                إضافة مطعم
+                إضافة موقع جديد
               </Link>
             </Button>
           </div>
         </div>
 
-      
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Card className="border-[#d9ecff] bg-white/80 shadow-xl backdrop-blur">
-            <CardHeader className="pb-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f7fb2]">الحالة المباشرة</p>
-              <CardTitle className="text-2xl">صحة المحفظة</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-3 rounded-2xl bg-[#eef6ff] px-3 py-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#dff0ff] text-[#2f7fb2]">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{publishedRate}% منشور</p>
-                  <p className="text-xs text-muted-foreground">مواقع جاهزة ومرئية للضيوف</p>
-                </div>
+            <CardContent className="flex items-center justify-between px-5 py-5">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">إجمالي المواقع</p>
+                <p className="text-3xl font-bold text-slate-900">{stats.totalSites}</p>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl bg-[#eef6ff] px-3 py-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#dff0ff] text-[#2f7fb2]">
-                  <Activity className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{momentumScore}% زخم</p>
-                  <p className="text-xs text-muted-foreground">تحديثات منتظمة وتغطية للفروع</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-2xl bg-[#eef6ff] px-3 py-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#dff0ff] text-[#2f7fb2]">
-                  <Building2 className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{averageBranches} متوسط الفروع</p>
-                  <p className="text-xs text-muted-foreground">تغطية لجميع المطاعم المدرجة</p>
-                </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef6ff] text-[#2f7fb2]">
+                <Building2 className="h-5 w-5" />
               </div>
             </CardContent>
           </Card>
-
           <Card className="border-[#d9ecff] bg-white/80 shadow-xl backdrop-blur">
-            <CardHeader className="pb-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f7fb2]">الأداء</p>
-              <CardTitle className="text-2xl">اتجاه أسبوعي</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-baseline justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">المتوسط</p>
-                  <p className="text-3xl font-semibold text-[#2f7fb2]">{averagePerformance}%</p>
-                </div>
-                <Badge className="bg-[#dff0ff] text-[#256a9a]">+4% مقارنة بالأسبوع الماضي</Badge>
+            <CardContent className="flex items-center justify-between px-5 py-5">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">المطاعم</p>
+                <p className="text-3xl font-bold text-slate-900">{stats.restaurantsCount}</p>
               </div>
-              <div className="flex h-36 items-end gap-2">
-                {performanceTrend.map((value, index) => (
-                  <div key={index} className="flex-1 h-full rounded-full bg-[#dff0ff]">
-                    <div
-                      className="relative m-1 rounded-full bg-gradient-to-t from-[#8fd1ff] via-[#6ec3ff] to-[#46b6ff] shadow-inner"
-                      style={{ height: `${value}%` }}
-                    >
-                      <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-semibold text-[#2f7fb2]">
-                        {value}%
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef6ff] text-[#2f7fb2]">
+                <Building2 className="h-5 w-5" />
               </div>
-              <p className="mt-3 text-xs text-muted-foreground">رفع قوائم جديدة وتحديثات الإعدادات يوميًا.</p>
             </CardContent>
           </Card>
-
-          <Card className="border-[#d9ecff] bg-white/80 shadow-xl backdrop-blur xl:col-span-2">
-            <CardHeader className="pb-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f7fb2]">الأحدث</p>
-              <CardTitle className="text-2xl">أحدث المطاعم</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentRestaurants.length === 0 && (
-                <div className="rounded-2xl border border-dashed border-[#cfe6ff] bg-[#eef6ff] px-4 py-6 text-center">
-                  <p className="font-semibold text-sky-900">لا توجد مطاعم بعد</p>
-                  <p className="text-sm text-muted-foreground">ابدأ بإضافة أول مطعم لتظهر النتائج هنا.</p>
-                </div>
-              )}
-
-              {recentRestaurants.map((restaurant) => (
-                <div
-                  key={restaurant._id ?? restaurant.subdomain}
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-[#d9ecff] bg-[#eef6ff] px-3 py-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#dff0ff] to-white text-[#2f7fb2]">
-                      <Building2 className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-900">
-                        {restaurant.name.ar || restaurant.name.en}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{restaurant.subdomain}.meelza.site</p>
-                    </div>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className={
-                      restaurant.isPublished
-                        ? "border-[#b9dcff] bg-[#dff0ff] text-[#256a9a]"
-                        : "border-amber-200 bg-amber-50 text-amber-800"
-                    }
-                  >
-                    {restaurant.isPublished ? "منشور" : "مسودة"}
-                  </Badge>
-                </div>
-              ))}
-
-              <div className="flex items-center justify-between rounded-2xl border border-[#d9ecff] bg-white px-3 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#dff0ff] text-[#2f7fb2]">
-                    <MapPin className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900">خريطة التغطية</p>
-                    <p className="text-xs text-muted-foreground">تابِع الفروع الجديدة في ثوانٍ.</p>
-                  </div>
-                </div>
-                <Button asChild variant="outline" className="border-[#cfe6ff] text-[#256a9a] hover:bg-[#edf6ff]">
-                  <Link href="/dashboard/restaurants/new">إضافة فرع</Link>
-                </Button>
+          <Card className="border-[#d9ecff] bg-white/80 shadow-xl backdrop-blur">
+            <CardContent className="flex items-center justify-between px-5 py-5">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">السوبرماركت</p>
+                <p className="text-3xl font-bold text-slate-900">{stats.supermarketsCount}</p>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef6ff] text-[#2f7fb2]">
+                <Store className="h-5 w-5" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-[#d9ecff] bg-white/80 shadow-xl backdrop-blur">
+            <CardContent className="flex items-center justify-between px-5 py-5">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">المنشور</p>
+                <p className="text-3xl font-bold text-slate-900">{stats.publishedCount}</p>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef6ff] text-[#2f7fb2]">
+                <ArrowUpRight className="h-5 w-5" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {supermarkets.length > 0 && (
-          <Card className="border-[#d9ecff] bg-white/80 shadow-xl backdrop-blur">
-            <CardHeader className="pb-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f7fb2]">السوبرماركت</p>
-              <CardTitle className="text-2xl">المتاجر المرتبطة بحسابك</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {supermarkets.map((market) => (
-                <Card
-                  key={market.id}
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-[#d9ecff] bg-[#eef6ff] px-4 py-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#2f7fb2]">
-                      <Store className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">
-                        {typeof market.name === "string" ? market.name : market.name?.ar || market.name?.en}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{market.slug}</p>
-                    </div>
-                  </div>
-                  <Button asChild size="sm" className="rounded-full bg-[#46b6ff] text-white hover:bg-[#3aa7df]">
-                    <Link href={`/dashboard/${market.slug}`}>فتح اللوحة</Link>
-                  </Button>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
-        )}
+        <Card className="border-[#d9ecff] bg-white/80 shadow-2xl backdrop-blur">
+          <CardHeader className="flex flex-col gap-3 border-b border-[#edf6ff] pb-5 sm:flex-row-reverse sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f7fb2]">المحفظة</p>
+              <CardTitle className="text-2xl">المواقع المرتبطة بحسابك</CardTitle>
+              <CardDescription className="max-w-xl">
+                كل المطاعم والسوبرماركت تظهر هنا في قائمة موحدة مع تمييز نوع كل موقع.
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-6">
+            {sortedSites.length === 0 ? (
+              <div className="flex min-h-[280px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-[#cfe6ff] bg-[#f8fbff] text-center">
+                <Building2 className="h-8 w-8 text-[#2f7fb2]" />
+                <div className="space-y-1">
+                  <p className="text-lg font-semibold text-slate-900">لا توجد مواقع مرتبطة بهذا الحساب</p>
+                  <p className="text-sm text-muted-foreground">ابدأ بإضافة أول مطعم أو سوبرماركت إلى لوحة التحكم.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {sortedSites.map((site) => {
+                  const normalizedName = normalizeName(site.name)
+                  const displayName = normalizedName.ar || normalizedName.en || site.slug
+                  const logo = site.logoUrl || site.coverImage
+                  const description = resolveLocalizedText(site.description)
 
-        <RestaurantsTable data={restaurants} />
+                  return (
+                    <Card
+                      key={site.id}
+                      className="overflow-hidden rounded-3xl border border-[#d9ecff] bg-[#fdfefe] shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl"
+                    >
+                      <CardContent className="space-y-5 p-5">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Badge className="rounded-full bg-[#eef6ff] px-3 py-1 text-[#2f7fb2] hover:bg-[#eef6ff]">
+                                {formatRelativeType(site.type)}
+                              </Badge>
+                              <Badge
+                                variant="outline"
+                                className={site.isPublished ? "border-emerald-200 text-emerald-700" : "border-amber-200 text-amber-700"}
+                              >
+                                {site.isPublished ? "منشور" : "مسودة"}
+                              </Badge>
+                            </div>
+                            <div className="space-y-1">
+                              <h3 className="text-lg font-bold text-slate-900">{displayName}</h3>
+                              <p className="text-sm text-muted-foreground">{site.subdomain || site.slug}</p>
+                            </div>
+                          </div>
+                          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-[#eef6ff] text-[#2f7fb2]">
+                            {logo ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={logo} alt={displayName} className="h-full w-full object-cover" />
+                            ) : site.type === "restaurant" ? (
+                              <Building2 className="h-5 w-5" />
+                            ) : (
+                              <Store className="h-5 w-5" />
+                            )}
+                          </div>
+                        </div>
+
+                        {description ? (
+                          <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{description}</p>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">لا يوجد وصف مضاف لهذا الموقع حتى الآن.</p>
+                        )}
+
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="text-xs text-muted-foreground">
+                            {site.role ? `الدور: ${site.role}` : "صلاحية مالك"}
+                          </div>
+                          <Button asChild size="sm" className="rounded-full bg-[#46b6ff] text-white hover:bg-[#3aa7df]">
+                            <Link href={`/dashboard/${site.slug}`}>
+                              فتح اللوحة
+                              <ArrowUpRight className="mr-1 h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
