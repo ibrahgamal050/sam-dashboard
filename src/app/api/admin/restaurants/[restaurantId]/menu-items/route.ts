@@ -8,6 +8,18 @@ import Restaurant from "@/models/Restaurant";
 import RestaurantMenuItem, { type IRestaurantMenuItem } from "@/models/RestaurantMenuItem";
 import { normalizeMenuType } from "@/lib/menu-types";
 
+type BrandMenuItemLean = {
+  _id: mongoose.Types.ObjectId;
+  name: unknown;
+  description?: unknown;
+  images?: Array<{ url?: string }>;
+  category: string;
+  price?: number | null;
+  order?: number;
+  isAvailable?: boolean;
+  isActive?: boolean;
+};
+
 const normalizeObjectId = (value: unknown) => {
   if (!value) return null;
   if (typeof value === "string") return value;
@@ -86,7 +98,7 @@ export async function GET(
   const brandObjectId = new mongoose.Types.ObjectId(brandId);
   const brandItems = await BrandMenuItem.find({ brandId: brandObjectId })
     .sort({ order: 1, createdAt: -1 })
-    .lean();
+    .lean<BrandMenuItemLean[]>();
 
   const brandItemIds = brandItems.map((item) => item._id);
   const overrides = brandItemIds.length
@@ -186,7 +198,7 @@ export async function PUT(
 
   const brandObjectId = new mongoose.Types.ObjectId(brandId);
   const brandMenuItemObjectId = new mongoose.Types.ObjectId(body.brandItemId);
-  const item = await BrandMenuItem.findOne({ _id: body.brandItemId, brandId: brandObjectId }).lean();
+  const item = await BrandMenuItem.findOne({ _id: body.brandItemId, brandId: brandObjectId }).lean<BrandMenuItemLean | null>();
   if (!item) {
     return NextResponse.json({ error: "Brand item not found." }, { status: 404 });
   }
@@ -235,7 +247,7 @@ export async function POST(
   }
 
   const brandObjectId = new mongoose.Types.ObjectId(brandId);
-  const brandItems = await BrandMenuItem.find({ brandId: brandObjectId }).lean();
+  const brandItems = await BrandMenuItem.find({ brandId: brandObjectId }).lean<BrandMenuItemLean[]>();
   if (!brandItems.length) {
     return NextResponse.json({ ok: true, imported: 0 });
   }
@@ -253,7 +265,7 @@ export async function POST(
           restaurantId: restaurantObjectId,
           brandMenuItemId: item._id,
           menuType,
-          price: typeof item.price === "number" ? item.price : null,
+          ...(typeof item.price === "number" ? { price: item.price } : {}),
           order: typeof item.order === "number" ? item.order : 0,
           isAvailable: item.isAvailable ?? true,
           isActive: item.isActive ?? true,

@@ -16,7 +16,7 @@ export default async function DeliveryZonesPage({ params }: DeliveryZonesPagePro
   await dbConnect()
   const restaurant = await Restaurant.findOne({ subdomain }).select("_id")
   if (restaurant) {
-    const restaurantId = restaurant._id.toString()
+    const restaurantId = String(restaurant._id)
     return (
       <div className="min-h-screen bg-background">
         <header className="border-b border-border bg-card">
@@ -56,7 +56,7 @@ export default async function DeliveryZonesPage({ params }: DeliveryZonesPagePro
     notFound()
   }
 
-  const supermarketId = supermarket._id.toString()
+  const supermarketId = String(supermarket._id)
 
   return (
     

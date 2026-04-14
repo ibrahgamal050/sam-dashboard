@@ -37,7 +37,7 @@ export async function POST(
 
   return NextResponse.json({
     item: {
-      id: item._id.toString(),
+      id: String(item._id),
       name: item.name,
       category: item.category,
       price: item.price,

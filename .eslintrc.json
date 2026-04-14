@@ -6,6 +6,17 @@
     "react-hooks/exhaustive-deps": "warn",
     "react/no-unescaped-entities": "off",
     "@next/next/no-img-element": "off",
-    "jsx-a11y/alt-text": "warn"
+    "jsx-a11y/alt-text": "warn",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@meelza/*", "packages/*", "/Users/*"],
+            "message": "apps/dashboard must not import local workspace files or packages from outside /dashboard."
+          }
+        ]
+      }
+    ]
   }
 }

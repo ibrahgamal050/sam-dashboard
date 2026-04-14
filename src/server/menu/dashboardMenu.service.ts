@@ -45,6 +45,20 @@ type BrandContextLean = {
   _id: mongoose.Types.ObjectId
 }
 
+type BrandMenuItemLean = {
+  _id: mongoose.Types.ObjectId
+  name?: { ar?: string; en?: string }
+  description?: unknown
+  category?: string
+  price?: number | null
+  images?: Array<{ url?: string }>
+  sizes?: Array<{ label: string; price?: number }>
+  weight?: string
+  order?: number
+  isAvailable?: boolean
+  isActive?: boolean
+}
+
 const pickName = (value: any) => value?.ar || value?.en || ""
 
 const normalizeCategoryName = (value?: string) => (value || "غير مصنف").trim()
@@ -125,7 +139,7 @@ export async function getDashboardMenu(
   const brandItems = includeHidden
     ? await BrandMenuItem.find({ brandId })
         .sort({ order: 1, createdAt: -1 })
-        .lean()
+        .lean<BrandMenuItemLean[]>()
     : await (async () => {
         const brandItemIds = Array.from(overrideMap.keys())
         return brandItemIds.length
@@ -134,7 +148,7 @@ export async function getDashboardMenu(
               brandId,
             })
               .sort({ order: 1, createdAt: -1 })
-              .lean()
+              .lean<BrandMenuItemLean[]>()
           : []
       })()
 
@@ -273,7 +287,7 @@ export async function updateDashboardMenuItemOverrides(
   }
   const itemObjectId = new mongoose.Types.ObjectId(itemId)
 
-  const baseItem = await BrandMenuItem.findOne({ _id: itemId, brandId: brand._id }).lean()
+  const baseItem = await BrandMenuItem.findOne({ _id: itemId, brandId: brand._id }).lean<BrandMenuItemLean | null>()
   if (!baseItem) {
     return { ok: false as const, status: 404, message: "Menu item not found." }
   }
@@ -468,7 +482,7 @@ export async function saveDashboardMenuOrder(
 export async function importBrandMenuItems(context: MenuContext, menuType: MenuType) {
   const { brand, restaurant } = context
 
-  const items = await BrandMenuItem.find({ brandId: brand._id, isActive: true }).lean()
+  const items = await BrandMenuItem.find({ brandId: brand._id, isActive: true }).lean<BrandMenuItemLean[]>()
   if (!items.length) {
     return { ok: true, imported: 0 }
   }

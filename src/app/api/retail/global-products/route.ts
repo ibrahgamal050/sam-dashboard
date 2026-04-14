@@ -44,7 +44,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     data: {
       items: items.map((item) => ({
-        id: item._id.toString(),
+        id: String(item._id),
         name: item.name,
         slug: item.slug,
         category: item.category,
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
   if (existing) {
     return NextResponse.json({
       item: {
-        id: existing._id.toString(),
+        id: String(existing._id),
         name: existing.name,
         slug: existing.slug,
         category: existing.category,
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     item: {
-      id: created._id.toString(),
+      id: String(created._id),
       name: created.name,
       slug: created.slug,
       category: created.category,
