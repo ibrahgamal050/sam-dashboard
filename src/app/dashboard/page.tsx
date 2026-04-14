@@ -1,13 +1,15 @@
 'use client'
 
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { ArrowUpRight, Building2, Plus, Store } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
+import { buildDashboardSitePath } from "@/lib/dashboard-site-path"
 
 type AccessibleSite = {
   id: string
@@ -46,21 +48,22 @@ const formatRelativeType = (type: AccessibleSite["type"]) => {
 }
 
 export default function DashboardPage() {
+  const router = useRouter()
   const [sites, setSites] = useState<AccessibleSite[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    void fetchSites()
-  }, [])
-
-  const fetchSites = async () => {
+  const fetchSites = useCallback(async () => {
     try {
       setIsLoading(true)
       setError(null)
 
       const response = await fetch("/api/me/sites", { cache: "no-store" })
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          router.replace(`/auth/login?return_url=${encodeURIComponent("/dashboard")}`)
+          return
+        }
         throw new Error("تعذر جلب المواقع")
       }
 
@@ -78,7 +81,11 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    void fetchSites()
+  }, [fetchSites])
 
   const stats = useMemo(() => {
     const totalSites = sites.length
@@ -108,6 +115,34 @@ export default function DashboardPage() {
 
   if (error) {
     return <div className="mt-8 text-center text-red-500">{error}</div>
+  }
+
+  if (sortedSites.length === 0) {
+    return (
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#f5f9ff] via-white to-[#e9f4ff] text-right">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-10 top-16 h-64 w-64 rounded-full bg-[#d8ecff]/60 blur-3xl" />
+          <div className="absolute right-10 top-10 h-64 w-64 rounded-full bg-[#dcefff]/60 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto flex min-h-screen max-w-3xl items-center justify-center px-4 py-10">
+          <Card className="w-full border-[#d9ecff] bg-white/90 text-center shadow-2xl backdrop-blur">
+            <CardContent className="flex flex-col items-center gap-4 px-8 py-12">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-[#eef6ff] text-[#2f7fb2]">
+                <Building2 className="h-8 w-8" />
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-2xl font-bold text-slate-900">لا توجد متاجر مرتبطة بهذا الحساب</h1>
+                <p className="text-base leading-7 text-muted-foreground">
+                  لا يمكنك الوصول إلى لوحة التحكم قبل ربط هذا الحساب بمطعم أو سوبرماركت.
+                </p>
+                <p className="text-sm text-muted-foreground">تواصل مع الدعم أو مع مسؤول المنصة لإضافة الصلاحية المناسبة.</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -198,81 +233,71 @@ export default function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            {sortedSites.length === 0 ? (
-              <div className="flex min-h-[280px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-[#cfe6ff] bg-[#f8fbff] text-center">
-                <Building2 className="h-8 w-8 text-[#2f7fb2]" />
-                <div className="space-y-1">
-                  <p className="text-lg font-semibold text-slate-900">لا توجد مواقع مرتبطة بهذا الحساب</p>
-                  <p className="text-sm text-muted-foreground">ابدأ بإضافة أول مطعم أو سوبرماركت إلى لوحة التحكم.</p>
-                </div>
-              </div>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {sortedSites.map((site) => {
-                  const normalizedName = normalizeName(site.name)
-                  const displayName = normalizedName.ar || normalizedName.en || site.slug
-                  const logo = site.logoUrl || site.coverImage
-                  const description = resolveLocalizedText(site.description)
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {sortedSites.map((site) => {
+                const normalizedName = normalizeName(site.name)
+                const displayName = normalizedName.ar || normalizedName.en || site.slug
+                const logo = site.logoUrl || site.coverImage
+                const description = resolveLocalizedText(site.description)
 
-                  return (
-                    <Card
-                      key={site.id}
-                      className="overflow-hidden rounded-3xl border border-[#d9ecff] bg-[#fdfefe] shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl"
-                    >
-                      <CardContent className="space-y-5 p-5">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Badge className="rounded-full bg-[#eef6ff] px-3 py-1 text-[#2f7fb2] hover:bg-[#eef6ff]">
-                                {formatRelativeType(site.type)}
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className={site.isPublished ? "border-emerald-200 text-emerald-700" : "border-amber-200 text-amber-700"}
-                              >
-                                {site.isPublished ? "منشور" : "مسودة"}
-                              </Badge>
-                            </div>
-                            <div className="space-y-1">
-                              <h3 className="text-lg font-bold text-slate-900">{displayName}</h3>
-                              <p className="text-sm text-muted-foreground">{site.subdomain || site.slug}</p>
-                            </div>
+                return (
+                  <Card
+                    key={site.id}
+                    className="overflow-hidden rounded-3xl border border-[#d9ecff] bg-[#fdfefe] shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl"
+                  >
+                    <CardContent className="space-y-5 p-5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Badge className="rounded-full bg-[#eef6ff] px-3 py-1 text-[#2f7fb2] hover:bg-[#eef6ff]">
+                              {formatRelativeType(site.type)}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className={site.isPublished ? "border-emerald-200 text-emerald-700" : "border-amber-200 text-amber-700"}
+                            >
+                              {site.isPublished ? "منشور" : "مسودة"}
+                            </Badge>
                           </div>
-                          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-[#eef6ff] text-[#2f7fb2]">
-                            {logo ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={logo} alt={displayName} className="h-full w-full object-cover" />
-                            ) : site.type === "restaurant" ? (
-                              <Building2 className="h-5 w-5" />
-                            ) : (
-                              <Store className="h-5 w-5" />
-                            )}
+                          <div className="space-y-1">
+                            <h3 className="text-lg font-bold text-slate-900">{displayName}</h3>
+                            <p className="text-sm text-muted-foreground">{site.subdomain || site.slug}</p>
                           </div>
                         </div>
-
-                        {description ? (
-                          <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{description}</p>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">لا يوجد وصف مضاف لهذا الموقع حتى الآن.</p>
-                        )}
-
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="text-xs text-muted-foreground">
-                            {site.role ? `الدور: ${site.role}` : "صلاحية مالك"}
-                          </div>
-                          <Button asChild size="sm" className="rounded-full bg-[#46b6ff] text-white hover:bg-[#3aa7df]">
-                            <Link href={`/dashboard/${site.slug}`}>
-                              فتح اللوحة
-                              <ArrowUpRight className="mr-1 h-4 w-4" />
-                            </Link>
-                          </Button>
+                        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-[#eef6ff] text-[#2f7fb2]">
+                          {logo ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={logo} alt={displayName} className="h-full w-full object-cover" />
+                          ) : site.type === "restaurant" ? (
+                            <Building2 className="h-5 w-5" />
+                          ) : (
+                            <Store className="h-5 w-5" />
+                          )}
                         </div>
-                      </CardContent>
-                    </Card>
-                  )
-                })}
-              </div>
-            )}
+                      </div>
+
+                      {description ? (
+                        <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{description}</p>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">لا يوجد وصف مضاف لهذا الموقع حتى الآن.</p>
+                      )}
+
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-xs text-muted-foreground">
+                          {site.role ? `الدور: ${site.role}` : "صلاحية مالك"}
+                        </div>
+                        <Button asChild size="sm" className="rounded-full bg-[#46b6ff] text-white hover:bg-[#3aa7df]">
+                          <Link href={buildDashboardSitePath(site)}>
+                            فتح اللوحة
+                            <ArrowUpRight className="mr-1 h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -1,8 +1,14 @@
-export type RoleAssignment = { restaurantId?: string | null; role?: string }
+export type RoleAssignment = {
+  restaurantId?: string | null
+  supermarketId?: string | null
+  brandId?: string | null
+  role?: string
+}
 
 export type TargetInfo = {
   type: "restaurant" | "supermarket"
   id: string
+  brandId?: string | null
 }
 
 const normalizeRole = (role: any) =>
@@ -40,18 +46,47 @@ export const isOwnerForTarget = (user: any, target: TargetInfo) => {
   if (hasAdminRole) return true
 
   const assignments = rawRoles as RoleAssignment[]
+  const normalizedBrandId = target.brandId ? String(target.brandId) : null
   const hasOwnerRole = assignments.some((entry) => {
-    if (!entry || entry.role !== "owner") return false
-    const assignmentId = entry.restaurantId ? String(entry.restaurantId) : null
-    if (!assignmentId) return true
-    return assignmentId === target.id
+    if (!entry || normalizeRole(entry.role) !== "owner") return false
+
+    const restaurantId = entry.restaurantId ? String(entry.restaurantId) : null
+    const supermarketId = entry.supermarketId ? String(entry.supermarketId) : null
+    const brandId = entry.brandId ? String(entry.brandId) : null
+
+    if (target.type === "restaurant" && restaurantId) {
+      return restaurantId === target.id
+    }
+
+    if (target.type === "supermarket" && supermarketId) {
+      return supermarketId === target.id
+    }
+
+    if (brandId && normalizedBrandId) {
+      return brandId === normalizedBrandId
+    }
+
+    return false
   })
 
   if (hasOwnerRole) return true
 
   if (user.role === "owner") {
-    const primaryId = user.restaurantId ? String(user.restaurantId) : null
-    return !primaryId || primaryId === target.id
+    if (target.type === "restaurant") {
+      const primaryRestaurantId = user.restaurantId ? String(user.restaurantId) : null
+      if (primaryRestaurantId) return primaryRestaurantId === target.id
+    }
+
+    if (target.type === "supermarket") {
+      const primarySupermarketId = user.supermarketId ? String(user.supermarketId) : null
+      if (primarySupermarketId) return primarySupermarketId === target.id
+    }
+
+    if (user.brandId && normalizedBrandId) {
+      return String(user.brandId) === normalizedBrandId
+    }
+
+    return false
   }
 
   return false

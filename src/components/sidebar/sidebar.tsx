@@ -24,6 +24,7 @@ import {
   Download as DownloadIcon,
 } from "lucide-react"
 
+import { buildDashboardTenantBasePath } from "@/lib/dashboard-site-path"
 import { cn } from "@/lib/utils"
 
 export type SidebarProps = {
@@ -46,18 +47,33 @@ type NavGroup = {
 
 export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: SidebarProps) {
   const params = useParams()
-  const fallbackSubdomain = Array.isArray(params?.subdomain)
+  const slugParam = Array.isArray(params?.slug) ? params.slug[0] : (params?.slug as string) ?? ""
+  const subdomainParam = Array.isArray(params?.subdomain)
     ? params.subdomain[0]
     : (params?.subdomain as string) ?? ""
+  const fallbackSubdomain = slugParam || subdomainParam
   const subdomain = subdomainProp ?? fallbackSubdomain
 
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   const [retailSlug, setRetailSlug] = useState(subdomain || "")
   const [tenantType, setTenantType] = useState<"restaurant" | "supermarket" | "unknown">("unknown")
+  const routeTenantType = useMemo<"restaurant" | "supermarket" | "legacy">(() => {
+    if (pathname?.includes("/dashboard/restaurant/")) return "restaurant"
+    if (pathname?.includes("/dashboard/supermarket/")) return "supermarket"
+    return "legacy"
+  }, [pathname])
   const isRetailContext = Boolean(pathname?.includes("/dashboard/") && pathname?.includes("/retail"))
 
-  const basePath = useMemo(() => `/dashboard/${subdomain}`.replace(/\/+$/, ""), [subdomain])
+  const basePath = useMemo(() => {
+    if (routeTenantType === "restaurant") {
+      return buildDashboardTenantBasePath("restaurant", subdomain)
+    }
+    if (routeTenantType === "supermarket") {
+      return buildDashboardTenantBasePath("supermarket", subdomain)
+    }
+    return `/dashboard/${subdomain}`.replace(/\/+$/, "")
+  }, [routeTenantType, subdomain])
   const brandShort = (subdomain || "MZ").slice(0, 2).toUpperCase()
 
   useEffect(() => {
@@ -93,8 +109,9 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
   }, [subdomain])
 
   useEffect(() => {
-    if (!subdomain || isRetailContext) {
-      if (isRetailContext) setTenantType("supermarket")
+    if (!subdomain || isRetailContext || routeTenantType !== "legacy") {
+      if (routeTenantType === "restaurant") setTenantType("restaurant")
+      if (routeTenantType === "supermarket" || isRetailContext) setTenantType("supermarket")
       return
     }
     let active = true
@@ -112,7 +129,7 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
     return () => {
       active = false
     }
-  }, [subdomain, isRetailContext])
+  }, [subdomain, isRetailContext, routeTenantType])
 
   const isSupermarket = isRetailContext || tenantType === "supermarket"
 
@@ -145,7 +162,7 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
 
   const navSections = useMemo<NavGroup[]>(() => {
     const catalogPrimaryItem: NavItem = isSupermarket
-      ? { label: "كتالوج السوبرماركت", href: ({ subdomain }) => `/dashboard/${subdomain}/retail`, icon: ShoppingBag }
+      ? { label: "كتالوج السوبرماركت", href: "retail", icon: ShoppingBag }
       : { label: "المنيو", href: "menu", icon: ShoppingBag }
 
     return [

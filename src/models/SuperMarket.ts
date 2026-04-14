@@ -3,6 +3,7 @@ import mongoose, { Schema, type Document, type Model } from "mongoose";
 export type MarketType = "supermarket" | "pharmacy" | "bakery" | "dark_store";
 
 export interface ISuperMarket extends Document {
+  brandId?: mongoose.Types.ObjectId;
   name: string;
   nameAr?: string;
   nameEn?: string;
@@ -46,6 +47,11 @@ export interface ISuperMarket extends Document {
 
 const SuperMarketSchema = new Schema<ISuperMarket>(
   {
+    brandId: {
+  type: Schema.Types.ObjectId,
+  ref: "Brand",
+  index: true
+},
     name: { type: String, required: true, trim: true },
     nameAr: { type: String, trim: true },
     nameEn: { type: String, trim: true },

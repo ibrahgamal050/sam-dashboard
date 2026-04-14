@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 import type { IRestaurant } from "@/types/restaurant"
+import { buildDashboardSitePath } from "@/lib/dashboard-site-path"
 
 type AccessibleSite = {
   id: string
@@ -172,7 +173,7 @@ export default function RestaurantDashboard() {
                     </div>
                   </div>
                   <Button asChild size="sm" className="rounded-full bg-[#46b6ff] text-white hover:bg-[#3aa7df]">
-                    <Link href={`/dashboard/${market.slug}`}>فتح اللوحة</Link>
+                    <Link href={buildDashboardSitePath(market)}>فتح اللوحة</Link>
                   </Button>
                 </Card>
               ))}

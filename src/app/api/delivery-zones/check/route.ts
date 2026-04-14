@@ -5,6 +5,7 @@ import { deliveryZoneCheckInternals } from "./internals"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
+export { deliveryZoneCheckInternals }
 
 export async function POST(request: Request) {
   try {

@@ -33,6 +33,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Skeleton } from "@/components/ui/skeleton"
+import { buildDashboardTenantBasePath } from "@/lib/dashboard-site-path"
 import { cn } from "@/lib/utils"
 import { IRestaurant } from "@/types/restaurant"
 
@@ -275,7 +276,7 @@ export function RestaurantsTable({ data, isLoading = false, className }: Restaur
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link href={`/dashboard/${restaurant.subdomain}`}>
+              <Link href={buildDashboardTenantBasePath("restaurant", restaurant.subdomain)}>
                 <Button
                   variant="ghost"
                   size="icon"
