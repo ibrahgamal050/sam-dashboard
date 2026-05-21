@@ -9,6 +9,7 @@ import { MenuEditor } from "@/components/dashboard/menu/menu-editor";
 type MenuPageProps = {
   params: Promise<{
     subdomain?: string | string[];
+    slug?: string | string[];
   }>;
 };
 
@@ -27,9 +28,21 @@ const normalizeBrandId = (value: unknown) => {
   return String(value);
 };
 
+const isNextNavigationError = (error: unknown) => {
+  if (!(error instanceof Error) || !("digest" in error)) return false;
+  const digest = (error as { digest?: unknown }).digest;
+  return (
+    typeof digest === "string" &&
+    (digest === "NEXT_NOT_FOUND" ||
+      digest.startsWith("NEXT_HTTP_ERROR_FALLBACK;") ||
+      digest.startsWith("NEXT_REDIRECT"))
+  );
+};
+
 export default async function MenuPage({ params }: MenuPageProps) {
-  const { subdomain: rawSubdomain } = await params;
-  const subdomain = Array.isArray(rawSubdomain) ? rawSubdomain[0] : rawSubdomain;
+  const { subdomain: rawSubdomain, slug: rawSlug } = await params;
+  const rawTenant = rawSubdomain ?? rawSlug;
+  const subdomain = Array.isArray(rawTenant) ? rawTenant[0] : rawTenant;
 
   if (!subdomain) notFound();
 
@@ -56,34 +69,22 @@ export default async function MenuPage({ params }: MenuPageProps) {
     }
 
     const brandId = normalizeBrandId((restaurant as any).brandId);
-    if (!brandId) {
-      notFound();
-    }
-
-    const brand = await Brand.findById(brandId).lean();
-    if (!brand) {
-      notFound();
-    }
+    const brand = brandId ? await Brand.findById(brandId).lean() : null;
+    const menuId = brand?._id?.toString() || (restaurant as any)._id.toString();
 
     return (
       <MenuEditor
-        menuId={brand._id.toString()}
+        menuId={menuId}
         restaurantslug={subdomain}
         restaurantId={(restaurant as any)._id.toString()}
       />
     );
   } catch (error: unknown) {
-    // نفس handling بتاعك
-    if (
-      error instanceof Error &&
-      "digest" in error &&
-      typeof (error as { digest?: string }).digest === "string" &&
-      (error as { digest?: string }).digest === "NEXT_NOT_FOUND"
-    ) {
+    if (isNextNavigationError(error)) {
       throw error;
     }
 
     console.error("Error loading menu page:", error);
-    throw new Error("Failed to load menu page");
+    throw new Error("Не удалось загрузить страницу меню");
   }
 }

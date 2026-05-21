@@ -238,7 +238,10 @@ export default function PageEditor() {
 
   const rawSubdomain = useMemo(() => {
     const sub = params?.subdomain
-    return Array.isArray(sub) ? sub[0] : sub
+    const slg = params?.slug
+    const resolved = Array.isArray(sub) ? sub[0] : sub
+    const resolvedSlug = Array.isArray(slg) ? slg[0] : slg
+    return resolved ?? resolvedSlug ?? ""
   }, [params])
 
   const rawId = useMemo(() => {

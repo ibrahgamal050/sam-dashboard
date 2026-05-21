@@ -17,13 +17,13 @@ import { zodFormResolver } from "@/lib/zod-form-resolver"
 
 const formSchema = z
   .object({
-    name: z.string().min(2, { message: "الاسم يجب أن يتكوّن من حرفين على الأقل" }),
-    email: z.string().email({ message: "أدخل بريدًا إلكترونيًا صالحًا" }),
-    password: z.string().min(6, { message: "الرقم السري يجب ألا يقل عن 6 خانات" }),
-    confirmPassword: z.string().min(6, { message: "يرجى تأكيد الرقم السري" }),
+    name: z.string().min(2, { message: "Имя должно содержать не менее 2 символов" }),
+    email: z.string().email({ message: "Введите корректный email" }),
+    password: z.string().min(6, { message: "Пароль должен содержать не менее 6 символов" }),
+    confirmPassword: z.string().min(6, { message: "Пожалуйста, подтвердите пароль" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "الرقم السري غير متطابق",
+    message: "Пароли не совпадают",
     path: ["confirmPassword"],
   })
 
@@ -71,33 +71,33 @@ export default function CustomerRegisterPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        setError(result.error || "تعذّر التسجيل، حاول مرة أخرى")
+        setError(result.error || "Не удалось зарегистрироваться, попробуйте ещё раз")
         return
       }
 
-      setSuccess("تم إنشاء الحساب بنجاح! سيتم تحويلك لتسجيل الدخول")
+      setSuccess("Аккаунт успешно создан! Вы будете перенаправлены на страницу входа")
       setTimeout(() => router.push("/auth/login"), 1800)
     } catch (err) {
       console.error("Registration error", err)
-      setError("حدث خطأ غير متوقع. الرجاء المحاولة لاحقًا.")
+      setError("Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже.")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <Card className="border-0 shadow-none" dir="rtl">
-      <CardHeader className="space-y-3 text-right">
-        <CardTitle className="text-3xl font-bold text-gray-900">إنشاء حساب عميل</CardTitle>
+    <Card className="border-0 shadow-none" dir="ltr">
+      <CardHeader className="space-y-3 text-left">
+        <CardTitle className="text-3xl font-bold text-gray-900">Создать аккаунт клиента</CardTitle>
         <CardDescription className="text-sm leading-6 text-gray-500">
-          انضم إلى منصة ميلزا لتصفح المطاعم، حفظ عناوينك وتتبع طلباتك بكل سهولة.
+          Присоединяйтесь к платформе Meelza, чтобы просматривать рестораны, сохранять адреса и отслеживать заказы.
         </CardDescription>
       </CardHeader>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <CardContent className="space-y-5">
           {error && (
-            <Alert variant="destructive" className="text-right">
+            <Alert variant="destructive" className="text-left">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -108,34 +108,34 @@ export default function CustomerRegisterPage() {
             </Alert>
           )}
 
-          <Field label="الاسم الكامل" error={errors.name?.message}>
+          <Field label="Полное имя" error={errors.name?.message}>
             <Input
               id="name"
-              placeholder="مثال: أحمد القاضي"
-              className="text-right"
+              placeholder="Например: Иван Иванов"
+              className="text-left"
               disabled={isLoading}
               {...register("name")}
             />
           </Field>
 
-          <Field label="البريد الإلكتروني" error={errors.email?.message}>
+          <Field label="Email" error={errors.email?.message}>
             <Input
               id="email"
               type="email"
               placeholder="name@example.com"
-              className="text-right"
+              className="text-left"
               disabled={isLoading}
               {...register("email")}
             />
           </Field>
 
-          <Field label="الرقم السري" error={errors.password?.message}>
+          <Field label="Пароль" error={errors.password?.message}>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                className="text-right"
+                className="text-left"
                 disabled={isLoading}
                 {...register("password")}
               />
@@ -152,13 +152,13 @@ export default function CustomerRegisterPage() {
             </div>
           </Field>
 
-          <Field label="تأكيد الرقم السري" error={errors.confirmPassword?.message}>
+          <Field label="Подтвердите пароль" error={errors.confirmPassword?.message}>
             <div className="relative">
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="••••••••"
-                className="text-right"
+                className="text-left"
                 disabled={isLoading}
                 {...register("confirmPassword")}
               />
@@ -176,7 +176,7 @@ export default function CustomerRegisterPage() {
           </Field>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-4 text-right">
+        <CardFooter className="flex flex-col gap-4 text-left">
           <Button
             type="submit"
             className="w-full rounded-2xl bg-[#6c5ce7] text-white shadow-lg shadow-[#6c5ce7]/25"
@@ -185,24 +185,24 @@ export default function CustomerRegisterPage() {
             {isLoading ? (
               <>
                 <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                جاري إنشاء الحساب...
+                Создание аккаунта...
               </>
             ) : (
-              "تسجيل الحساب"
+              "Зарегистрироваться"
             )}
           </Button>
 
           <div className="text-sm text-gray-600">
-            لديك حساب بالفعل؟
-            <Link href="/auth/login" className="mr-2 font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
-              تسجيل الدخول
+            Уже есть аккаунт?{" "}
+            <Link href="/auth/login" className="font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
+              Войти
             </Link>
           </div>
 
           <div className="text-xs text-gray-500">
-            هل أنت من فريق الإدارة؟
-            <Link href="/auth/register-manager" className="mr-1 font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
-              انتقل لتسجيل المدراء
+            Вы из команды управления?{" "}
+            <Link href="/auth/register-manager" className="font-semibold text-[#6c5ce7] hover:text-[#5643d7]">
+              Регистрация для менеджеров
             </Link>
           </div>
         </CardFooter>
@@ -212,7 +212,7 @@ export default function CustomerRegisterPage() {
 }
 
 const Field = ({ label, error, children }: { label: string; error?: string | null; children: ReactNode }) => (
-  <div className="space-y-2 text-right">
+  <div className="space-y-2 text-left">
     <Label className="text-sm font-medium text-gray-700">{label}</Label>
     {children}
     {error && <p className="text-xs text-red-500">{error}</p>}

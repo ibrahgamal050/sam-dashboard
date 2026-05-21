@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import dbConnect from "@/lib/dbConnect";
+import Brand from "@/models/Brand";
 import SuperMarket from "@/models/SuperMarket";
 import CatalogProduct from "@/models/CatalogProduct";
 import MerchantProduct from "@/models/MerchantProduct";
@@ -11,7 +12,10 @@ import RetailSidebarSheet from "@/components/retail/retail-sidebar-sheet";
 import type { CategoryNode } from "@/components/retail/retail-catalog-types";
 
 type RetailPageProps = {
-  params: Promise<{ subdomain: string }>;
+  params: Promise<{
+    subdomain?: string;
+    slug?: string;
+  }>;
 };
 
 type Localized = { ar?: string; en?: string } | null | undefined;
@@ -33,8 +37,9 @@ const mapNodeToTop = (nodes: CategoryNode[], topId?: string, acc = new Map<strin
 };
 
 export default async function RetailDashboardPage({ params }: RetailPageProps) {
-  const { subdomain } = await params;
-  const decodedSlug = decodeURIComponent(subdomain || "").toLowerCase();
+  const { subdomain, slug } = await params;
+  const resolvedSlug = slug || subdomain || "";
+  const decodedSlug = decodeURIComponent(resolvedSlug).toLowerCase();
   if (!decodedSlug) notFound();
 
   await dbConnect();
@@ -42,6 +47,7 @@ export default async function RetailDashboardPage({ params }: RetailPageProps) {
   const supermarket = await SuperMarket.findOne({ slug: decodedSlug }).lean();
   if (!supermarket) notFound();
   const supermarketName = pickLocalized(supermarket.name as Localized) || supermarket.slug;
+  const brand = supermarket.brandId ? await Brand.findById(supermarket.brandId).lean() : null;
 
   const catalogProducts = await CatalogProduct.find({
     supermarketId: supermarket._id,
@@ -86,12 +92,21 @@ export default async function RetailDashboardPage({ params }: RetailPageProps) {
     globalProducts.map((item) => [item._id.toString(), item])
   );
 
-  const categoriesDoc = await SupermarketCategories.findOne({
-    supermarketId: supermarket._id,
-    isActive: true,
-  })
-    .select({ categories: 1 })
-    .lean();
+  const categoriesDoc =
+    (brand?._id
+      ? await SupermarketCategories.findOne({
+          brandId: brand._id,
+          isActive: true,
+        })
+          .select({ categories: 1, brandId: 1 })
+          .lean()
+      : null) ||
+    (await SupermarketCategories.findOne({
+      supermarketId: supermarket._id,
+      isActive: true,
+    })
+      .select({ categories: 1, supermarketId: 1 })
+      .lean());
 
   const rawCategories: CategoryNode[] = categoriesDoc ? ((categoriesDoc as any).categories || []) : [];
   const nodeTopMap = rawCategories.length ? mapNodeToTop(rawCategories) : new Map<string, string>();
@@ -105,7 +120,7 @@ export default async function RetailDashboardPage({ params }: RetailPageProps) {
     const name =
       pickLocalized(merchantProduct?.customName) ||
       pickLocalized(globalProduct?.name) ||
-      "منتج بدون اسم";
+      "Товар без названия";
     const image =
       merchantProduct?.customImages?.[0]?.url ||
       globalProduct?.images?.[0]?.url ||
@@ -136,7 +151,7 @@ export default async function RetailDashboardPage({ params }: RetailPageProps) {
     const name =
       pickLocalized(merchant.customName) ||
       pickLocalized(global?.name) ||
-      "منتج بدون اسم";
+      "Товар без названия";
     const image =
       merchant.customImages?.[0]?.url || global?.images?.[0]?.url || "";
     return {
@@ -160,15 +175,15 @@ export default async function RetailDashboardPage({ params }: RetailPageProps) {
               <RetailSidebarSheet name={supermarketName} slug={supermarket.slug} />
               <div className="flex flex-1 items-center gap-2 rounded-2xl bg-slate-50 px-4 py-2 text-sm text-slate-500">
                 <span className="text-slate-400">🔍</span>
-                ابحث عن منتج أو طلب...
+                Поиск товара или заказа...
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <button className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-slate-600">
-                مسح باركود
+                Сканировать штрихкод
               </button>
               <button className="rounded-2xl bg-[#2e6fe6] px-4 py-2 text-white">
-                إنشاء فاتورة
+                Создать счёт
               </button>
             </div>
           </div>
@@ -179,7 +194,13 @@ export default async function RetailDashboardPage({ params }: RetailPageProps) {
               name: supermarketName,
               slug: supermarket.slug,
               isActive: supermarket.isActive,
+              brandId: brand?._id?.toString?.() || supermarket.brandId?.toString?.() || null,
             }}
+            categorySaveUrl={
+              brand?._id
+                ? `/api/retail/brands/${brand._id.toString()}/categories`
+                : `/api/retail/supermarkets/${supermarket._id.toString()}/categories`
+            }
             catalogId={catalogId}
             rows={productsRows}
             merchantOptions={merchantOptions}

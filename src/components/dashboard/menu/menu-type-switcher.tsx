@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils"
 import type { MenuType } from "@/lib/menu-types"
 
 const MENU_TYPE_LABELS: Record<MenuType, string> = {
-  delivery: "دليفري",
-  dinein: "صالة",
-  takeaway: "تيك أواي",
+  delivery: "Доставка",
+  dinein: "Зал",
+  takeaway: "Самовывоз",
 }
 
 type MenuTypeSwitcherProps = {
@@ -49,13 +49,13 @@ export function MenuTypeSwitcher({ value, onChange, onAdd, className }: MenuType
         className="rounded-full border-slate-200 px-4 text-xs font-semibold"
         onClick={() => setOpen(true)}
       >
-        + إضافة منيو
+        + Добавить меню
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
-            <DialogTitle className="text-base">إضافة نوع منيو</DialogTitle>
+            <DialogTitle className="text-base">Добавить тип меню</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
             {(Object.keys(MENU_TYPE_LABELS) as MenuType[]).map((type) => (
@@ -75,7 +75,7 @@ export function MenuTypeSwitcher({ value, onChange, onAdd, className }: MenuType
                 )}
               >
                 <span>{MENU_TYPE_LABELS[type]}</span>
-                {value === type ? <span className="text-xs">الحالي</span> : null}
+                {value === type ? <span className="text-xs">Текущий</span> : null}
               </button>
             ))}
           </div>

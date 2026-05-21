@@ -32,7 +32,7 @@ export default function BranchesPageClient({ subdomain }: BranchesPageClientProp
 
       <div className="flex gap-3">
         <Input
-          placeholder="ابحث بالاسم أو العنوان..."
+          placeholder="Поиск по названию или адресу..."
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
@@ -60,7 +60,7 @@ export default function BranchesPageClient({ subdomain }: BranchesPageClientProp
               <div className="mt-3">
                 <span className={cn("inline-flex items-center gap-1 text-xs px-2 py-1 rounded",
                   b.isActive ? "bg-green-100" : "bg-zinc-200")}>
-                  <Power className="w-3 h-3" /> {b.isActive ? "نشط" : "مُعطَّل"}
+                  <Power className="w-3 h-3" /> {b.isActive ? "Активен" : "مُعطَّل"}
                 </span>
               </div>
             </div>

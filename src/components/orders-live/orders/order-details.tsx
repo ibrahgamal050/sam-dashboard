@@ -74,336 +74,352 @@ interface OrderDetailsProps {
 }
 
 const STATUS_BADGE_VARIANTS: Record<string, BadgeVariant> = {
-  pending: "secondary",
-  queued: "secondary",
-  processing: "default",
-  accepted: "default",
-  in_progress: "default",
-  preparing: "default",
-  ready: "outline-solid",
-  served: "secondary",
-  delivered: "secondary",
-  completed: "secondary",
-  canceled: "destructive",
-  cancelled: "destructive",
-  rejected: "destructive",
-  failed: "destructive",
-}
-
-const DETAILS_STRINGS: Record<
-  Locale,
-  {
-    summary: {
-      orderLabel: string
-      statusLabel: string
-      typeLabel: string
-      totalLabel: string
-      itemsCount: (count: number) => string
-    }
-    actions: {
-      refresh: string
-      accept: string
-      accepting: string
-      ready: string
-      readying: string
-      deliver: string
-      delivering: string
-      cancel: string
-      canceling: string
-    }
-    customer: {
-      title: string
-      phone: string
-      email: string
-      notes: string
-      noNotes: string
-    }
-    address: {
-      title: string
-      noAddress: string
-      pickup: string
-      instructions: string
-    }
-    payment: {
-      title: string
-      method: string
-      status: string
-    }
-    totals: {
-      title: string
-      subtotal: string
-      tax: string
-      service: string
-      delivery: string
-      discount: string
-      total: string
-    }
-    items: {
-      title: string
-      quantity: string
-      price: string
-      total: string
-      empty: string
-    }
-    timeline: {
-      title: string
-      created: string
-      accepted: string
-      ready: string
-      delivered: string
-      canceled: string
-      updated: string
-    }
-    meta: {
-      title: string
-      channel: string
-      source: string
-      platform: string
-      device: string
-    }
-    statuses: Record<string, string>
-    types: Record<string, string>
-    paymentMethods: Record<string, string>
-    paymentStatuses: Record<string, string>
-    common: {
-      unknown: string
-      notAvailable: string
-      countLabel: (count: number) => string
-    }
-  }
-> = {
   en: {
     summary: {
-      orderLabel: "Order",
-      statusLabel: "Status",
-      typeLabel: "Type",
-      totalLabel: "Total",
-      itemsCount: (count) => `${count} ${count === 1 ? "item" : "items"}`,
+      orderLabel: "Заказ",
+      statusLabel: "Статус",
+      typeLabel: "Тип",
+      totalLabel: "Итого",
+      itemsCount: (count) => `${count} позиций`,
     },
     actions: {
-      refresh: "Refresh",
-      accept: "Accept order",
-      accepting: "Accepting...",
-      ready: "Mark ready",
-      readying: "Marking...",
-      deliver: "Mark delivered",
-      delivering: "Completing...",
-      cancel: "Cancel order",
-      canceling: "Canceling...",
+      refresh: "Обновить",
+      accept: "Принять заказ",
+      accepting: "Принятие...",
+      ready: "Отметить готовым",
+      readying: "Обработка...",
+      deliver: "Отметить доставленным",
+      delivering: "Завершение...",
+      cancel: "Отменить заказ",
+      canceling: "Отмена...",
     },
     customer: {
-      title: "Customer",
-      phone: "Phone",
+      title: "Клиент",
+      phone: "Телефон",
       email: "Email",
-      notes: "Notes",
-      noNotes: "No notes",
+      notes: "Примечания",
+      noNotes: "Нет примечаний",
     },
     address: {
-      title: "Delivery address",
-      noAddress: "No delivery address",
-      pickup: "Customer pickup",
-      instructions: "Instructions",
+      title: "Адрес доставки",
+      noAddress: "Адрес доставки не указан",
+      pickup: "Самовывоз",
+      instructions: "Инструкции",
     },
     payment: {
-      title: "Payment",
-      method: "Method",
-      status: "Status",
+      title: "Оплата",
+      method: "Способ",
+      status: "Статус",
     },
     totals: {
-      title: "Breakdown",
-      subtotal: "Subtotal",
-      tax: "Tax",
-      service: "Service fee",
-      delivery: "Delivery fee",
-      discount: "Discount",
-      total: "Total",
+      title: "Разбивка",
+      subtotal: "Подытог",
+      tax: "Налог",
+      service: "Сервисный сбор",
+      delivery: "Стоимость доставки",
+      discount: "Скидка",
+      total: "Итого",
     },
     items: {
-      title: "Items",
-      quantity: "Qty",
-      price: "Price",
-      total: "Total",
-      empty: "No items",
+      title: "Позиции",
+      quantity: "Кол-во",
+      price: "Цена",
+      total: "Итого",
+      empty: "Нет позиций",
     },
     timeline: {
-      title: "Timeline",
-      created: "Created",
-      accepted: "Accepted",
-      ready: "Ready",
-      delivered: "Delivered",
-      canceled: "Canceled",
-      updated: "Last updated",
+      title: "История",
+      created: "Создан",
+      accepted: "Принят",
+      ready: "Готов",
+      delivered: "Доставлен",
+      canceled: "Отменён",
+      updated: "Последнее обновление",
     },
     meta: {
-      title: "Order info",
-      channel: "Channel",
-      source: "Source",
-      platform: "Platform",
-      device: "Device",
+      title: "Информация о заказе",
+      channel: "Канал",
+      source: "Источник",
+      platform: "Платформа",
+      device: "Устройство",
     },
     statuses: {
-      pending: "Pending",
-      queued: "Queued",
-      processing: "Processing",
-      accepted: "Accepted",
-      in_progress: "In progress",
-      preparing: "Preparing",
-      ready: "Ready",
-      served: "Served",
-      delivered: "Delivered",
-      completed: "Completed",
-      canceled: "Canceled",
-      cancelled: "Canceled",
-      rejected: "Rejected",
-      failed: "Failed",
+      pending: "Ожидание",
+      queued: "В очереди",
+      processing: "Обрабатывается",
+      accepted: "Принят",
+      in_progress: "В работе",
+      preparing: "Готовится",
+      ready: "Готов",
+      served: "Подан",
+      delivered: "Доставлен",
+      completed: "Выполнен",
+      canceled: "Отменён",
+      cancelled: "Отменён",
+      rejected: "Отклонён",
+      failed: "Ошибка",
     },
     types: {
-      delivery: "Delivery",
-      pickup: "Pickup",
-      dine_in: "Dine-in",
-      takeaway: "Takeaway",
-      drive_thru: "Drive-thru",
+      delivery: "Доставка",
+      pickup: "Самовывоз",
+      dine_in: "В зале",
+      takeaway: "С собой",
+      drive_thru: "Драйв-тру",
     },
     paymentMethods: {
-      cash: "Cash",
-      cod: "Cash on delivery",
-      card: "Card",
-      online: "Online",
-      wallet: "Wallet",
+      cash: "Наличные",
+      cod: "Наложенный платёж",
+      card: "Карта",
+      online: "Онлайн",
+      wallet: "Кошелёк",
       meelza_pay: "Meelza Pay",
       meelzapay: "Meelza Pay",
-      bank: "Bank transfer",
+      bank: "Банковский перевод",
     },
     paymentStatuses: {
-      paid: "Paid",
-      pending: "Pending",
-      failed: "Failed",
-      refunded: "Refunded",
-      authorized: "Authorized",
+      paid: "Оплачено",
+      pending: "Ожидание",
+      failed: "Ошибка",
+      refunded: "Возврат",
+      authorized: "Авторизовано",
     },
     common: {
-      unknown: "Unknown",
-      notAvailable: "N/A",
-      countLabel: (count) => `${count} ${count === 1 ? "item" : "items"}`,
+      unknown: "Неизвестно",
+      notAvailable: "Н/Д",
+      countLabel: (count) => `${count} позиций`,
     },
   },
   ar: {
     summary: {
-      orderLabel: "طلب",
-      statusLabel: "الحالة",
-      typeLabel: "النوع",
-      totalLabel: "الإجمالي",
-      itemsCount: (count) => `${count} عنصر`,
+      orderLabel: "Заказ",
+      statusLabel: "Статус",
+      typeLabel: "Тип",
+      totalLabel: "Итого",
+      itemsCount: (count) => `${count} позиций`,
     },
     actions: {
-      refresh: "تحديث",
-      accept: "قبول الطلب",
-      accepting: "جاري القبول...",
-      ready: "تعيين كجاهز",
-      readying: "جاري التعيين...",
-      deliver: "تعيين كتم التسليم",
-      delivering: "جاري الإنهاء...",
-      cancel: "إلغاء الطلب",
-      canceling: "جاري الإلغاء...",
+      refresh: "Обновить",
+      accept: "Принять заказ",
+      accepting: "Принятие...",
+      ready: "Отметить готовым",
+      readying: "Обработка...",
+      deliver: "Отметить доставленным",
+      delivering: "Завершение...",
+      cancel: "Отменить заказ",
+      canceling: "Отмена...",
     },
     customer: {
-      title: "العميل",
-      phone: "الهاتف",
-      email: "البريد الإلكتروني",
-      notes: "ملاحظات",
-      noNotes: "لا توجد ملاحظات",
+      title: "Клиент",
+      phone: "Телефон",
+      email: "Email",
+      notes: "Примечания",
+      noNotes: "Нет примечаний",
     },
     address: {
-      title: "عنوان التوصيل",
-      noAddress: "لا يوجد عنوان للتوصيل",
-      pickup: "استلام من المتجر",
-      instructions: "تعليمات",
+      title: "Адрес доставки",
+      noAddress: "Адрес доставки не указан",
+      pickup: "Самовывоз",
+      instructions: "Инструкции",
     },
     payment: {
-      title: "الدفع",
-      method: "الطريقة",
-      status: "الحالة",
+      title: "Оплата",
+      method: "Способ",
+      status: "Статус",
     },
     totals: {
-      title: "تفاصيل المبالغ",
-      subtotal: "الإجمالي الفرعي",
-      tax: "الضريبة",
-      service: "رسوم الخدمة",
-      delivery: "رسوم التوصيل",
-      discount: "الخصم",
-      total: "الإجمالي",
+      title: "Разбивка",
+      subtotal: "Подытог",
+      tax: "Налог",
+      service: "Сервисный сбор",
+      delivery: "Стоимость доставки",
+      discount: "Скидка",
+      total: "Итого",
     },
     items: {
-      title: "الأصناف",
-      quantity: "الكمية",
-      price: "السعر",
-      total: "الإجمالي",
-      empty: "لا توجد أصناف",
+      title: "Позиции",
+      quantity: "Кол-во",
+      price: "Цена",
+      total: "Итого",
+      empty: "Нет позиций",
     },
     timeline: {
-      title: "الخط الزمني",
-      created: "تم الإنشاء",
-      accepted: "تم القبول",
-      ready: "جاهز",
-      delivered: "تم التسليم",
-      canceled: "تم الإلغاء",
-      updated: "آخر تحديث",
+      title: "История",
+      created: "Создан",
+      accepted: "Принят",
+      ready: "Готов",
+      delivered: "Доставлен",
+      canceled: "Отменён",
+      updated: "Последнее обновление",
     },
     meta: {
-      title: "بيانات الطلب",
-      channel: "القناة",
-      source: "المصدر",
-      platform: "المنصة",
-      device: "الجهاز",
+      title: "Информация о заказе",
+      channel: "Канал",
+      source: "Источник",
+      platform: "Платформа",
+      device: "Устройство",
     },
     statuses: {
-      pending: "قيد الانتظار",
-      queued: "قيد الانتظار",
-      processing: "قيد المعالجة",
-      accepted: "تم القبول",
-      in_progress: "قيد التنفيذ",
-      preparing: "قيد التحضير",
-      ready: "جاهز",
-      served: "مقدّم",
-      delivered: "تم التسليم",
-      completed: "مكتمل",
-      canceled: "ملغى",
-      cancelled: "ملغى",
-      rejected: "مرفوض",
-      failed: "فشل",
+      pending: "Ожидание",
+      queued: "В очереди",
+      processing: "Обрабатывается",
+      accepted: "Принят",
+      in_progress: "В работе",
+      preparing: "Готовится",
+      ready: "Готов",
+      served: "Подан",
+      delivered: "Доставлен",
+      completed: "Выполнен",
+      canceled: "Отменён",
+      cancelled: "Отменён",
+      rejected: "Отклонён",
+      failed: "Ошибка",
     },
     types: {
-      delivery: "توصيل",
-      pickup: "استلام",
-      dine_in: "داخل المطعم",
-      takeaway: "تيك أواي",
-      drive_thru: "درايف ثرو",
+      delivery: "Доставка",
+      pickup: "Самовывоз",
+      dine_in: "В зале",
+      takeaway: "С собой",
+      drive_thru: "Драйв-тру",
     },
     paymentMethods: {
-      cash: "نقدًا",
-      cod: "دفع عند الاستلام",
-      card: "بطاقة",
-      online: "أونلاين",
-      wallet: "محفظة",
-      meelza_pay: "محفظة ميلزا",
-      meelzapay: "محفظة ميلزا",
-      bank: "تحويل بنكي",
+      cash: "Наличные",
+      cod: "Наложенный платёж",
+      card: "Карта",
+      online: "Онлайн",
+      wallet: "Кошелёк",
+      meelza_pay: "Meelza Pay",
+      meelzapay: "Meelza Pay",
+      bank: "Банковский перевод",
     },
     paymentStatuses: {
-      paid: "مدفوع",
-      pending: "قيد الانتظار",
-      failed: "فشل",
-      refunded: "مسترد",
-      authorized: "مفوَّض",
+      paid: "Оплачено",
+      pending: "Ожидание",
+      failed: "Ошибка",
+      refunded: "Возврат",
+      authorized: "Авторизовано",
     },
     common: {
-      unknown: "غير معروف",
-      notAvailable: "غير متاح",
-      countLabel: (count) => `${count} عنصر`,
+      unknown: "Неизвестно",
+      notAvailable: "Н/Д",
+      countLabel: (count) => `${count} позиций`,
+    },
+  },
+  ru: {
+    summary: {
+      orderLabel: "Заказ",
+      statusLabel: "Статус",
+      typeLabel: "Тип",
+      totalLabel: "Итого",
+      itemsCount: (count) => `${count} позиций`,
+    },
+    actions: {
+      refresh: "Обновить",
+      accept: "Принять заказ",
+      accepting: "Принятие...",
+      ready: "Отметить готовым",
+      readying: "Обработка...",
+      deliver: "Отметить доставленным",
+      delivering: "Завершение...",
+      cancel: "Отменить заказ",
+      canceling: "Отмена...",
+    },
+    customer: {
+      title: "Клиент",
+      phone: "Телефон",
+      email: "Email",
+      notes: "Примечания",
+      noNotes: "Нет примечаний",
+    },
+    address: {
+      title: "Адрес доставки",
+      noAddress: "Адрес доставки не указан",
+      pickup: "Самовывоз",
+      instructions: "Инструкции",
+    },
+    payment: {
+      title: "Оплата",
+      method: "Способ",
+      status: "Статус",
+    },
+    totals: {
+      title: "Разбивка",
+      subtotal: "Подытог",
+      tax: "Налог",
+      service: "Сервисный сбор",
+      delivery: "Стоимость доставки",
+      discount: "Скидка",
+      total: "Итого",
+    },
+    items: {
+      title: "Позиции",
+      quantity: "Кол-во",
+      price: "Цена",
+      total: "Итого",
+      empty: "Нет позиций",
+    },
+    timeline: {
+      title: "История",
+      created: "Создан",
+      accepted: "Принят",
+      ready: "Готов",
+      delivered: "Доставлен",
+      canceled: "Отменён",
+      updated: "Последнее обновление",
+    },
+    meta: {
+      title: "Информация о заказе",
+      channel: "Канал",
+      source: "Источник",
+      platform: "Платформа",
+      device: "Устройство",
+    },
+    statuses: {
+      pending: "Ожидание",
+      queued: "В очереди",
+      processing: "Обрабатывается",
+      accepted: "Принят",
+      in_progress: "В работе",
+      preparing: "Готовится",
+      ready: "Готов",
+      served: "Подан",
+      delivered: "Доставлен",
+      completed: "Выполнен",
+      canceled: "Отменён",
+      cancelled: "Отменён",
+      rejected: "Отклонён",
+      failed: "Ошибка",
+    },
+    types: {
+      delivery: "Доставка",
+      pickup: "Самовывоз",
+      dine_in: "В зале",
+      takeaway: "С собой",
+      drive_thru: "Драйв-тру",
+    },
+    paymentMethods: {
+      cash: "Наличные",
+      cod: "Наложенный платёж",
+      card: "Карта",
+      online: "Онлайн",
+      wallet: "Кошелёк",
+      meelza_pay: "Meelza Pay",
+      meelzapay: "Meelza Pay",
+      bank: "Банковский перевод",
+    },
+    paymentStatuses: {
+      paid: "Оплачено",
+      pending: "Ожидание",
+      failed: "Ошибка",
+      refunded: "Возврат",
+      authorized: "Авторизовано",
+    },
+    common: {
+      unknown: "Неизвестно",
+      notAvailable: "Н/Д",
+      countLabel: (count) => `${count} позиций`,
     },
   },
 }
-
 const normalizeKey = (value?: string) => {
   if (!value) return ""
   return value.toLowerCase().replace(/[\s-]+/g, "_")
@@ -505,7 +521,7 @@ export function OrderDetails({
   const currencyCode = (order.currency ?? order.amounts?.currency ?? "USD").toUpperCase()
 
   const currencyFormatter = useMemo(() => {
-    const localeTag = locale === "ar" ? "ar-EG" : "en-US"
+    const localeTag = "ru-RU"
     try {
       return new Intl.NumberFormat(localeTag, { style: "currency", currency: currencyCode })
     } catch {
@@ -524,7 +540,7 @@ export function OrderDetails({
   )
 
   const dateFormatter = useMemo(() => {
-    const localeTag = locale === "ar" ? "ar-EG" : "en-US"
+    const localeTag = "ru-RU"
     return new Intl.DateTimeFormat(localeTag, {
       dateStyle: "medium",
       timeStyle: "short",

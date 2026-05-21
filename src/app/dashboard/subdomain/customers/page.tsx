@@ -42,7 +42,7 @@ const formatDate = (value?: string) => {
   if (!value) return ""
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
-  return new Intl.DateTimeFormat("ar-EG").format(date)
+  return new Intl.DateTimeFormat("ru-RU").format(date)
 }
 
 const resolveCustomerKey = (order: ApiOrder) => {
@@ -55,13 +55,15 @@ const resolveCustomerKey = (order: ApiOrder) => {
 
 const buildCustomerName = (order: ApiOrder) => {
   if (order.customer?.name) return order.customer.name
-  if (order.userId) return `عميل ${order.userId.slice(-4)}`
-  return "عميل مجهول"
+  if (order.userId) return `Клиент ${order.userId.slice(-4)}`
+  return "Неизвестный клиент"
 }
 
 export default function CustomersPage() {
   const params = useParams()
-  const subdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : (params?.subdomain as string) ?? ""
+  const rawSubdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : (params?.subdomain as string)
+  const rawSlug = Array.isArray(params?.slug) ? params.slug[0] : (params?.slug as string)
+  const subdomain = rawSubdomain ?? rawSlug ?? ""
   const [customers, setCustomers] = useState<CustomerRow[]>([])
   const [query, setQuery] = useState("")
   const [loading, setLoading] = useState(true)
@@ -81,34 +83,34 @@ export default function CustomersPage() {
     if (restaurantRes.ok) {
       const restaurant = await restaurantRes.json()
       const restaurantId = restaurant?._id
-      if (!restaurantId) throw new Error("معرّف المطعم غير متوفر")
+      if (!restaurantId) throw new Error("Идентификатор ресторана недоступен")
 
       const ordersRes = await fetch(`/api/orders?restaurantId=${restaurantId}&limit=200`, {
         signal: controller.signal,
       })
-      if (!ordersRes.ok) throw new Error("تعذر جلب طلبات المطعم")
+      if (!ordersRes.ok) throw new Error("Не удалось загрузить заказы ресторана")
 
       const data = await ordersRes.json()
       return mapOrdersToCustomers(data?.orders || [])
     }
 
     if (restaurantRes.status !== 404) {
-      throw new Error("تعذر تحديد المطعم")
+      throw new Error("Не удалось определить ресторан")
     }
 
     const marketRes = await fetch(`/api/retail/supermarkets/slug/${encodeURIComponent(subdomain)}`, {
       signal: controller.signal,
     })
-    if (!marketRes.ok) throw new Error("تعذر تحديد السوبرماركت")
+    if (!marketRes.ok) throw new Error("Не удалось определить супермаркет")
 
     const market = await marketRes.json()
     const supermarketId = market?._id
-    if (!supermarketId) throw new Error("معرّف السوبرماركت غير متوفر")
+    if (!supermarketId) throw new Error("Идентификатор супермаркета недоступен")
 
     const ordersRes = await fetch(`/api/orders?supermarketId=${supermarketId}&limit=200`, {
       signal: controller.signal,
     })
-    if (!ordersRes.ok) throw new Error("تعذر جلب طلبات السوبرماركت")
+    if (!ordersRes.ok) throw new Error("Не удалось загрузить заказы супермаркета")
 
     const data = await ordersRes.json()
     return mapOrdersToCustomers(data?.orders || [])
@@ -127,7 +129,7 @@ export default function CustomersPage() {
         console.error(err)
         if (!cancelled) {
           setCustomers([])
-          setError("تعذر جلب العملاء من الخادم.")
+          setError("Не удалось загрузить клиентов с сервера.")
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -172,10 +174,10 @@ export default function CustomersPage() {
               <p className="max-w-xl text-sm text-emerald-50/90">تابع تواصل الضيوف، تكرار الطلبات، وأفضل العملاء.</p>
               <div className="flex flex-wrap gap-2 text-xs font-semibold text-emerald-50/90">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
-                  <UserCircle2 className="h-4 w-4" /> الإجمالي: {stats.total}
+                  <UserCircle2 className="h-4 w-4" /> Всего: {stats.total}
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
-                  <ArrowRight className="h-4 w-4" /> أعلى إنفاق: {stats.top?.name || "—"}
+                  <ArrowRight className="h-4 w-4" /> Топ по тратам: {stats.top?.name || "—"}
                 </span>
               </div>
             </div>
@@ -200,7 +202,7 @@ export default function CustomersPage() {
               <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-400" />
               <Input
                 type="search"
-                placeholder="ابحث عن عميل"
+                placeholder="Поиск клиента"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 className="h-10 rounded-full border-emerald-200 bg-white/80 pr-9 text-right text-sm"
@@ -273,13 +275,13 @@ export default function CustomersPage() {
                           <p className="text-xs text-emerald-700/80">{customer.email}</p>
                         </div>
                         <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
-                          {customer.orders} طلبات
+                          {customer.orders} заказов
                         </span>
                       </div>
                       <p className="mt-2 text-xs text-emerald-700/80">{customer.phone}</p>
                       <div className="mt-3 flex items-center justify-between text-xs text-emerald-700/80">
-                        <span>المعرف: {customer.id}</span>
-                        <span>آخر طلب: {formatDate(customer.lastOrder)}</span>
+                        <span>ID: {customer.id}</span>
+                        <span>Последний заказ: {formatDate(customer.lastOrder)}</span>
                       </div>
                     </div>
                   ))

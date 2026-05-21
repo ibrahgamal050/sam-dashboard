@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   // ضبط الـ dashboard على العربية والـ RTL
   return (
-    <div dir="rtl" lang="ar" className="min-h-screen">
+    <div  lang="ar" className="min-h-screen">
       {children}
     </div>
   )

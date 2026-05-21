@@ -23,6 +23,12 @@ interface OrderListItem {
   createdAt?: string
 }
 
+const RU_LIST = {
+  loading: "Загрузка...",
+  uncategorized: "Без категории",
+  orderLabel: "Заказ",
+}
+
 const LIST_STRINGS: Record<
   Locale,
   {
@@ -31,77 +37,56 @@ const LIST_STRINGS: Record<
     orderLabel: string
   }
 > = {
-  en: {
-    loading: "Loading...",
-    uncategorized: "Uncategorized",
-    orderLabel: "Order",
-  },
-  ar: {
-    loading: "جاري التحميل...",
-    uncategorized: "غير مصنف",
-    orderLabel: "طلب",
-  },
+  en: RU_LIST,
+  ar: RU_LIST,
+  ru: RU_LIST,
+}
+
+const RU_STATUS_LABELS = {
+  pending: "Ожидание",
+  queued: "В очереди",
+  in_progress: "В обработке",
+  processing: "Обрабатывается",
+  ready: "Готово",
+  delivered: "Доставлено",
+  completed: "Выполнено",
+  canceled: "Отменено",
+  cancelled: "Отменено",
 }
 
 const STATUS_LABELS: Record<Locale, Record<string, string>> = {
-  en: {
-    pending: "Pending",
-    queued: "Queued",
-    in_progress: "In progress",
-    processing: "Processing",
-    ready: "Ready",
-    delivered: "Delivered",
-    completed: "Completed",
-    canceled: "Canceled",
-    cancelled: "Canceled",
-  },
-  ar: {
-    pending: "قيد الانتظار",
-    queued: "قيد الانتظار",
-    in_progress: "قيد التنفيذ",
-    processing: "قيد المعالجة",
-    ready: "جاهز",
-    delivered: "تم التسليم",
-    completed: "مكتمل",
-    canceled: "ملغى",
-    cancelled: "ملغى",
-  },
+  en: RU_STATUS_LABELS,
+  ar: RU_STATUS_LABELS,
+  ru: RU_STATUS_LABELS,
+}
+
+const RU_TYPE_LABELS = {
+  delivery: "Доставка",
+  pickup: "Самовывоз",
+  dine_in: "В зале",
+  takeaway: "С собой",
 }
 
 const TYPE_LABELS: Record<Locale, Record<string, string>> = {
-  en: {
-    delivery: "Delivery",
-    pickup: "Pickup",
-    dine_in: "Dine-in",
-    takeaway: "Takeaway",
-  },
-  ar: {
-    delivery: "توصيل",
-    pickup: "استلام",
-    dine_in: "داخل المطعم",
-    takeaway: "تيك أواي",
-  },
+  en: RU_TYPE_LABELS,
+  ar: RU_TYPE_LABELS,
+  ru: RU_TYPE_LABELS,
+}
+
+const RU_PAYMENT_METHOD_LABELS = {
+  cash: "Наличные",
+  cod: "Наложенный платёж",
+  card: "Карта",
+  online: "Онлайн",
+  wallet: "Кошелёк",
+  meelza_pay: "Meelza Pay",
+  meelzapay: "Meelza Pay",
 }
 
 const PAYMENT_METHOD_LABELS: Record<Locale, Record<string, string>> = {
-  en: {
-    cash: "Cash",
-    cod: "Cash on delivery",
-    card: "Card",
-    online: "Online",
-    wallet: "Wallet",
-    meelza_pay: "Meelza Pay",
-    meelzapay: "Meelza Pay",
-  },
-  ar: {
-    cash: "نقدًا",
-    cod: "دفع عند الاستلام",
-    card: "بطاقة",
-    online: "أونلاين",
-    wallet: "محفظة",
-    meelza_pay: "محفظة ميلزا",
-    meelzapay: "محفظة ميلزا",
-  },
+  en: RU_PAYMENT_METHOD_LABELS,
+  ar: RU_PAYMENT_METHOD_LABELS,
+  ru: RU_PAYMENT_METHOD_LABELS,
 }
 
 interface OrdersListProps {
@@ -124,7 +109,7 @@ const toTitle = (value?: string) => {
 }
 
 const formatAmount = (amount: number, currency: string, locale: Locale) => {
-  const localeTag = locale === "ar" ? "ar-EG" : "en-US"
+  const localeTag = "ru-RU"
   const safeCurrency = currency.toUpperCase()
   try {
     return new Intl.NumberFormat(localeTag, { style: "currency", currency: safeCurrency }).format(amount)
@@ -199,7 +184,7 @@ export function OrdersList({
         const createdAt = order.createdAt ? new Date(order.createdAt) : null
         const createdTime =
           createdAt && !Number.isNaN(createdAt.getTime())
-            ? new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en-US", {
+            ? new Intl.DateTimeFormat("ru-RU", {
                 hour: "2-digit",
                 minute: "2-digit",
               }).format(createdAt)

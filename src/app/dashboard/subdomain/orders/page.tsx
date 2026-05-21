@@ -57,10 +57,10 @@ interface Order {
 }
 
 const STATUS_FILTERS: Array<{ label: string; value: OrderStatus | "All" }> = [
-  { label: "الكل", value: "All" },
-  { label: "قيد التوصيل", value: "On Delivery" },
-  { label: "تم التسليم", value: "Delivered" },
-  { label: "ملغي", value: "Canceled" },
+  { label: "Все", value: "All" },
+  { label: "В доставке", value: "On Delivery" },
+  { label: "Доставлено", value: "Delivered" },
+  { label: "Отменено", value: "Canceled" },
 ]
 
 const PAGE_SIZE = 10
@@ -68,11 +68,13 @@ const PAGE_SIZE = 10
 export default function OrdersPage() {
   const params = useParams()
   const { toast } = useToast()
-  const subdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : (params?.subdomain as string) ?? ""
+  const rawSubdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : (params?.subdomain as string)
+  const rawSlug = Array.isArray(params?.slug) ? params.slug[0] : (params?.slug as string)
+  const subdomain = rawSubdomain ?? rawSlug ?? ""
 
   const [orders, setOrders] = useState<Order[]>([])
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "All">("All")
-  const [dateRange, setDateRange] = useState("آخر 7 أيام")
+  const [dateRange, setDateRange] = useState("Все время")
   const [search, setSearch] = useState("")
   const deferredSearch = useDeferredValue(search)
   const [loading, setLoading] = useState(true)
@@ -129,7 +131,7 @@ export default function OrdersPage() {
           displayId,
           createdAt: order.createdAt,
           customer: {
-            name: resolveText(order.customer?.name) || "ضيف",
+            name: resolveText(order.customer?.name) || "Гость",
             phone: order.customer?.phone || "",
             email: order.customer?.email || "",
           },
@@ -148,32 +150,32 @@ export default function OrdersPage() {
       if (restaurantRes.ok) {
         const restaurant = await restaurantRes.json()
         const restaurantId = restaurant?._id
-        if (!restaurantId) throw new Error("معرّف المطعم غير متوفر")
+        if (!restaurantId) throw new Error("Идентификатор ресторана недоступен")
 
         const ordersRes = await fetch(`/api/orders?restaurantId=${restaurantId}&limit=200`, {
           signal: controller.signal,
         })
-        if (!ordersRes.ok) throw new Error("تعذر جلب الطلبات")
+        if (!ordersRes.ok) throw new Error("Не удалось загрузить заказы")
         const data = await ordersRes.json()
         return mapOrders(data)
       }
 
       if (restaurantRes.status !== 404) {
-        throw new Error("تعذر تحديد المطعم")
+        throw new Error("Не удалось определить ресторан")
       }
 
       const marketRes = await fetch(`/api/retail/supermarkets/slug/${encodeURIComponent(subdomain)}`, {
         signal: controller.signal,
       })
-      if (!marketRes.ok) throw new Error("تعذر تحديد السوبرماركت")
+      if (!marketRes.ok) throw new Error("Не удалось определить супермаркет")
       const market = await marketRes.json()
       const supermarketId = market?._id
-      if (!supermarketId) throw new Error("معرّف السوبرماركت غير متوفر")
+      if (!supermarketId) throw new Error("Идентификатор супермаркета недоступен")
 
       const ordersRes = await fetch(`/api/orders?supermarketId=${supermarketId}&limit=200`, {
         signal: controller.signal,
       })
-      if (!ordersRes.ok) throw new Error("تعذر جلب الطلبات")
+      if (!ordersRes.ok) throw new Error("Не удалось загрузить заказы")
       const data = await ordersRes.json()
       return mapOrders(data, market?.address?.ar || market?.address || undefined)
     }
@@ -207,7 +209,7 @@ export default function OrdersPage() {
         }
         if (!cancelled && (error as any)?.name !== "AbortError") {
           setOrders([])
-          toast({ title: "تعذر جلب الطلبات", description: "حدث خطأ أثناء تحميل الطلبات." })
+          toast({ title: "Не удалось загрузить заказы", description: "Произошла ошибка при загрузке заказов." })
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -222,13 +224,14 @@ export default function OrdersPage() {
 
   const now = Date.now()
   const minDate = useMemo(() => {
-    if (dateRange === "اليوم") {
+    if (dateRange === "Сегодня") {
       const d = new Date()
       d.setHours(0, 0, 0, 0)
       return d.getTime()
     }
-    if (dateRange === "آخر 30 يوم") return now - 30 * 86400000
-    return now - 7 * 86400000
+    if (dateRange === "Последние 7 дней") return now - 7 * 86400000
+    if (dateRange === "Последние 30 дней") return now - 30 * 86400000
+    return 0
   }, [dateRange, now])
 
   const statusCounts = useMemo(() => {
@@ -271,7 +274,7 @@ export default function OrdersPage() {
         rowKey: order.rowKey,
         displayId: order.displayId,
         date: new Date(order.createdAt).toLocaleString(),
-        customer: order.customer.name || "ضيف",
+        customer: order.customer.name || "Гость",
         location: order.address || "—",
         amount: formatCurrency(total, "EGP"),
         status: order.status,
@@ -300,17 +303,17 @@ export default function OrdersPage() {
 
     return [
       {
-        label: "إجمالي الإيرادات",
+        label: "Общая выручка",
         value: formatCurrency(totals.revenue, "EGP"),
         icon: DollarSign,
       },
       {
-        label: "الطلبات",
+        label: "Заказы",
         value: `${totals.orders}`,
         icon: RefreshCw,
       },
       {
-        label: "تم التسليم",
+        label: "Доставлено",
         value: `${totals.delivered}`,
         icon: CalendarRange,
       },
@@ -319,7 +322,7 @@ export default function OrdersPage() {
 
   const downloadCsv = () => {
     const rows = [
-      ["رقم الطلب", "التاريخ", "العميل", "الهاتف", "البريد", "الحالة", "العنوان", "الأصناف", "رسوم التوصيل", "الإجمالي"],
+      ["№ заказа", "Дата", "Клиент", "Телефон", "Email", "Статус", "Адрес", "Товары", "Стоимость доставки", "Итого"],
       ...orders.map((o) => {
         const itemsTotal = o.items.reduce((sum, i) => sum + i.qty * i.price, 0)
         const total = itemsTotal + o.deliveryFee
@@ -396,7 +399,7 @@ export default function OrdersPage() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="ابحث في الطلبات أو العملاء"
+                placeholder="Поиск по заказам или клиентам"
                 className="h-10 rounded-full border-slate-200 bg-white pr-9 text-sm text-right"
               />
             </div>
@@ -405,26 +408,26 @@ export default function OrdersPage() {
             {loading ? (
               <div className="flex flex-col items-center gap-3 py-12 text-sm text-slate-600">
                 <Loader2 className="h-5 w-5 animate-spin" />
-                جارٍ تحميل الطلبات...
+                Загрузка заказов...
               </div>
             ) : pageOrders.length === 0 ? (
               <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center text-slate-700">
                 <PackageOpen className="h-8 w-8" />
-                <p className="text-sm font-semibold">لا توجد طلبات مطابقة للفلاتر.</p>
-                <p className="text-xs text-slate-500">جرّب تغيير التاريخ أو حالة الطلب.</p>
+                <p className="text-sm font-semibold">Заказы не найдены по выбранным фильтрам.</p>
+                <p className="text-xs text-slate-500">Попробуйте изменить дату или статус заказа.</p>
               </div>
             ) : (
               <>
                 <OrdersTable orders={pageOrders} />
                 <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-xs text-slate-500">
-                    عرض{" "}
+                    Показано{" "}
                     <span className="font-medium text-slate-800">{(page - 1) * PAGE_SIZE + 1}</span>
-                    {" "}إلى{" "}
+                    {" "}–{" "}
                     <span className="font-medium text-slate-800">
                       {Math.min(page * PAGE_SIZE, tableOrders.length)}
                     </span>
-                    {" "}من{" "}
+                    {" "}из{" "}
                     <span className="font-medium text-slate-800">{tableOrders.length}</span>
                   </p>
                   <div className="flex items-center gap-2">
@@ -435,10 +438,10 @@ export default function OrdersPage() {
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
                     >
-                      السابق
+                      Назад
                     </Button>
                     <span className="text-xs text-slate-500">
-                      صفحة {page} / {pageCount}
+                      Страница {page} / {pageCount}
                     </span>
                     <Button
                       variant="outline"
@@ -447,7 +450,7 @@ export default function OrdersPage() {
                       onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
                       disabled={page === pageCount}
                     >
-                      التالي
+                      Вперёд
                     </Button>
                   </div>
                 </div>
@@ -462,7 +465,7 @@ export default function OrdersPage() {
 
 function formatCurrency(amount: number, currency: string) {
   try {
-    return new Intl.NumberFormat("ar-EG", { style: "currency", currency, maximumFractionDigits: 2 }).format(amount)
+    return new Intl.NumberFormat("ru-RU", { style: "currency", currency, maximumFractionDigits: 2 }).format(amount)
   } catch {
     return `${amount.toFixed(2)} ${currency}`
   }

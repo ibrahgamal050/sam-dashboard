@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useRouter, useParams, usePathname } from "next/navigation"
 import { Truck, CheckCircle2, XCircle, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -35,7 +35,14 @@ interface OrdersTableProps {
 export function OrdersTable({ orders }: OrdersTableProps) {
   const [selectedOrders, setSelectedOrders] = useState<string[]>([])
   const router = useRouter()
-  const { subdomain } = useParams() as { subdomain: string }
+  const params = useParams() as { subdomain?: string; slug?: string }
+  const pathname = usePathname()
+  const tenant = params.subdomain ?? params.slug ?? ""
+  const orderBasePath = pathname?.includes("/dashboard/restaurant/")
+    ? `/dashboard/restaurant/${tenant}/orders`
+    : pathname?.includes("/dashboard/supermarket/")
+    ? `/dashboard/supermarket/${tenant}/orders`
+    : `/dashboard/${tenant}/orders`
 
   const allSelected = selectedOrders.length === orders.length && orders.length > 0
   const hasSelection = selectedOrders.length > 0
@@ -77,20 +84,20 @@ export function OrdersTable({ orders }: OrdersTableProps) {
   }
 
   const statusLabels: Record<OrdersTableRow["status"], string> = {
-    "On Delivery": "قيد التوصيل",
-    Delivered: "تم التسليم",
-    Canceled: "ملغي",
+    "On Delivery": "В доставке",
+    Delivered: "Доставлено",
+    Canceled: "Отменено",
   }
 
   const selectionBanner = hasSelection ? (
     <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-[0_12px_24px_rgba(15,23,42,0.06)]">
-      <span>تم تحديد {selectedOrders.length} طلب</span>
+      <span>Выбрано {selectedOrders.length} заказов</span>
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" className="border-slate-200 text-slate-700 hover:bg-slate-50">
-          إرسال
+          Отправить
         </Button>
         <Button variant="ghost" size="sm" className="text-slate-600 hover:bg-slate-50" onClick={() => setSelectedOrders([])}>
-          إلغاء التحديد
+          Снять выделение
         </Button>
       </div>
     </div>
@@ -107,16 +114,16 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                 <Checkbox
                   checked={allSelected}
                   onCheckedChange={(checked) => handleSelectAll(Boolean(checked))}
-                  aria-label="تحديد كل الطلبات"
+                  aria-label="Выбрать все заказы"
                 />
               </th>
-              <th className="px-4 py-3 font-semibold">رقم الطلب</th>
-              <th className="px-4 py-3 font-semibold">التاريخ</th>
-              <th className="px-4 py-3 font-semibold">العميل</th>
-              <th className="px-4 py-3 font-semibold">العنوان</th>
-              <th className="px-4 py-3 font-semibold">الإجمالي</th>
-              <th className="px-4 py-3 font-semibold">الحالة</th>
-              <th className="px-4 py-3 font-semibold">الإجراءات</th>
+              <th className="px-4 py-3 font-semibold">№ заказа</th>
+              <th className="px-4 py-3 font-semibold">Дата</th>
+              <th className="px-4 py-3 font-semibold">Клиент</th>
+              <th className="px-4 py-3 font-semibold">Адрес</th>
+              <th className="px-4 py-3 font-semibold">Итого</th>
+              <th className="px-4 py-3 font-semibold">Статус</th>
+              <th className="px-4 py-3 font-semibold">Действия</th>
               <th className="w-12" />
             </tr>
           </thead>
@@ -132,14 +139,14 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                     "cursor-pointer bg-white transition-colors hover:bg-[#f4f8ff]",
                     isSelected && "bg-[#eef5ff] ring-1 ring-[#cfe4ff]",
                   )}
-                  onClick={() => router.push(`/dashboard/${subdomain}/orders/${order.id}`)}
+                  onClick={() => router.push(`${orderBasePath}/${order.id}`)}
                 >
                   <td className="px-4 py-3 align-top">
                     <Checkbox
                       checked={isSelected}
                       onCheckedChange={(checked) => handleSelectOrder(order.rowKey, Boolean(checked))}
                       onClick={(event) => event.stopPropagation()}
-                      aria-label={`تحديد الطلب ${order.displayId}`}
+                      aria-label={`Выбрать заказ ${order.displayId}`}
                     />
                   </td>
                   <td className="px-4 py-3 align-top font-semibold text-slate-900">{order.displayId}</td>
@@ -171,7 +178,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                         className="h-auto px-0 text-slate-600 hover:bg-transparent hover:text-slate-900"
                         onClick={(event) => event.stopPropagation()}
                       >
-                        عرض
+                        Просмотр
                       </Button>
                       {order.status === "On Delivery" && (
                         <Button
@@ -180,7 +187,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                           className="h-auto px-0 text-sky-600 hover:bg-transparent hover:text-slate-900"
                           onClick={(event) => event.stopPropagation()}
                         >
-                          تم التسليم
+                          Доставлено
                         </Button>
                       )}
                     </div>
@@ -195,7 +202,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                           onClick={(event) => event.stopPropagation()}
                         >
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">فتح القائمة</span>
+                          <span className="sr-only">Открыть меню</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
@@ -205,7 +212,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                             event.stopPropagation()
                           }}
                         >
-                          تعديل
+                          Изменить
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-destructive"
@@ -214,7 +221,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                             event.stopPropagation()
                           }}
                         >
-                          إلغاء الطلب
+                          Отменить заказ
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -234,7 +241,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
             <button
               key={order.rowKey}
               type="button"
-              onClick={() => router.push(`/dashboard/${subdomain}/orders/${order.id}`)}
+              onClick={() => router.push(`${orderBasePath}/${order.id}`)}
               className={cn(
                 "w-full rounded-3xl border border-slate-200 bg-white p-4 text-right shadow-[0_18px_40px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_36px_rgba(15,23,42,0.08)]",
                 isSelected && "border-[#cfe4ff] ring-2 ring-[#d9e9ff]",
@@ -242,7 +249,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">طلب</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Заказ</p>
                   <p className="text-base font-semibold text-slate-900">#{order.displayId}</p>
                   <p className="text-sm font-semibold text-slate-900">{order.customer}</p>
                   <p className="text-xs text-slate-500">{order.location}</p>
@@ -253,7 +260,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                <span>الحالة</span>
+                <span>Статус</span>
                 <Badge
                   variant="outline"
                   className={cn("inline-flex gap-2 border px-3 py-1 text-xs font-semibold", statusBadge.className)}

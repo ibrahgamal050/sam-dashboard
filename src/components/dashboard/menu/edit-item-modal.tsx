@@ -45,9 +45,9 @@ type SizeDraft = {
 }
 
 const MENU_TYPE_LABELS: Record<MenuType, string> = {
-  delivery: "دليفري",
-  dinein: "صالة",
-  takeaway: "تيك أواي",
+  delivery: "Доставка",
+  dinein: "Зал",
+  takeaway: "Самовывоз",
 }
 
 const createOverrideState = (itemData?: any): MenuTypeOverrideState => ({
@@ -76,8 +76,8 @@ function MenuTypeSettings({ value, basePrice, currencyLabel, onChange }: MenuTyp
     <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-slate-800">عرض في هذه المنيو</p>
-          <p className="text-xs text-slate-500">إيقاف العرض يخفي الصنف في هذا النوع فقط.</p>
+          <p className="text-sm font-semibold text-slate-800">Показывать в этом меню</p>
+          <p className="text-xs text-slate-500">Если выключить, позиция будет скрыта только для этого типа меню.</p>
         </div>
         <Switch
           checked={!value.isHidden}
@@ -88,19 +88,19 @@ function MenuTypeSettings({ value, basePrice, currencyLabel, onChange }: MenuTyp
       <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-xs text-slate-500">السعر الأساسي (البراند)</p>
+            <p className="text-xs text-slate-500">Базовая цена</p>
             <p className="text-lg font-semibold text-slate-900">
               {typeof basePrice === "number" ? basePrice.toFixed(0) : "--"} {currencyLabel}
             </p>
           </div>
-          <div className="text-xs text-slate-500">يمكنك ترك السعر فارغًا للرجوع للسعر الأساسي.</div>
+          <div className="text-xs text-slate-500">Оставьте поле пустым, чтобы использовать базовую цену.</div>
         </div>
         <div className="flex items-center gap-3">
           <input
             type="number"
             value={value.price}
             onChange={(event) => onChange({ ...value, price: event.target.value })}
-            placeholder="سعر مخصص"
+            placeholder="Индивидуальная цена"
             className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm"
           />
         </div>
@@ -109,8 +109,8 @@ function MenuTypeSettings({ value, basePrice, currencyLabel, onChange }: MenuTyp
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3">
           <div>
-            <p className="text-sm font-semibold text-slate-800">متاح</p>
-            <p className="text-xs text-slate-500">تحكم في توفر الصنف لهذا النوع.</p>
+            <p className="text-sm font-semibold text-slate-800">Доступно</p>
+            <p className="text-xs text-slate-500">Управляет доступностью позиции для этого типа меню.</p>
           </div>
           <Switch
             checked={value.isAvailable}
@@ -163,7 +163,7 @@ export function EditItemModal({
   const activeOverride = overrides[activeMenuType]
 
   const itemTitle = useMemo(
-    () => baseName.ar || baseName.en || "صنف",
+    () => baseName.ar || baseName.en || "Позиция",
     [baseName.ar, baseName.en],
   )
 
@@ -229,7 +229,7 @@ export function EditItemModal({
         { cache: "no-store" },
       )
       if (!response.ok) {
-        throw new Error(`Failed to load ${menuType}`)
+        throw new Error(`Не удалось загрузить ${MENU_TYPE_LABELS[menuType]}`)
       }
       const data = await response.json()
       const found = data?.categories
@@ -320,12 +320,12 @@ export function EditItemModal({
       if (!response.ok) {
         const status = response.status
         if (status === 401 || status === 403) {
-          toast.error("غير مصرح", {
-            description: "ليست لديك صلاحية لتعديل هذا الصنف.",
+          toast.error("Нет доступа", {
+            description: "У вас нет прав на редактирование этой позиции.",
           })
         } else {
-          toast.error("فشل حفظ التعديلات", {
-            description: "يرجى المحاولة مرة أخرى.",
+          toast.error("Не удалось сохранить изменения", {
+            description: "Попробуйте еще раз.",
           })
         }
         return
@@ -341,8 +341,8 @@ export function EditItemModal({
       }
       onSave(updatedItem)
     } catch {
-      toast.error("فشل حفظ التعديلات", {
-        description: "يرجى المحاولة مرة أخرى.",
+      toast.error("Не удалось сохранить изменения", {
+        description: "Попробуйте еще раз.",
       })
     } finally {
       setSaving(false)
@@ -358,14 +358,14 @@ export function EditItemModal({
     >
       <SheetContent
         side="left"
-        dir="rtl"
-        className="flex h-full w-full max-w-xl flex-col overflow-hidden border-r border-slate-200 bg-white p-0 text-right shadow-2xl"
+        dir="ltr"
+        className="flex h-full w-full max-w-xl flex-col overflow-hidden border-r border-slate-200 bg-white p-0 text-left shadow-2xl"
       >
         <SheetHeader className="sr-only">
-          <SheetTitle>تعديل الصنف</SheetTitle>
+          <SheetTitle>Редактирование позиции</SheetTitle>
         </SheetHeader>
         <div className="border-b border-slate-200 px-6 py-5">
-          <p className="text-xs font-semibold text-slate-400">تعديل إعدادات الصنف</p>
+          <p className="text-xs font-semibold text-slate-400">Настройки позиции</p>
           <h2 className="mt-2 text-xl font-semibold text-slate-900">{itemTitle}</h2>
           {itemDescription ? (
             <p className="mt-2 text-sm text-slate-500">{itemDescription}</p>
@@ -391,29 +391,29 @@ export function EditItemModal({
             ))}
           </div>
           {loadingType === activeMenuType ? (
-            <span className="text-xs text-slate-500">جاري التحميل...</span>
+            <span className="text-xs text-slate-500">Загрузка...</span>
           ) : null}
         </div>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
           <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div>
-              <p className="text-xs font-semibold text-slate-400">البيانات الأساسية</p>
-              <p className="text-sm text-slate-500">تعديل اسم الصنف والأحجام الأساسية.</p>
+              <p className="text-xs font-semibold text-slate-400">Основные данные</p>
+              <p className="text-sm text-slate-500">Измените название позиции и базовые размеры.</p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-xs font-semibold text-slate-600">اسم الصنف بالعربية</label>
+                <label className="text-xs font-semibold text-slate-600">Название на арабском</label>
                 <input
                   value={baseName.ar}
                   onChange={(event) => setBaseName({ ...baseName, ar: event.target.value })}
                   className="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm"
-                  placeholder="مثال: بيت المشويات"
+                  placeholder="Например: гриль-ассорти"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600">اسم الصنف بالإنجليزية</label>
+                <label className="text-xs font-semibold text-slate-600">Название на английском</label>
                 <input
                   value={baseName.en}
                   onChange={(event) => setBaseName({ ...baseName, en: event.target.value })}
@@ -427,8 +427,8 @@ export function EditItemModal({
             <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">الأحجام</p>
-                  <p className="text-xs text-slate-500">إضافة أحجام وأسعار اختيارية للصنف.</p>
+                  <p className="text-sm font-semibold text-slate-800">Размеры</p>
+                  <p className="text-xs text-slate-500">Добавьте дополнительные размеры и цены.</p>
                 </div>
                 <Switch checked={hasSizes} onCheckedChange={setHasSizes} />
               </div>
@@ -436,7 +436,7 @@ export function EditItemModal({
               {hasSizes ? (
                 <div className="space-y-3">
                   {sizeDrafts.length === 0 ? (
-                    <p className="text-xs text-slate-500">لا توجد أحجام بعد.</p>
+                    <p className="text-xs text-slate-500">Размеры пока не добавлены.</p>
                   ) : (
                     sizeDrafts.map((size) => (
                       <div
@@ -447,13 +447,13 @@ export function EditItemModal({
                           value={size.name.ar}
                           onChange={(event) => handleSizeNameChange(size.id, "ar", event.target.value)}
                           className="h-10 rounded-lg border border-slate-200 px-3 text-sm"
-                          placeholder="اسم الحجم بالعربية"
+                          placeholder="Название размера на арабском"
                         />
                         <input
                           value={size.name.en}
                           onChange={(event) => handleSizeNameChange(size.id, "en", event.target.value)}
                           className="h-10 rounded-lg border border-slate-200 px-3 text-sm"
-                          placeholder="اسم الحجم بالإنجليزية"
+                          placeholder="Название размера на английском"
                           dir="ltr"
                         />
                         <input
@@ -461,7 +461,7 @@ export function EditItemModal({
                           value={size.price}
                           onChange={(event) => handleSizePriceChange(size.id, event.target.value)}
                           className="h-10 rounded-lg border border-slate-200 px-3 text-sm"
-                          placeholder="السعر"
+                          placeholder="Цена"
                         />
                         <Button
                           type="button"
@@ -469,23 +469,23 @@ export function EditItemModal({
                           className="text-red-500 hover:bg-red-50"
                           onClick={() => removeSize(size.id)}
                         >
-                          حذف
+                          Удалить
                         </Button>
                       </div>
                     ))
                   )}
                   <Button type="button" variant="outline" className="rounded-xl" onClick={addSize}>
-                    + إضافة حجم
+                    + Добавить размер
                   </Button>
                 </div>
               ) : (
-                <p className="text-xs text-slate-500">لن يتم عرض أحجام لهذا الصنف.</p>
+                <p className="text-xs text-slate-500">Для этой позиции размеры отображаться не будут.</p>
               )}
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-            الإعدادات التالية تخص نوع المنيو فقط بدون تعديل بيانات البراند.
+            Следующие настройки применяются только к выбранному типу меню.
           </div>
 
           <MenuTypeSettings
@@ -501,23 +501,23 @@ export function EditItemModal({
               onClick={() => setShowAdvanced((prev) => !prev)}
               className="flex w-full items-center justify-between bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700"
             >
-              إعدادات متقدمة
+              Расширенные настройки
               {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
             {showAdvanced && (
               <div className="space-y-4 px-4 py-4">
                 <div className="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3">
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">إخفاء الصنف عن المطعم بالكامل</p>
-                    <p className="text-xs text-slate-500">سيتم إخفاؤه من كل أنواع المنيو.</p>
+                    <p className="text-sm font-semibold text-slate-800">Скрыть позицию во всем ресторане</p>
+                    <p className="text-xs text-slate-500">Позиция будет скрыта во всех типах меню.</p>
                   </div>
                   <Switch checked={globalHidden} onCheckedChange={setGlobalHidden} />
                 </div>
 
                 <div className="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3 opacity-60">
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">تعطيل مؤقت</p>
-                    <p className="text-xs text-slate-500">قريبًا</p>
+                    <p className="text-sm font-semibold text-slate-800">Временное отключение</p>
+                    <p className="text-xs text-slate-500">Скоро</p>
                   </div>
                   <Switch checked={false} disabled />
                 </div>
@@ -528,7 +528,7 @@ export function EditItemModal({
                   className="w-full rounded-xl border-slate-200"
                   onClick={handleResetMenuType}
                 >
-                  إعادة ضبط هذا النوع
+                  Сбросить этот тип меню
                 </Button>
               </div>
             )}
@@ -537,14 +537,14 @@ export function EditItemModal({
 
         <div className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-6 py-4">
           <Button variant="ghost" className="text-red-500 hover:bg-red-50" onClick={onDelete}>
-            حذف الصنف
+            Удалить позицию
           </Button>
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={onCancel}>
-              إلغاء
+              Отмена
             </Button>
             <Button onClick={handleSave} className="bg-[#2e6fe6] hover:bg-[#2357b9]" disabled={saving}>
-              {saving ? "جار الحفظ..." : "حفظ التغييرات"}
+              {saving ? "Сохранение..." : "Сохранить изменения"}
             </Button>
           </div>
         </div>

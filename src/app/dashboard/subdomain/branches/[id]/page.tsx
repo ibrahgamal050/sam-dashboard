@@ -21,9 +21,11 @@ const days: { key: keyof FormValues["openingHours"]; label: string }[] = [
 ]
 
 export default function BranchEditorPage() {
-  const params = useParams<{ subdomain: string; id: string }>()
+  const params = useParams() as { subdomain?: string; slug?: string; id?: string }
+  const subdomain = subdomain ?? params.slug ?? ""
+  const branchId = branchId ?? ""
   const router = useRouter()
-  const isNew = params.id === "new"
+  const isNew = branchId === "new"
 
   const form = useForm<FormValues>({
     resolver: zodFormResolver<FormValues>(createBranchSchema),
@@ -40,7 +42,7 @@ export default function BranchEditorPage() {
 
   const load = async () => {
     if (!isNew) {
-      const res = await fetch(`/api/${params.subdomain}/branches/${params.id}`)
+      const res = await fetch(`/api/${subdomain}/branches/${branchId}`)
       if (res.ok) {
         const data = await res.json()
         form.reset({
@@ -70,15 +72,15 @@ export default function BranchEditorPage() {
 
   const onSubmit = async (values: FormValues) => {
     const url = isNew
-      ? `/api/${params.subdomain}/branches`
-      : `/api/${params.subdomain}/branches/${params.id}`
+      ? `/api/${subdomain}/branches`
+      : `/api/${subdomain}/branches/${branchId}`
 
     const res = await fetch(url, {
       method: isNew ? "POST" : "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
     })
-    if (res.ok) router.push(`/dashboard/${params.subdomain}/branches`)
+    if (res.ok) router.push(`/dashboard/${subdomain}/branches`)
     else alert("حدث خطأ أثناء الحفظ")
   }
 

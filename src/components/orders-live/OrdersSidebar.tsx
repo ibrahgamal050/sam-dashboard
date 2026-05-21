@@ -53,26 +53,25 @@ type OrderAction = {
 
 function getOrderAction(status: string | undefined, lang: Locale): OrderAction {
   const s = String(status ?? "").toLowerCase()
-  const isArabic = lang === "ar"
 
   switch (s) {
     case "pending":
     case "queued":
-      return { label: isArabic ? "قبول" : "Accept", color: "bg-[#0EBE7F]", textColor: "text-white", action: "accept" }
+      return { label: "Принять", color: "bg-[#0EBE7F]", textColor: "text-white", action: "accept" }
 
     case "accepted":
     case "in_progress":
     case "preparing":
     case "processing":
-      return { label: isArabic ? "جاهز" : "Ready", color: "bg-[#FF5C2B]", textColor: "text-white", action: "ready" }
+      return { label: "Готово", color: "bg-[#FF5C2B]", textColor: "text-white", action: "ready" }
 
     case "ready":
-      return { label: isArabic ? "تسليم" : "Deliver", color: "bg-[#6F70FF]", textColor: "text-white", action: "deliver" }
+      return { label: "Доставить", color: "bg-[#6F70FF]", textColor: "text-white", action: "deliver" }
 
     case "delivered":
     case "completed":
       return {
-        label: isArabic ? "مكتمل" : "Completed",
+        label: "Выполнено",
         color: "bg-gray-200",
         textColor: "text-gray-600",
         disabled: true,
@@ -82,10 +81,10 @@ function getOrderAction(status: string | undefined, lang: Locale): OrderAction {
     case "canceled":
     case "cancelled":
     case "rejected":
-      return { label: isArabic ? "ملغي" : "Canceled", color: "bg-gray-200", textColor: "text-gray-600", disabled: true }
+      return { label: "Отменено", color: "bg-gray-200", textColor: "text-gray-600", disabled: true }
 
     default:
-      return { label: isArabic ? "عرض" : "View", color: "bg-gray-100", textColor: "text-gray-700" }
+      return { label: "Просмотр", color: "bg-gray-100", textColor: "text-gray-700" }
   }
 }
 
@@ -168,7 +167,7 @@ export default function OrdersSidebar({
   readOnly = false,
 }: Props) {
   const [now, setNow] = React.useState(() => Date.now())
-  const muteLabel = lang === "ar" ? "كتم" : "Mute"
+  const muteLabel = "Без звука"
 
   React.useEffect(() => {
     if (typeof window === "undefined") return
@@ -195,12 +194,12 @@ export default function OrdersSidebar({
           {/* Lang toggle */}
           <div className="hidden items-center gap-1 rounded-full bg-[#F3F3F3] p-1 text-xs font-semibold md:flex">
             <button
-              onClick={() => setLang("ar")}
-              className={cn("rounded-full px-3 py-1", lang === "ar" ? "bg-white shadow-sm" : "text-gray-600")}
+              onClick={() => setLang("ru")}
+              className={cn("rounded-full px-3 py-1", lang === "ru" ? "bg-white shadow-sm" : "text-gray-600")}
               type="button"
               title={strings.language}
             >
-              عربي
+              RU
             </button>
           </div>
 
@@ -276,7 +275,7 @@ export default function OrdersSidebar({
 
             const action = readOnly
               ? {
-                  label: lang === "ar" ? "عرض" : "View",
+                  label: "Просмотр",
                   color: "bg-gray-100",
                   textColor: "text-gray-600",
                   disabled: true,
@@ -335,7 +334,7 @@ export default function OrdersSidebar({
                     <div className="text-sm font-bold text-gray-900">
                       {order.orderNumber ?? order.orderId ?? order.id}
                     </div>
-                    <div className="text-[10px] text-gray-400">{lang === "ar" ? "عرض الطلب" : "View Order"}</div>
+                    <div className="text-[10px] text-gray-400">Просмотр заказа</div>
                   </div>
 
                  
@@ -346,7 +345,7 @@ export default function OrdersSidebar({
                       {liveDuration}
                       {isLate && (
                         <span className="ml-2 rounded-full bg-red-100 px-2 py-[2px] text-[10px] font-semibold text-red-700">
-                          {lang === "ar" ? "متأخر" : "Late"}
+                          Опоздание
                         </span>
                       )}
                     </div>

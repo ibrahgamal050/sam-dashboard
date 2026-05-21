@@ -14,15 +14,15 @@ export default function AuthError() {
   const getErrorMessage = (errorCode: string | null) => {
     switch (errorCode) {
       case "CredentialsSignin":
-        return "Invalid email or password. Please try again."
+        return "Неверный email или пароль. Попробуйте ещё раз."
       case "SessionRequired":
-        return "You need to be signed in to access this page."
+        return "Для доступа к этой странице необходимо войти в систему."
       case "AccessDenied":
-        return "You don't have permission to access this resource."
+        return "У вас нет прав доступа к этому ресурсу."
       case "CallbackRouteError":
-        return "There was a problem with the authentication callback."
+        return "Произошла ошибка при обратном вызове аутентификации."
       default:
-        return "An unexpected authentication error occurred. Please try again."
+        return "Произошла непредвиденная ошибка аутентификации. Попробуйте ещё раз."
     }
   }
 
@@ -30,29 +30,29 @@ export default function AuthError() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Authentication Error</CardTitle>
-          <CardDescription>There was a problem signing you in</CardDescription>
+          <CardTitle className="text-2xl font-bold">Ошибка аутентификации</CardTitle>
+          <CardDescription>При входе в систему возникла проблема</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
+            <AlertTitle>Ошибка</AlertTitle>
             <AlertDescription>{getErrorMessage(error)}</AlertDescription>
           </Alert>
 
           <p className="text-sm text-gray-500">
-            If you continue to experience issues, please contact support or try again later.
+            Если проблема не исчезает, обратитесь в службу поддержки или повторите попытку позже.
           </p>
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-4">
           <Button className="w-full" onClick={() => (window.location.href = "/auth/login")}>
-            Try Again
+            Попробовать снова
           </Button>
           <div className="text-center text-sm">
             <a href="/" className="text-blue-600 hover:text-blue-800">
-              Return to Home
+              На главную
             </a>
           </div>
         </CardFooter>

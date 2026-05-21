@@ -27,13 +27,13 @@ const resolveImageUrl = (value: string | null) => {
 }
 
 const dayLabels = [
-  "الأحد",
-  "الاثنين",
-  "الثلاثاء",
-  "الأربعاء",
-  "الخميس",
-  "الجمعة",
-  "السبت",
+  "Воскресенье",
+  "Понедельник",
+  "Вторник",
+  "Среда",
+  "Четверг",
+  "Пятница",
+  "Суббота",
 ]
 
 type OpeningHour = {
@@ -123,7 +123,9 @@ const formatList = (value?: string[]) => (value && value.length ? value.join(", 
 
 export default function SettingsPage() {
   const params = useParams()
-  const subdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : params?.subdomain ?? ""
+  const rawSubdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : (params?.subdomain as string)
+  const rawSlug = Array.isArray(params?.slug) ? params.slug[0] : (params?.slug as string)
+  const subdomain = rawSubdomain ?? rawSlug ?? ""
   const { toast } = useToast()
 
   const [activeTab, setActiveTab] = useState("basic")
@@ -297,10 +299,10 @@ export default function SettingsPage() {
       } catch (loadError) {
         console.error(loadError)
         if (!cancelled) {
-          setError("تعذر تحميل الإعدادات من الخادم. سيتم استخدام القيم الافتراضية مؤقتًا.")
+          setError("Не удалось загрузить настройки с сервера. Используются значения по умолчанию.")
           toast({
-            title: "تعذر تحميل الإعدادات",
-            description: "تحقق من الاتصال ثم حاول مرة أخرى.",
+            title: "Не удалось загрузить настройки",
+            description: "Проверьте подключение и попробуйте снова.",
             variant: "destructive",
           })
           setIsLoading(false)
@@ -355,12 +357,12 @@ export default function SettingsPage() {
       const relativePath = objectName.replace(/^restaurants\//, "")
 
       updateForm(type === "logo" ? { logoUrl: relativePath } : { coverImage: relativePath })
-      toast({ title: "تم رفع الصورة بنجاح" })
+      toast({ title: "Изображение загружено успешно" })
     } catch (uploadError) {
       console.error(uploadError)
       toast({
-        title: "تعذر رفع الصورة",
-        description: "حاول مرة أخرى لاحقًا.",
+        title: "Не удалось загрузить изображение",
+        description: "Попробуйте позже.",
         variant: "destructive",
       })
     }
@@ -435,13 +437,13 @@ export default function SettingsPage() {
         if (!response.ok) throw new Error("Failed to save settings")
       }
 
-      toast({ title: "تم حفظ الإعدادات بنجاح" })
+      toast({ title: "Настройки сохранены успешно" })
     } catch (saveError) {
       console.error(saveError)
-      setError("تعذر حفظ الإعدادات. حاول مرة أخرى.")
+      setError("Не удалось сохранить настройки. Попробуйте снова.")
       toast({
-        title: "تعذر الحفظ",
-        description: "تأكد من صحة البيانات ثم حاول مرة أخرى.",
+        title: "Ошибка сохранения",
+        description: "Проверьте данные и попробуйте снова.",
         variant: "destructive",
       })
     } finally {
@@ -450,15 +452,15 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 text-right" dir="rtl">
+    <div className="space-y-6 text-right" dir="ltr">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">إعدادات {form.targetType === "restaurant" ? "المطعم" : "السوبرماركت"}</h1>
+          <h1 className="text-3xl font-bold text-slate-900">Настройки {form.targetType === "restaurant" ? "ресторана" : "супермаркета"}</h1>
           <p className="text-slate-500">حدّث البيانات الأساسية والهوية والخدمات.</p>
         </div>
         <Button onClick={handleSave} disabled={isSaving || isLoading}>
           {isSaving ? <Loader2 className="ml-2 h-4 w-4 animate-spin" /> : <Save className="ml-2 h-4 w-4" />}
-          {isSaving ? "جارٍ الحفظ..." : "حفظ التغييرات"}
+          {isSaving ? "Сохранение..." : "Сохранить изменения"}
         </Button>
       </div>
 
@@ -559,7 +561,7 @@ export default function SettingsPage() {
                     <Input
                       value={form.logoUrl}
                       onChange={(e) => updateForm({ logoUrl: e.target.value })}
-                      placeholder="رابط الشعار"
+                      placeholder="Ссылка на логотип"
                     />
                     <input
                       ref={logoInputRef}
@@ -592,7 +594,7 @@ export default function SettingsPage() {
                     <Input
                       value={form.coverImage}
                       onChange={(e) => updateForm({ coverImage: e.target.value })}
-                      placeholder="رابط الغلاف"
+                      placeholder="Ссылка на обложку"
                     />
                     <input
                       ref={coverInputRef}
@@ -931,7 +933,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
                 <Clock className="h-4 w-4" />
-                {openNow ? "مفتوح الآن" : "مغلق الآن"}
+                {openNow ? "Открыт сейчас" : "Закрыт сейчас"}
                 {openNow && <CheckCircle2 className="h-4 w-4" />}
               </div>
               <div className="grid gap-3">
@@ -1117,7 +1119,7 @@ export default function SettingsPage() {
                 <Textarea
                   value={menuJson}
                   onChange={(e) => setMenuJson(e.target.value)}
-                  placeholder="ضع إعدادات JSON هنا"
+                  placeholder="Вставьте JSON настроек здесь"
                   rows={5}
                 />
                 <div className="flex flex-wrap gap-2">
@@ -1135,9 +1137,9 @@ export default function SettingsPage() {
                       try {
                         const parsed = JSON.parse(menuJson || "{}")
                         updateForm({ menuSettings: { ...form.menuSettings, ...parsed } })
-                        toast({ title: "تم استيراد الإعدادات" })
+                        toast({ title: "Настройки импортированы" })
                       } catch {
-                        toast({ title: "JSON غير صالح", variant: "destructive" })
+                        toast({ title: "Некорректный JSON", variant: "destructive" })
                       }
                     }}
                   >

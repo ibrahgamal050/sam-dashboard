@@ -49,7 +49,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
   const [editingItem, setEditingItem] = useState<IMenuItem | null>(null)
   const [editingItemSectionId, setEditingItemSectionId] = useState<Types.ObjectId | string | null>(null)
   const [editingSection, setEditingSection] = useState<ICategory | null>(null)
-  const [currentLanguage, setCurrentLanguage] = useState<"ar" | "en">("ar")
+  const [currentLanguage, setCurrentLanguage] = useState<"ar" | "en">("en")
   const [imageManagerOpen, setImageManagerOpen] = useState(false)
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({})
   const [showStoppedItems, setShowStoppedItems] = useState(false)
@@ -101,14 +101,14 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
         console.error("Failed to load menu:", error)
         const status = typeof error?.status === "number" ? error.status : null
         if (status === 401 || status === 403) {
-          setError("ليست لديك صلاحية لعرض هذا المنيو.")
-          toast.error("غير مصرح", {
-            description: "يرجى التأكد من الصلاحيات ثم المحاولة مرة أخرى.",
+          setError("У вас нет прав для просмотра этого меню.")
+          toast.error("Нет доступа", {
+            description: "Проверьте права доступа и попробуйте еще раз.",
           })
         } else {
-          setError(`Failed to load menu: ${error.message || "Unknown error"}`)
-          toast.error("Failed to load menu", {
-            description: error.message || "Please try again later",
+          setError(`Не удалось загрузить меню: ${error.message || "Неизвестная ошибка"}`)
+          toast.error("Не удалось загрузить меню", {
+            description: error.message || "Попробуйте позже",
           })
         }
       } finally {
@@ -170,8 +170,8 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
           await MenuService.saveMenuOrder(restaurantslug, nextCategories, menuType)
         } catch (error: any) {
           console.error("Failed to auto-save order:", error)
-          toast.error("فشل حفظ الترتيب", {
-            description: "يرجى المحاولة مرة أخرى.",
+          toast.error("Не удалось сохранить порядок", {
+            description: "Попробуйте еще раз.",
           })
         } finally {
           setOrderSaving(false)
@@ -188,13 +188,13 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
     try {
       const result = await MenuService.importMenuItems(restaurantslug, menuType)
       await fetchMenu(menuType, showStoppedItems)
-      toast.success("تم استيراد المنيو من البراند", {
-        description: result.imported ? `تم ربط ${result.imported} صنف` : "لم يتم العثور على أصناف جديدة",
+      toast.success("Меню импортировано", {
+        description: result.imported ? `Связано позиций: ${result.imported}` : "Новых позиций не найдено",
       })
     } catch (error: any) {
       console.error("Failed to import menu items:", error)
-      toast.error("فشل استيراد المنيو", {
-        description: error.message || "يرجى المحاولة مرة أخرى.",
+      toast.error("Не удалось импортировать меню", {
+        description: error.message || "Попробуйте еще раз.",
       })
     } finally {
       setImporting(false)
@@ -272,8 +272,8 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
       const newSection: ICategory = {
         _id: tempId as unknown as Types.ObjectId,
         name: {
-          en: "New Section",
-          ar: "قسم جديد",
+          en: "Новый раздел",
+          ar: "Новый раздел",
         },
         menuItems: [],
       }
@@ -296,11 +296,11 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
           // Set the editing section to the one with the real ID
           setEditingSection(savedSection)
 
-          toast.success("Section added successfully")
+          toast.success("Раздел добавлен")
         } catch (error: any) {
           // If API call fails, keep the local section but show an error
           console.error("Failed to save new section:", error)
-          toast.error("Failed to save new section", {
+          toast.error("Не удалось сохранить новый раздел", {
             description: error.message || "Changes saved locally only",
           })
           setEditingSection(newSection)
@@ -309,7 +309,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
         setEditingSection(newSection)
       }
     } catch (error: any) {
-      toast.error("Failed to add section", {
+      toast.error("Не удалось добавить раздел", {
         description: error.message || "Please try again later",
       })
     }
@@ -324,8 +324,8 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
         const newItem: IMenuItem = {
           _id: tempId as unknown as Types.ObjectId,
           name: {
-            en: "New Item",
-            ar: "عنصر جديد",
+            en: "Новая позиция",
+            ar: "Новая позиция",
           },
           description: {
             en: "",
@@ -389,17 +389,17 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
             // Update editing state to the item with the real ID
             setEditingItem(savedItem)
 
-            toast.success("Item added successfully")
+            toast.success("Позиция добавлена")
           } catch (error: any) {
             // If API call fails, keep the local item but show an error
             console.error("Failed to save new item:", error)
-            toast.error("Failed to save new item", {
+            toast.error("Не удалось сохранить новую позицию", {
               description: error.message || "Changes saved locally only",
             })
           }
         }
       } catch (error: any) {
-        toast.error("Failed to add item", {
+        toast.error("Не удалось добавить позицию", {
           description: error.message || "Please try again later",
         })
       }
@@ -437,10 +437,10 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
             menuType,
           )
 
-          toast.success("Item updated successfully")
+          toast.success("Позиция обновлена")
         } catch (error: any) {
           console.error("Failed to update item:", error)
-          toast.error("Failed to update item", {
+          toast.error("Не удалось обновить позицию", {
             description: error.message || "Changes saved locally only",
           })
         }
@@ -465,10 +465,10 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
         try {
           await MenuService.updateCategory(menuId, updatedSection._id.toString(), updatedSection)
 
-          toast.success("Section updated successfully")
+          toast.success("Раздел обновлен")
         } catch (error: any) {
           console.error("Failed to update section:", error)
-          toast.error("Failed to update section", {
+          toast.error("Не удалось обновить раздел", {
             description: error.message || "Changes saved locally only",
           })
         }
@@ -504,11 +504,11 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
         try {
           await MenuService.deleteMenuItem(menuId, categoryId, itemId, menuType)
 
-          toast.success("Item deleted successfully")
+          toast.success("Позиция удалена")
         } catch (error: any) {
           console.error("Failed to delete item:", error)
-          toast.error("Failed to delete item", {
-            description: error.message || "Item removed locally only",
+          toast.error("Не удалось удалить позицию", {
+            description: error.message || "Позиция удалена только локально",
           })
 
           // If API call fails, restore the item
@@ -544,11 +544,11 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
         try {
           await MenuService.deleteCategory(menuId, sectionId)
 
-          toast.success("Section deleted successfully")
+          toast.success("Раздел удален")
         } catch (error: any) {
           console.error("Failed to delete section:", error)
-          toast.error("Failed to delete section", {
-            description: error.message || "Section removed locally only",
+          toast.error("Не удалось удалить раздел", {
+            description: error.message || "Раздел удален только локально",
           })
 
           // If API call fails, restore the section
@@ -582,11 +582,11 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
       // Update local state
       setMenu(updatedMenu)
 
-      toast.success("Menu saved successfully")
+      toast.success("Меню сохранено")
     } catch (error: any) {
       console.error("Failed to save menu:", error)
-      setError(`Failed to save menu: ${error.message || "Unknown error"}`)
-      toast.error("Failed to save menu", {
+      setError(`Не удалось сохранить меню: ${error.message || "Неизвестная ошибка"}`)
+      toast.error("Не удалось сохранить меню", {
         description: error.message || "Please try again later",
       })
     } finally {
@@ -610,9 +610,9 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
   const handleMenuTypeAdd = useCallback(
     (nextType: MenuType) => {
       handleMenuTypeChange(nextType)
-      toast.success("تم تفعيل نوع المنيو", {
+      toast.success("Тип меню активирован", {
         description:
-          nextType === "delivery" ? "دليفري" : nextType === "dinein" ? "صالة" : "تيك أواي",
+          nextType === "delivery" ? "Доставка" : nextType === "dinein" ? "Зал" : "Самовывоз",
       })
     },
     [handleMenuTypeChange],
@@ -634,7 +634,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] pb-12">
+    <div className="min-h-screen bg-[#f4f6fb] pb-12 text-left" dir="ltr">
       
 
       <div className="mx-auto mt-8 max-w-6xl px-6">
@@ -650,7 +650,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                   showStoppedItems && "border-[#2e6fe6] bg-[#edf2ff] text-[#2e6fe6]",
                 )}
               >
-                {showStoppedItems ? "إخفاء الأصناف المتوقفة" : "إظهار الأصناف المتوقفة"}
+                {showStoppedItems ? "Скрыть остановленные позиции" : "Показать остановленные позиции"}
               </Button>
               <Button
                 variant="outline"
@@ -658,10 +658,10 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                 disabled={importing}
                 className="rounded-full border-slate-200 px-5"
               >
-                {importing ? "جاري الاستيراد..." : "استيراد من البراند"}
+                {importing ? "Импорт..." : "Импортировать из бренда"}
               </Button>
               {orderSaving ? (
-                <span className="text-xs font-medium text-slate-500">جاري حفظ الترتيب...</span>
+                <span className="text-xs font-medium text-slate-500">Сохранение порядка...</span>
               ) : null}
               <MenuTypeSwitcher
                 value={menuType}
@@ -688,7 +688,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
               <MenuPreview menu={menu} categories={previewCategories} currentLanguage={currentLanguage} />
             ) : (
               <div className="rounded-3xl bg-white p-6 text-center text-sm text-muted-foreground">
-                Loading menu preview...
+                Загрузка предпросмотра меню...
               </div>
             )
           ) : (
@@ -719,13 +719,13 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                                   </div>
                                   <div className="space-y-1">
                                     <div className="flex items-center gap-2 text-sm uppercase tracking-wide text-[#2e6fe6]">
-                                      <span className="font-semibold">Section</span>
+                                      <span className="font-semibold">Раздел</span>
                                       <span className="text-slate-300">•</span>
                                       <button
                                         onClick={() => setEditingSection(category)}
                                         className="flex items-center gap-1 text-xs font-medium text-[#2e6fe6] hover:underline"
                                       >
-                                        <Edit className="h-3.5 w-3.5" /> Edit details
+                                        <Edit className="h-3.5 w-3.5" /> Изменить детали
                                       </button>
                                     </div>
                                     <h3 className="text-xl font-semibold text-slate-900">
@@ -796,7 +796,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                                                 <div className="space-y-1">
                                                   <div className="flex flex-wrap items-center gap-2">
                                                     <h4 className="text-base font-semibold text-slate-900">
-                                                      {item.name[currentLanguage] || item.name.en || "New Item"}
+                                                      {item.name[currentLanguage] || item.name.en || "Новая позиция"}
                                                     </h4>
                                                     {(() => {
                                                       const status =
@@ -804,26 +804,26 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                                                       if (status === "linked") {
                                                         return (
                                                           <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-                                                            مرتبط بالمطعم
+                                                            Связано с рестораном
                                                           </span>
                                                         )
                                                       }
                                                       if (status === "unlinked") {
                                                         return (
                                                           <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
-                                                            غير مرتبط
+                                                            Не связано
                                                           </span>
                                                         )
                                                       }
                                                       return (
                                                         <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-600">
-                                                          متوقف
+                                                          Остановлено
                                                         </span>
                                                       )
                                                     })()}
                                                     {item.isAvailable === false ? (
                                                       <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
-                                                        غير متاح
+                                                        Недоступно
                                                       </span>
                                                     ) : null}
                                                   </div>
@@ -834,7 +834,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                                                   )}
                                                   {item.sizes && item.sizes.length > 0 && (
                                                     <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                                                      {item.sizes.length} variants
+                                                      Вариантов: {item.sizes.length}
                                                     </p>
                                                   )}
                                                 </div>
@@ -886,7 +886,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                                           className="w-full justify-start gap-2 rounded-2xl bg-[#f7f9ff] text-[#2e6fe6] hover:bg-[#edf2ff]"
                                           onClick={() => addItemToSection(category._id?.toString() || "")}
                                         >
-                                          <Plus className="h-4 w-4" /> Quick Add item
+                                          <Plus className="h-4 w-4" /> Быстро добавить позицию
                                         </Button>
                                       </div>
                                     </div>
@@ -909,7 +909,7 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                   className="flex-1 rounded-2xl border-dashed border-slate-300 bg-white px-6 py-6 text-[#2e6fe6] hover:border-[#2e6fe6]"
                   onClick={addNewSection}
                 >
-                  <Plus className="mr-2 h-4 w-4" /> Add Section
+                  <Plus className="mr-2 h-4 w-4" /> Добавить раздел
                 </Button>
                 <Button
                   className="flex-1 rounded-2xl bg-[#2e6fe6] px-6 py-6 text-base font-semibold shadow hover:bg-[#2357b9]"
@@ -918,11 +918,11 @@ export function MenuEditor({ menuId, restaurantslug, initialMenu, restaurantId }
                 >
                   {saving ? (
                     <>
-                      <Save className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                      <Save className="mr-2 h-4 w-4 animate-spin" /> Сохранение...
                     </>
                   ) : (
                     <>
-                      <Save className="mr-2 h-4 w-4" /> Save Menu
+                      <Save className="mr-2 h-4 w-4" /> Сохранить меню
                     </>
                   )}
                 </Button>

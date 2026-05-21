@@ -5,7 +5,8 @@ import { QRGenerator } from "@/components/qr-code-generator/qr-generator"
 import { useParams } from "next/navigation"
 
 export default function QRPage() {
-  const { subdomain } = useParams() as { subdomain: string }
+  const params = useParams() as { subdomain?: string; slug?: string }
+  const subdomain = params.subdomain ?? params.slug ?? ""
 
   return (
     <div className="relative space-y-6">

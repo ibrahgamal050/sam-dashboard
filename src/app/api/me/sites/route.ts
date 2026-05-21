@@ -78,7 +78,7 @@ const extractAssignments = (user: any): RoleAssignment[] => {
   return raw.filter((entry: any) => entry && typeof entry === "object")
 }
 
-const isAdminRole = (value: unknown) => normalizeRole(value) === "meelza_admin"
+const isAdminRole = (value: unknown) => ["meelza_admin", "admin", "superadmin"].includes(normalizeRole(value))
 
 const toObjectIds = (ids: string[]): Types.ObjectId[] =>
   ids

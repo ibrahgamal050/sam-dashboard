@@ -11,7 +11,8 @@ export type CategoryNode = {
 };
 
 export interface ISupermarketCategories extends Document {
-  supermarketId: mongoose.Types.ObjectId;
+  supermarketId?: mongoose.Types.ObjectId;
+  brandId?: mongoose.Types.ObjectId;
   isActive: boolean;
   categories: CategoryNode[];
   createdAt: Date;
@@ -38,14 +39,16 @@ CategoryNodeSchema.add({
 
 const SupermarketCategoriesSchema = new Schema<ISupermarketCategories>(
   {
-    supermarketId: { type: Schema.Types.ObjectId, ref: "SuperMarket", required: true, unique: true },
+    supermarketId: { type: Schema.Types.ObjectId, ref: "SuperMarket", default: undefined },
+    brandId: { type: Schema.Types.ObjectId, ref: "Brand", default: undefined },
     isActive: { type: Boolean, default: true },
     categories: { type: [CategoryNodeSchema], default: [] },
   },
   { timestamps: true }
 );
 
-SupermarketCategoriesSchema.index({ supermarketId: 1 }, { unique: true });
+SupermarketCategoriesSchema.index({ supermarketId: 1 }, { unique: true, sparse: true });
+SupermarketCategoriesSchema.index({ brandId: 1 }, { unique: true, sparse: true });
 
 const SupermarketCategories: Model<ISupermarketCategories> =
   mongoose.models.SupermarketCategories ||

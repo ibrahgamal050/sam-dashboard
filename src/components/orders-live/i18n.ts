@@ -43,78 +43,45 @@ export type OrdersI18n = {
   unpaid: string
 }
 
+const RU_STRINGS: OrdersI18n = {
+  fallbackTitle: "Текущие заказы",
+  refresh: "Обновить",
+  autoAccept: "Автоприём",
+  muteAutoAccepted: "Без звука для автоприёма",
+  searchPlaceholder: "Поиск по № заказа, клиенту, телефону",
+  statusPlaceholder: "Статус",
+  typePlaceholder: "Тип",
+  sortTooltip: {
+    newest: "Сначала новые",
+    oldest: "Сначала старые",
+  },
+  liveRefresh: "Обновление каждые 5 сек",
+  failedBadge: "Ошибка загрузки",
+  noRestaurantTitle: "Ресторан не выбран",
+  noRestaurantSubtitle: "Выберите филиал для просмотра текущих заказов.",
+  errorTitle: "Не удалось загрузить заказы",
+  tryAgain: "Повторить",
+  selectOrder: "Выберите заказ",
+  noOrdersMatch: "Заказы не найдены",
+  mobileDetailsTitle: "Детали заказа",
+  language: "Язык",
+
+  view: "Просмотр",
+  ready: "Готово",
+  delivered: "Доставлено",
+  canceled: "Отменено",
+  updating: "Обновление...",
+
+  delivery: "Доставка",
+  pickup: "Самовывоз",
+  dine_in: "В зале",
+
+  paid: "Оплачено",
+  unpaid: "Не оплачено",
+}
+
 export const STRINGS: Record<Locale, OrdersI18n> = {
-  en: {
-    fallbackTitle: "Live Orders",
-    refresh: "Refresh",
-    autoAccept: "Auto-accept",
-    muteAutoAccepted: "Mute auto-accepted",
-    searchPlaceholder: "Search order #, customer, phone",
-    statusPlaceholder: "Status",
-    typePlaceholder: "Type",
-    sortTooltip: {
-      newest: "Sort by newest",
-      oldest: "Sort by oldest",
-    },
-    liveRefresh: "Live refresh every 5s",
-    failedBadge: "failed to load",
-    noRestaurantTitle: "No restaurant selected",
-    noRestaurantSubtitle: "Please choose a branch to view live orders.",
-    errorTitle: "Failed to load orders",
-    tryAgain: "Try again",
-    selectOrder: "Select an order",
-    noOrdersMatch: "No orders match your filters",
-    mobileDetailsTitle: "Order Details",
-    language: "Language",
-
-    view: "View",
-    ready: "Ready",
-    delivered: "Delivered",
-    canceled: "Canceled",
-    updating: "Updating...",
-
-    delivery: "Delivery",
-    pickup: "Pickup",
-    dine_in: "Dine-in",
-
-    paid: "Paid",
-    unpaid: "Unpaid",
-  },
-
-  ar: {
-    fallbackTitle: "الطلبات الحية",
-    refresh: "تحديث",
-    autoAccept: "قبول تلقائي",
-    muteAutoAccepted: "كتم الطلبات المقبولة تلقائيًا",
-    searchPlaceholder: "ابحث برقم الطلب أو اسم العميل أو الهاتف",
-    statusPlaceholder: "الحالة",
-    typePlaceholder: "النوع",
-    sortTooltip: {
-      newest: "ترتيب من الأحدث",
-      oldest: "ترتيب من الأقدم",
-    },
-    liveRefresh: "تحديث مباشر كل 5 ثوانٍ",
-    failedBadge: "تعذر التحميل",
-    noRestaurantTitle: "لم يتم اختيار مطعم",
-    noRestaurantSubtitle: "يرجى اختيار فرع لعرض الطلبات اللحظية.",
-    errorTitle: "تعذر تحميل الطلبات",
-    tryAgain: "إعادة المحاولة",
-    selectOrder: "اختر طلبًا",
-    noOrdersMatch: "لا توجد طلبات مطابقة",
-    mobileDetailsTitle: "تفاصيل الطلب",
-    language: "اللغة",
-
-    view: "عرض",
-    ready: "جاهز",
-    delivered: "تم التوصيل",
-    canceled: "ملغي",
-    updating: "جارٍ التحديث",
-
-    delivery: "دليفري",
-    pickup: "استلام",
-    dine_in: "داخل المطعم",
-
-    paid: "مدفوع",
-    unpaid: "غير مدفوع",
-  },
+  en: RU_STRINGS,
+  ar: RU_STRINGS,
+  ru: RU_STRINGS,
 }

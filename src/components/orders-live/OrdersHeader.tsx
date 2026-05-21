@@ -57,13 +57,10 @@ export default function OrdersHeader({
 
   allOrdersLabel,
 }: Props) {
-  const isArabic = lang === "ar"
-  const resolvedAllBrandsLabel = allBrandsLabel ?? (isArabic ? "كل الفروع" : "All branches")
-  const resolvedOnlineCountText = onlineCountText ?? (isArabic ? "3/5 قنوات متصلة" : "3/5 channels online")
-  const resolvedAllOrdersLabel = allOrdersLabel ?? (isArabic ? "كل الطلبات" : "All orders")
-  const searchPlaceholder = isArabic
-    ? "ابحث برقم التذكرة أو رقم الطلب"
-    : "Search by token number or order ID"
+  const resolvedAllBrandsLabel = allBrandsLabel ?? "Все филиалы"
+  const resolvedOnlineCountText = onlineCountText ?? "3/5 каналов онлайн"
+  const resolvedAllOrdersLabel = allOrdersLabel ?? "Все заказы"
+  const searchPlaceholder = "Поиск по токену или ID заказа"
 
   return (
     <header className="w-full">
@@ -84,28 +81,28 @@ export default function OrdersHeader({
             active={activeTab === "biller"}
             onClick={() => onTabChange?.("biller")}
             icon={<span className="text-[11px] font-bold">▦</span>}
-            label={isArabic ? "الفوترة" : "Billing"}
+            label="Касса"
             badge="23"
           />
           <Tab
             active={activeTab === "receiver"}
             onClick={() => onTabChange?.("receiver")}
             icon={<span className="text-[11px] font-bold">↩</span>}
-            label={isArabic ? "الاستقبال" : "Receiver"}
+            label="Приём"
             badge="05"
           />
           <Tab
             active={activeTab === "settings"}
             onClick={() => onTabChange?.("settings")}
             icon={<Settings className="h-4 w-4" />}
-            label={isArabic ? "الإعدادات" : "Settings"}
+            label="Настройки"
           />
 
           <button
             type="button"
             className="ml-1 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white hover:bg-gray-50"
-            aria-label={isArabic ? "إضافة" : "Add"}
-            title={isArabic ? "إضافة" : "Add"}
+            aria-label="Добавить"
+            title="Добавить"
           >
             <Plus className="h-5 w-5" />
           </button>
@@ -113,10 +110,10 @@ export default function OrdersHeader({
 
         {/* Right: Quick icons + avatar */}
         <div className="flex items-center gap-2">
-          <IconBtn title={isArabic ? "قائمة" : "Menu"}>
+          <IconBtn title="Меню">
             <BookOpen className="h-4 w-4" />
           </IconBtn>
-          <IconBtn title={isArabic ? "الإعدادات" : "Settings"}>
+          <IconBtn title="Настройки">
             <Settings className="h-4 w-4" />
           </IconBtn>
           <div className="h-10 w-10 rounded-full bg-orange-500" />
@@ -154,15 +151,15 @@ export default function OrdersHeader({
             onClick={onToggleMute}
             active={!isMuted}
             icon={<BellOff className="h-4 w-4" />}
-            label={isArabic ? "كتم" : "Mute"}
+            label="Без звука"
           />
-          <ActionBtn onClick={onRefresh} icon={<RefreshCw className="h-4 w-4" />} label={isArabic ? "تحديث" : "Refresh"} />
-          <ActionBtn onClick={onReport} icon={<Flag className="h-4 w-4" />} label={isArabic ? "إبلاغ" : "Report"} />
+          <ActionBtn onClick={onRefresh} icon={<RefreshCw className="h-4 w-4" />} label="Обновить" />
+          <ActionBtn onClick={onReport} icon={<Flag className="h-4 w-4" />} label="Отчёт" />
           <ActionBtn onClick={onOpenAllOrders} icon={<ListChecks className="h-4 w-4" />} label={resolvedAllOrdersLabel} />
 
           {/* Online toggle */}
           <div className="ml-1 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2">
-            <span className="text-sm font-semibold text-[#1b1b1b]">{isArabic ? "متصل" : "Online"}</span>
+            <span className="text-sm font-semibold text-[#1b1b1b]">Онлайн</span>
             <button
               type="button"
               onClick={() => onToggleOnline?.(!isOnline)}

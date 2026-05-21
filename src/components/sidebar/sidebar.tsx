@@ -10,6 +10,9 @@ import {
   CalendarRange,
   ChevronDown,
   ClipboardList,
+  FileImage,
+  FileText,
+  GitBranch,
   Home,
   Layers,
   LifeBuoy,
@@ -17,8 +20,10 @@ import {
   Megaphone,
   Menu,
   PackageCheck,
+  QrCode,
   Settings,
   ShoppingBag,
+  UserCog,
   Users,
   X,
   Download as DownloadIcon,
@@ -57,10 +62,11 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   const [retailSlug, setRetailSlug] = useState(subdomain || "")
-  const [tenantType, setTenantType] = useState<"restaurant" | "supermarket" | "unknown">("unknown")
-  const routeTenantType = useMemo<"restaurant" | "supermarket" | "legacy">(() => {
+  const [tenantType, setTenantType] = useState<"restaurant" | "supermarket" | "brand" | "unknown">("unknown")
+  const routeTenantType = useMemo<"restaurant" | "supermarket" | "brand" | "legacy">(() => {
     if (pathname?.includes("/dashboard/restaurant/")) return "restaurant"
     if (pathname?.includes("/dashboard/supermarket/")) return "supermarket"
+    if (pathname?.includes("/dashboard/brand/")) return "brand"
     return "legacy"
   }, [pathname])
   const isRetailContext = Boolean(pathname?.includes("/dashboard/") && pathname?.includes("/retail"))
@@ -71,6 +77,9 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
     }
     if (routeTenantType === "supermarket") {
       return buildDashboardTenantBasePath("supermarket", subdomain)
+    }
+    if (routeTenantType === "brand") {
+      return buildDashboardTenantBasePath("brand", subdomain)
     }
     return `/dashboard/${subdomain}`.replace(/\/+$/, "")
   }, [routeTenantType, subdomain])
@@ -112,6 +121,7 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
     if (!subdomain || isRetailContext || routeTenantType !== "legacy") {
       if (routeTenantType === "restaurant") setTenantType("restaurant")
       if (routeTenantType === "supermarket" || isRetailContext) setTenantType("supermarket")
+      if (routeTenantType === "brand") setTenantType("brand")
       return
     }
     let active = true
@@ -132,6 +142,7 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
   }, [subdomain, isRetailContext, routeTenantType])
 
   const isSupermarket = isRetailContext || tenantType === "supermarket"
+  const isBrand = tenantType === "brand" || routeTenantType === "brand"
 
   const resolveHref = (href: NavItem["href"]) => {
     if (typeof href === "function") return href({ subdomain, retailSlug: retailSlug || subdomain })
@@ -161,37 +172,62 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
   }
 
   const navSections = useMemo<NavGroup[]>(() => {
-    const catalogPrimaryItem: NavItem = isSupermarket
-      ? { label: "كتالوج السوبرماركت", href: "retail", icon: ShoppingBag }
-      : { label: "المنيو", href: "menu", icon: ShoppingBag }
+    const catalogPrimaryItem: NavItem = isBrand
+      ? { label: "Каталог бренда", href: "catalog", icon: ShoppingBag }
+      : isSupermarket
+      ? { label: "Каталог бренда", href: "catalog", icon: ShoppingBag }
+      : { label: "Меню", href: "menu", icon: ShoppingBag }
+
+    if (isBrand) {
+      return [
+        {
+          label: "Бренд",
+          items: [
+            { label: "Каталог", href: "catalog", icon: ShoppingBag },
+          ],
+        },
+      ]
+    }
 
     return [
       {
-        label: "نظرة عامة",
+        label: "Обзор",
         items: [
-          { label: "الرئيسية", href: "", icon: Home },
-          { label: "الطلبات", href: "orders", icon: ClipboardList },
-          { label: "العملاء", href: "customers", icon: Users },
-          { label: "التحليلات", href: "analytics", icon: BarChart3 },
+          { label: "Главная", href: "", icon: Home },
+          { label: "Заказы", href: "orders", icon: ClipboardList },
+          { label: "Клиенты", href: "customers", icon: Users },
+          { label: "Аналитика", href: "analytics", icon: BarChart3 },
         ],
       },
       {
-        label: "الكتالوج",
+        label: "Каталог",
         collapsible: true,
         items: [
           catalogPrimaryItem,
+          { label: "Изображения меню", href: "menuimage", icon: FileImage },
+          ...(isSupermarket ? [{ label: "Склад", href: "inventory", icon: PackageCheck }] : []),
         ],
       },
       {
-        label: "التشغيل",
+        label: "Управление",
         collapsible: true,
         items: [
-          { label: "مناطق التوصيل", href: "delivery-zones", icon: Map },
-          { label: "الإعدادات", href: "settings", icon: Settings },
+          { label: "Филиалы", href: "branches", icon: GitBranch },
+          { label: "Персонал", href: "staff", icon: UserCog },
+          { label: "Страницы", href: "pages", icon: FileText },
+          { label: "QR-коды", href: "qr", icon: QrCode },
+        ],
+      },
+      {
+        label: "Операции",
+        collapsible: true,
+        items: [
+          { label: "Зоны доставки", href: "delivery-zones", icon: Map },
+          { label: "Настройки", href: "settings", icon: Settings },
         ],
       },
     ]
-  }, [isSupermarket])
+  }, [isBrand, isSupermarket])
 
   const renderNavItem = (item: NavItem) => {
     const fullHref = resolveHref(item.href)
@@ -248,10 +284,11 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
   return (
     <aside
       className={cn(
-        "fixed right-0 top-0 z-50 flex h-dvh w-72 flex-col border-l border-slate-200 bg-white  text-slate-700 shadow-[0_18px_50px_rgba(15,23,42,0.15)] transition-transform duration-200 ease-in-out",
-        isOpen ? "translate-x-0" : "translate-x-full",
+        "fixed left-0 top-0 z-50 flex h-dvh w-72 flex-col border-r border-slate-200 bg-white text-left text-slate-700 shadow-[0_18px_50px_rgba(15,23,42,0.15)] transition-transform duration-200 ease-in-out",
+        isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:translate-x-0",
       )}
+      dir="ltr"
     >
       <div className="relative px-5 py-6">
         <div className="rounded-2xl border border-slate-200 bg-[#e9f4ff] px-4 py-3 shadow-sm">
@@ -260,16 +297,16 @@ export function Sidebar({ subdomain: subdomainProp, isOpen = false, onClose }: S
               {brandShort}
             </div>
             <div className="leading-tight">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">لوحة التحكم</p>
-              <span className="text-base font-semibold text-slate-800">{subdomain || "لوحة تحكم ميلزا"}</span>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Панель</p>
+              <span className="text-base font-semibold text-slate-800">{subdomain || "Панель Meelza"}</span>
             </div>
           </div>
         </div>
         <button
           type="button"
-          className="absolute left-5 top-7 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 lg:hidden"
+          className="absolute right-5 top-7 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 lg:hidden"
           onClick={onClose}
-          aria-label="إغلاق الشريط الجانبي"
+          aria-label="Закрыть боковую панель"
         >
           <X className="h-4 w-4" />
         </button>

@@ -67,7 +67,7 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100/80">Brand assets</p>
               <h1 className="text-2xl font-semibold sm:text-3xl">QR Code Menu & Tableside ordering</h1>
               <p className="text-sm text-emerald-50/90">
-                صمّم لوحة QR جاهزة للطباعة بألوان وشعار علامتك. اختر القالب، وعدّل النصوص قبل التنزيل.
+                Создайте QR-панель, готовую к печати, с цветами и логотипом вашего бренда. Выберите шаблон и отредактируйте текст перед загрузкой.
               </p>
             </div>
             <div className="flex flex-wrap gap-2 text-xs font-semibold text-emerald-50/90">
@@ -90,7 +90,7 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
                   QR Code template
                 </CardTitle>
                 <p className="text-sm text-emerald-700/90">
-                  اختر القالب والألوان، ويُحدّث المعاينة مباشرة.
+                  Выберите шаблон и цвета — предварительный просмотр обновляется в реальном времени.
                 </p>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -121,7 +121,7 @@ export function QRGenerator({ subdomain }: QRGeneratorProps) {
             <Card className="border-emerald-100/80 bg-white/85 shadow-xl backdrop-blur">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-semibold text-emerald-900">Content</CardTitle>
-                <p className="text-sm text-emerald-700/90">حدّد النص الذي يراه العميل عند مسح الكود.</p>
+                <p className="text-sm text-emerald-700/90">Укажите текст, который увидит клиент при сканировании кода.</p>
               </CardHeader>
               <CardContent className="space-y-5">
                 <div className="space-y-2">

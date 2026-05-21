@@ -1,10 +1,15 @@
-export type Locale = "en" | "ar"
+export type Locale = "en" | "ar" | "ru"
 
-export const resolveLocale = (value?: string | null): Locale => (value === "ar" ? "ar" : "en")
+export const resolveLocale = (value?: string | null): Locale => {
+  if (value === "ar") return "ar"
+  if (value === "ru") return "ru"
+  return "ru"
+}
 
-export const getDirection = (locale: Locale): "ltr" | "rtl" => (locale === "ar" ? "rtl" : "ltr")
+export const getDirection = (locale: Locale): "ltr" | "rtl" => "ltr"
 
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: "English",
   ar: "العربية",
+  ru: "Русский",
 }

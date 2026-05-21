@@ -53,7 +53,7 @@ export default function MobileOrderDetails({
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <div className="text-sm font-semibold text-[#1b1b1b]">
-          {lang === "ar" ? "طلب رقم" : "Order #"} {selectedOrder.orderId ?? selectedOrder.id}
+          Заказ № {selectedOrder.orderId ?? selectedOrder.id}
         </div>
       </div>
 

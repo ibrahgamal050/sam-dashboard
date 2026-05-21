@@ -63,7 +63,7 @@ export default function DeliveryZonesManager({
         console.log("[v0] Loaded zones:", fetchedZones.length)
       } catch (error) {
         console.error("[v0] Error loading zones:", error)
-        toast.error("تعذّر تحميل مناطق التوصيل")
+        toast.error("Не удалось загрузить зоны доставки")
       } finally {
         setIsLoading(false)
       }
@@ -228,7 +228,7 @@ export default function DeliveryZonesManager({
   const handleConfirmGeometryChanges = useCallback(async () => {
     if (!editingZone || !draftGeometry || editingZone.id === "new") return
     if (!entityId) {
-      toast.error("بيانات الجهة غير مكتملة")
+      toast.error("Данные объекта неполные")
       return
     }
 
@@ -239,10 +239,10 @@ export default function DeliveryZonesManager({
       })
       setZones((prev) => prev.map((z) => (z.id === updatedZone.id ? updatedZone : z)))
       beginGeometryEditing(updatedZone)
-      toast.success("تم حفظ شكل المنطقة")
+      toast.success("Геометрия зоны сохранена")
     } catch (error) {
       console.error("[v0] Error saving geometry:", error)
-      toast.error("تعذّر حفظ تعديلات الشكل")
+      toast.error("Не удалось сохранить изменения геометрии")
     } finally {
       setIsSaving(false)
     }
@@ -322,7 +322,7 @@ export default function DeliveryZonesManager({
 
   const handleZoneToggle = async (zone: DeliveryZone) => {
     if (!entityId) {
-      toast.error("بيانات الجهة غير مكتملة")
+      toast.error("Данные объекта неполные")
       return
     }
     try {
@@ -331,10 +331,10 @@ export default function DeliveryZonesManager({
       })
 
       setZones((prev) => prev.map((z) => (z.id === zone.id ? updatedZone : z)))
-      toast.success(updatedZone.is_active ? "تم تفعيل المنطقة" : "تم تعطيل المنطقة")
+      toast.success(updatedZone.is_active ? "Зона включена" : "Зона отключена")
     } catch (error) {
       console.error("[v0] Error toggling zone:", error)
-      toast.error("تعذّر تحديث حالة المنطقة")
+      toast.error("Не удалось обновить статус зоны")
     }
   }
 
@@ -360,7 +360,7 @@ export default function DeliveryZonesManager({
     zoneData: CreateDeliveryZoneRequest | (Partial<DeliveryZone> & { id: string }),
   ) => {
     if (!entityId) {
-      toast.error("بيانات الجهة غير مكتملة")
+      toast.error("Данные объекта неполные")
       return
     }
     try {
@@ -380,10 +380,10 @@ export default function DeliveryZonesManager({
         const updatedZone = await ZonesAPI.updateZone(entityId, zoneData.id, entityType, payload)
         setZones((prev) => prev.map((z) => (z.id === zoneData.id ? updatedZone : z)))
         beginGeometryEditing(updatedZone)
-        toast.success("تم تحديث المنطقة بنجاح")
+        toast.success("Зона обновлена")
       } else {
         if (!draftGeometry) {
-          toast.error("ارسم منطقة التوصيل على الخريطة قبل الحفظ")
+          toast.error("Нарисуйте зону доставки на карте перед сохранением")
           return
         }
 
@@ -402,14 +402,14 @@ export default function DeliveryZonesManager({
         setZones((prev) => [...prev, newZone])
         beginGeometryEditing(newZone)
         setIsCreatingZone(false)
-        toast.success("تم إنشاء المنطقة بنجاح")
+        toast.success("Зона создана")
       }
 
       setHasPendingGeometryChanges(false)
       setDrawingMode(null)
     } catch (error) {
       console.error("[v0] Error saving zone:", error)
-      toast.error("تعذّر حفظ المنطقة")
+      toast.error("Не удалось сохранить зону")
     } finally {
       setIsSaving(false)
     }
@@ -417,7 +417,7 @@ export default function DeliveryZonesManager({
 
   const handleDeleteZone = useCallback(async (zoneId: string) => {
     if (!entityId) {
-      toast.error("بيانات الجهة غير مكتملة")
+      toast.error("Данные объекта неполные")
       return
     }
     try {
@@ -430,23 +430,23 @@ export default function DeliveryZonesManager({
       setGeometryMetrics(null)
       setHasPendingGeometryChanges(false)
       setIsCreatingZone(false)
-      toast.success("تم حذف المنطقة بنجاح")
+      toast.success("Зона удалена")
     } catch (error) {
       console.error("[v0] Error deleting zone:", error)
-      toast.error("تعذّر حذف المنطقة")
+      toast.error("Не удалось удалить зону")
     }
   }, [entityId, entityType])
 
   const handleDeleteCurrentZone = useCallback(() => {
     if (!editingZone || editingZone.id === "new") return
-    if (window.confirm(`حذف "${editingZone.name}"؟ لا يمكن التراجع عن هذه العملية.`)) {
+    if (window.confirm(`Удалить "${editingZone.name}"? Это действие нельзя отменить.`)) {
       void handleDeleteZone(editingZone.id)
     }
   }, [editingZone, handleDeleteZone])
 
   const startCreatingZone = () => {
     if (!entityId) {
-      toast.error("Missing delivery zone context")
+      toast.error("Не найден контекст зоны доставки")
       return
     }
     setIsCreatingZone(true)
@@ -465,7 +465,7 @@ export default function DeliveryZonesManager({
       <div className={`${className} flex items-center justify-center`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-          <p className="text-sm text-muted-foreground">جاري تحميل مناطق التوصيل...</p>
+          <p className="text-sm text-muted-foreground">Загрузка зон доставки...</p>
         </div>
       </div>
     )
@@ -479,14 +479,14 @@ export default function DeliveryZonesManager({
         <div className="rounded-2xl border bg-card p-4 shadow-sm">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h1 className="text-lg font-semibold">مناطق التوصيل</h1>
+              <h1 className="text-lg font-semibold">Зоны доставки</h1>
               <p className="text-xs text-muted-foreground">
-                حدد نطاقات التوصيل واضبط الرسوم.
+                Настройте зоны доставки и тарифы.
               </p>
             </div>
             <Button onClick={startCreatingZone} disabled={isCreatingZone || !entityId}>
               <Plus className="h-4 w-4 mr-2" />
-              منطقة جديدة
+              Новая зона
             </Button>
           </div>
         </div>
@@ -522,16 +522,16 @@ export default function DeliveryZonesManager({
             <div className="flex items-center gap-2 mb-2">
               <MapPin className="h-4 w-4 text-primary" />
               <p className="font-medium text-sm">
-                جارٍ إنشاء منطقة {drawingMode === "circle" ? "دائرية" : "مضلعة"}
+                Создание зоны: {drawingMode === "circle" ? "круг" : "полигон"}
               </p>
             </div>
             {drawingMode === "circle" ? (
-              <p className="text-xs text-muted-foreground">اضغط على الخريطة لتحديد مركز المنطقة الدائرية</p>
+              <p className="text-xs text-muted-foreground">Нажмите на карту, чтобы выбрать центр круговой зоны</p>
             ) : (
               <div className="text-xs text-muted-foreground space-y-1">
-                <p>• انقر على نقاط الخريطة لرسم المضلع</p>
-                <p>• انقر مرتين لإنهاء الرسم</p>
-                <p>• تحتاج إلى 3 نقاط على الأقل لمنطقة صالحة</p>
+                <p>• Нажимайте на карту, чтобы нарисовать полигон</p>
+                <p>• Дважды нажмите, чтобы завершить рисование</p>
+                <p>• Для корректной зоны нужно минимум 3 точки</p>
               </div>
             )}
           </div>

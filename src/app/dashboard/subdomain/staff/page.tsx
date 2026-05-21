@@ -9,7 +9,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 type Staff = { _id: string; name: string; role: string; active: boolean }
 
 export default function StaffPage() {
-  const { subdomain } = useParams() as { subdomain: string }
+  const params = useParams() as { subdomain?: string; slug?: string }
+  const subdomain = params.subdomain ?? params.slug ?? ""
   const [list, setList] = useState<Staff[]>([])
   const [name, setName] = useState('')
   const [role, setRole] = useState('cashier')
@@ -39,33 +40,33 @@ export default function StaffPage() {
     <div className="mx-auto max-w-4xl p-6 space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Staff Management</CardTitle>
+          <CardTitle>Управление персоналом</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            <Input placeholder="Name" value={name} onChange={(e)=>setName(e.target.value)} />
+            <Input placeholder="Имя" value={name} onChange={(e)=>setName(e.target.value)} />
             <Select value={role} onValueChange={setRole}>
-              <SelectTrigger><SelectValue placeholder="Role" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Должность" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="cashier">Cashier</SelectItem>
-                <SelectItem value="waiter">Waiter</SelectItem>
-                <SelectItem value="expo">Expo</SelectItem>
-                <SelectItem value="kitchen">Kitchen</SelectItem>
+                <SelectItem value="manager">Менеджер</SelectItem>
+                <SelectItem value="cashier">Кассир</SelectItem>
+                <SelectItem value="waiter">Официант</SelectItem>
+                <SelectItem value="expo">Экспо</SelectItem>
+                <SelectItem value="kitchen">Кухня</SelectItem>
               </SelectContent>
             </Select>
-            <Input placeholder="PIN (4-6 digits)" value={pin} onChange={(e)=>setPin(e.target.value)} />
-            <Button onClick={add} disabled={!name || !role || !pin || loading}>Add</Button>
+            <Input placeholder="ПИН-код (4-6 цифр)" value={pin} onChange={(e)=>setPin(e.target.value)} />
+            <Button onClick={add} disabled={!name || !role || !pin || loading}>Добавить</Button>
           </div>
 
           <div className="border-t pt-3">
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="text-left text-muted-foreground">
-                  <th className="p-2">Name</th>
-                  <th className="p-2">Role</th>
-                  <th className="p-2">Status</th>
-                  <th className="p-2">Actions</th>
+                  <th className="p-2">Имя</th>
+                  <th className="p-2">Должность</th>
+                  <th className="p-2">Статус</th>
+                  <th className="p-2">Действия</th>
                 </tr>
               </thead>
               <tbody>
@@ -73,13 +74,13 @@ export default function StaffPage() {
                   <tr key={s._id} className="border-t">
                     <td className="p-2">{s.name}</td>
                     <td className="p-2 capitalize">{s.role}</td>
-                    <td className="p-2">{s.active ? 'Active' : 'Inactive'}</td>
+                    <td className="p-2">{s.active ? 'Активен' : 'Неактивен'}</td>
                     <td className="p-2">
-                      <Button variant="secondary" size="sm" onClick={()=>toggleActive(s._id, !s.active)}>{s.active ? 'Deactivate' : 'Activate'}</Button>
+                      <Button variant="secondary" size="sm" onClick={()=>toggleActive(s._id, !s.active)}>{s.active ? 'Деактивировать' : 'Активировать'}</Button>
                     </td>
                   </tr>
                 ))}
-                {list.length === 0 && (<tr><td colSpan={4} className="p-4 text-center text-muted-foreground">No staff yet</td></tr>)}
+                {list.length === 0 && (<tr><td colSpan={4} className="p-4 text-center text-muted-foreground">Сотрудников пока нет</td></tr>)}
               </tbody>
             </table>
           </div>

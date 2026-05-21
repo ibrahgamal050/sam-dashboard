@@ -2,8 +2,7 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 import dbConnect from "@/lib/dbConnect"
-import DeliveryZoneLegacy, { type DeliveryZoneLegacyDocument } from "@/models/delivery-zone-legacy"
-import SupermarketDeliveryZone from "@/models/SupermarketDeliveryZone"
+import DeliveryZone from "@/models/delivery-zone"
 import { serializeDeliveryZones } from "@/lib/delivery-zones/serialize"
 import { Types } from "mongoose"
 
@@ -75,28 +74,12 @@ export async function POST(request: NextRequest) {
     await dbConnect()
 
     if (supermarketId) {
-      const rawZones = await SupermarketDeliveryZone.find({
+      const rawZones = await DeliveryZone.find({
         supermarketId: new Types.ObjectId(supermarketId),
-        isActive: true,
+        $or: [{ active: true }, { isActive: true }, { is_active: true }],
       }).lean()
 
-      const zones = rawZones.map((zone) => ({
-        id: zone?._id?.toString?.() ?? String(zone?._id ?? ""),
-        restaurantId: undefined,
-        supermarketId: zone?.supermarketId?.toString?.() ?? String(zone?.supermarketId ?? ""),
-        name: zone?.name ?? "",
-        description: undefined,
-        delivery_fee: Number(zone?.fee ?? 0),
-        color: zone?.color ?? "#3B82F6",
-        zone_type: "polygon" as const,
-        geometry: zone?.polygon,
-        is_active: zone?.isActive ?? true,
-        created_at: zone?.createdAt ? new Date(zone.createdAt).toISOString() : new Date().toISOString(),
-        updated_at: zone?.updatedAt ? new Date(zone.updatedAt).toISOString() : new Date().toISOString(),
-        min_order: zone?.minOrder ?? undefined,
-        eta_mins: zone?.etaMins ?? undefined,
-        priority: zone?.priority ?? undefined,
-      }))
+      const zones = serializeDeliveryZones(rawZones)
 
       const availableZones = zones.filter((zone) => {
         if (zone.zone_type === "polygon" && zone.geometry?.type === "Polygon") {
@@ -119,11 +102,11 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const rawZones = await DeliveryZoneLegacy.find({
+    const rawZones = await DeliveryZone.find({
       restaurantId: new Types.ObjectId(restaurantId),
-      is_active: true,
-    }).lean<DeliveryZoneLegacyDocument[]>()
-    const zones = serializeDeliveryZones(rawZones as DeliveryZoneLegacyDocument[])
+      $or: [{ active: true }, { isActive: true }, { is_active: true }],
+    }).lean()
+    const zones = serializeDeliveryZones(rawZones)
 
     const availableZones = zones.filter((zone) => {
       if (zone.zone_type === "circle" && zone.geometry.type === "Point") {

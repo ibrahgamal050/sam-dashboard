@@ -49,7 +49,7 @@ export function Header({ subdomain, onOpenSidebar }: HeaderProps) {
             className="h-11 w-11 rounded-2xl border border-slate-200 bg-slate-50 text-slate-700 shadow-sm lg:hidden"
             onClick={onOpenSidebar}
           >
-            <span className="sr-only">فتح الشريط الجانبي</span>
+            <span className="sr-only">Открыть боковую панель</span>
             <Menu className="h-5 w-5" />
           </Button>
 
@@ -57,7 +57,7 @@ export function Header({ subdomain, onOpenSidebar }: HeaderProps) {
             <Search className="h-4 w-4 text-slate-400" />
             <Input
               type="search"
-              placeholder="ابحث عن منتج أو طلب"
+              placeholder="Поиск товара или заказа"
               className="h-6 border-0 bg-transparent p-0 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0"
             />
           </div>
@@ -69,15 +69,15 @@ export function Header({ subdomain, onOpenSidebar }: HeaderProps) {
             className="hidden items-center gap-2 rounded-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:inline-flex"
           >
             <HelpCircle className="h-4 w-4" />
-            مركز المساعدة
+            Центр помощи
           </Button>
           <Button className="hidden items-center gap-2 rounded-full bg-[#46b6ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#3aa9ef] sm:inline-flex">
             <ScanLine className="h-4 w-4" />
-            مسح باركود
+            Сканировать штрихкод
           </Button>
           <Button className="hidden items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 sm:inline-flex">
             <Plus className="h-4 w-4" />
-            إنشاء فاتورة
+            Создать счет
           </Button>
           <Button
             variant="ghost"
@@ -105,13 +105,13 @@ export function Header({ subdomain, onOpenSidebar }: HeaderProps) {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">{displayName}</p>
-                  <p className="text-xs leading-none text-muted-foreground">إدارة الحساب</p>
+                  <p className="text-xs leading-none text-muted-foreground">Управление аккаунтом</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <UserCog className="ml-2 h-4 w-4" />
-                <span>إعدادات الحساب</span>
+                <UserCog className="mr-2 h-4 w-4" />
+                <span>Настройки аккаунта</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -123,7 +123,7 @@ export function Header({ subdomain, onOpenSidebar }: HeaderProps) {
                 }}
               >
                 <LogOut className="h-4 w-4" />
-                <span>{isLoggingOut ? "جارٍ تسجيل الخروج…" : "تسجيل الخروج"}</span>
+                <span>{isLoggingOut ? "Выход..." : "Выйти"}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

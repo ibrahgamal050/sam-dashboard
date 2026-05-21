@@ -13,7 +13,7 @@ import { useLiveOrders } from "./hooks/useLiveOrders"
 import { STRINGS } from "./i18n"
 
 export default function OrdersLayout({ restaurantSlug }: { restaurantSlug: string }) {
-  const [lang, setLang] = useState<Locale>("ar")
+  const [lang, setLang] = useState<Locale>("ru")
   const direction = getDirection(lang)
   const strings = STRINGS[lang] ?? STRINGS.en
 
@@ -93,7 +93,7 @@ return (
         isOnline={autoAccept}
         onToggleOnline={isReadOnly ? undefined : (v) => setAutoAccept(v)}
         onOpenAllOrders={handleOpenAllOrders}
-        allOrdersLabel="عرض كل الطلبات"
+        allOrdersLabel="Все заказы"
       />
 
       {/* Body ياخد باقي الشاشة */}

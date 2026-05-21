@@ -64,19 +64,19 @@ export function EditSectionModal({ section, onSave, onCancel, onDelete }: EditSe
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-xl">Edit section details</DialogTitle>
+          <DialogTitle className="text-xl">Редактирование раздела</DialogTitle>
         </DialogHeader>
 
         <div className="flex justify-end mb-2">
           <Button variant="outline" size="sm" onClick={() => setActiveLanguage(activeLanguage === "en" ? "ar" : "en")}>
-            {activeLanguage === "en" ? "العربية" : "English"}
+            {activeLanguage === "en" ? "Арабский" : "Английский"}
           </Button>
         </div>
 
         <div className="space-y-6 py-4">
           <div className="space-y-2">
             <Label htmlFor="section-name" className="text-base">
-              Section name ({activeLanguage}) <span className="text-red-500">*</span>
+              Название раздела ({activeLanguage}) <span className="text-red-500">*</span>
             </Label>
             <Input
               id="section-name"
@@ -88,7 +88,7 @@ export function EditSectionModal({ section, onSave, onCancel, onDelete }: EditSe
 
           <div className="space-y-2">
             <Label htmlFor="section-description" className="text-base">
-              Section description ({activeLanguage})
+              Описание раздела ({activeLanguage})
             </Label>
             <Textarea
               id="section-description"
@@ -96,8 +96,8 @@ export function EditSectionModal({ section, onSave, onCancel, onDelete }: EditSe
               onChange={(e) => handleDescriptionChange(activeLanguage, e.target.value)}
               placeholder={
                 activeLanguage === "en"
-                  ? "e.g., Kick off your meal with our delicious small bites."
-                  : "مثال: ابدأ وجبتك مع وجباتنا الخفيفة اللذيذة."
+                  ? "Например: начните заказ с наших закусок."
+                  : "Например: начните заказ с наших закусок."
               }
               rows={3}
               dir={activeLanguage === "ar" ? "rtl" : "ltr"}
@@ -106,7 +106,7 @@ export function EditSectionModal({ section, onSave, onCancel, onDelete }: EditSe
 
           <div className="space-y-2">
             <Label htmlFor="section-image" className="text-base">
-              Image URL (optional)
+              URL изображения (необязательно)
             </Label>
             <Input
               id="section-image"
@@ -119,7 +119,7 @@ export function EditSectionModal({ section, onSave, onCancel, onDelete }: EditSe
               <div className="flex items-center justify-center border border-dashed rounded-lg h-24 mt-2">
                 <Button variant="ghost" className="flex flex-col items-center gap-2">
                   <ImagePlus className="h-6 w-6" />
-                  <span className="text-xs">Upload image</span>
+                  <span className="text-xs">Загрузить изображение</span>
                 </Button>
               </div>
             )}
@@ -128,7 +128,7 @@ export function EditSectionModal({ section, onSave, onCancel, onDelete }: EditSe
               <div className="mt-2 border rounded-md overflow-hidden w-full max-w-xs h-24">
                 <img
                   src={editedSection.image || "/placeholder.svg"}
-                  alt={editedSection.name.en || "Section image"}
+                  alt={editedSection.name.en || "Изображение раздела"}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     ;(e.target as HTMLImageElement).src = "/placeholder.svg?height=100&width=300"
@@ -139,10 +139,10 @@ export function EditSectionModal({ section, onSave, onCancel, onDelete }: EditSe
           </div>
 
           <div className="space-y-4">
-            <Label className="text-base">Section visibility</Label>
+            <Label className="text-base">Видимость раздела</Label>
             <div className="flex items-center justify-between">
               <Label htmlFor="show-on-menu" className="cursor-pointer">
-                Show on menu
+                Показывать в меню
               </Label>
               <Switch
                 id="show-on-menu"
@@ -155,13 +155,13 @@ export function EditSectionModal({ section, onSave, onCancel, onDelete }: EditSe
 
         <div className="flex justify-between">
           <Button variant="outline" onClick={onDelete} className="text-destructive hover:bg-destructive/10">
-            Delete
+            Удалить
           </Button>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onCancel}>
-              Cancel
+              Отмена
             </Button>
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSave}>Сохранить</Button>
           </div>
         </div>
       </DialogContent>

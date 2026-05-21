@@ -45,7 +45,9 @@ interface FetchResponse {
 export default function PagesDashboard() {
   const params = useParams()
   const router = useRouter()
-  const subdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : (params?.subdomain as string) ?? ""
+  const rawSubdomain = Array.isArray(params?.subdomain) ? params.subdomain[0] : (params?.subdomain as string)
+  const rawSlug = Array.isArray(params?.slug) ? params.slug[0] : (params?.slug as string)
+  const subdomain = rawSubdomain ?? rawSlug ?? ""
 
   const [pages, setPages] = useState<PageDocument[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -60,14 +62,14 @@ export default function PagesDashboard() {
         setIsLoading(true)
         const response = await fetch(`/api/${subdomain}/pages`, { signal: controller.signal })
         if (!response.ok) {
-          throw new Error("تعذر تحميل الصفحات")
+          throw new Error("Не удалось загрузить страницы")
         }
         const data: FetchResponse = await response.json()
         setPages(data.data.pages || [])
       } catch (err) {
         if (!(err instanceof DOMException && err.name === "AbortError")) {
           console.error(err)
-          setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع")
+          setError(err instanceof Error ? err.message : "Произошла непредвиденная ошибка")
         }
       } finally {
         setIsLoading(false)
@@ -111,11 +113,11 @@ export default function PagesDashboard() {
       const response = await fetch(`/api/${subdomain}/pages/${id}`, { method: "DELETE" })
       if (!response.ok) throw new Error("Failed to delete page")
       setPages((prev) => prev.filter((page) => page._id !== id))
-      toast({ title: "تم حذف الصفحة" })
+      toast({ title: "Страница удалена" })
     } catch (err) {
       toast({
-        title: "فشل الحذف",
-        description: err instanceof Error ? err.message : "حدث خطأ غير معروف",
+        title: "Ошибка удаления",
+        description: err instanceof Error ? err.message : "Произошла неизвестная ошибка",
         variant: "destructive",
       })
     }
@@ -137,11 +139,11 @@ export default function PagesDashboard() {
         }),
       )
       setSelectedIds([])
-      toast({ title: "تم حذف الصفحات المحددة" })
+      toast({ title: "Выбранные страницы удалены" })
     } catch (err) {
       toast({
-        title: "فشل الحذف الجماعي",
-        description: err instanceof Error ? err.message : "حدث خطأ غير معروف",
+        title: "Ошибка массового удаления",
+        description: err instanceof Error ? err.message : "Произошла неизвестная ошибка",
         variant: "destructive",
       })
     }
@@ -151,11 +153,11 @@ export default function PagesDashboard() {
     try {
       const url = `${window.location.origin}/${slug}`
       await navigator.clipboard.writeText(url)
-      toast({ title: "تم نسخ رابط الصفحة", description: url })
+      toast({ title: "Ссылка на страницу скопирована", description: url })
     } catch (err) {
       toast({
-        title: "فشل النسخ",
-        description: "تعذر النسخ إلى الحافظة",
+        title: "Ошибка копирования",
+        description: "Не удалось скопировать в буфер обмена",
         variant: "destructive",
       })
     }
@@ -164,9 +166,9 @@ export default function PagesDashboard() {
   const summary = useMemo(() => {
     const published = pages.filter((page) => page.isPublished).length
     return [
-      { label: "إجمالي الصفحات", value: pages.length },
-      { label: "المنشور", value: published },
-      { label: "المسودات", value: pages.length - published },
+      { label: "Всего страниц", value: pages.length },
+      { label: "Опубликовано", value: published },
+      { label: "Черновики", value: pages.length - published },
     ]
   }, [pages])
 
@@ -198,7 +200,7 @@ export default function PagesDashboard() {
   }
 
   return (
-    <section className="space-y-6 text-right">
+    <section className="space-y-6 text-left">
       <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row-reverse sm:items-center sm:justify-between">
         <div>
           <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">الصفحات</h1>
@@ -242,7 +244,7 @@ export default function PagesDashboard() {
           <CardTitle className="text-base font-semibold text-slate-900">
             كل الصفحات
           </CardTitle>
-          <p className="text-xs text-slate-500">عرض {pages.length} نتيجة</p>
+          <p className="text-xs text-slate-500">{pages.length} результатов</p>
           </CardHeader>
           <CardContent className="overflow-x-auto">
           <Table>
@@ -252,7 +254,7 @@ export default function PagesDashboard() {
                   <Checkbox
                     checked={allSelected}
                     onCheckedChange={(checked) => toggleSelectAll(Boolean(checked))}
-                    aria-label="تحديد كل الصفحات"
+                    aria-label="Выбрать все страницы"
                   />
                 </TableHead>
                 <TableHead>العنوان</TableHead>
@@ -298,7 +300,7 @@ export default function PagesDashboard() {
                             : "border-amber-200 bg-amber-50 text-amber-700",
                         )}
                       >
-                        {page.isPublished ? "منشور" : "مسودة"}
+                        {page.isPublished ? "Опубликовано" : "Черновик"}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -335,8 +337,8 @@ export default function PagesDashboard() {
                           onClick={() => {
                             if (!page._id && !page.slug) {
                               toast({
-                                title: "معرّفات مفقودة",
-                                description: "هذه الصفحة لا تحتوي على معرّف أو سلاج.",
+                                title: "Отсутствуют идентификаторы",
+                                description: "У этой страницы нет идентификатора или слага.",
                                 variant: "destructive",
                               })
                               return

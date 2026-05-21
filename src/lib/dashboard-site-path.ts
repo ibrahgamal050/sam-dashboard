@@ -1,4 +1,4 @@
-export type DashboardTenantType = "restaurant" | "supermarket"
+export type DashboardTenantType = "restaurant" | "supermarket" | "brand"
 
 export function buildDashboardTenantBasePath(type: DashboardTenantType, subdomain: string) {
   return `/dashboard/${type}/${subdomain}`.replace(/\/+$/, "")

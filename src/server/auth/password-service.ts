@@ -1,9 +1,12 @@
 import bcrypt from 'bcryptjs'
-import { env } from '../env'
+
+const parseSaltRounds = () => {
+  const parsed = Number.parseInt(process.env.BCRYPT_SALT_ROUNDS || '', 10)
+  return Number.isFinite(parsed) ? parsed : 12
+}
 
 export const hashPassword = async (password: string) => {
-  const rounds = env.bcryptSaltRounds
-  return bcrypt.hash(password, rounds)
+  return bcrypt.hash(password, parseSaltRounds())
 }
 
 export const comparePassword = async (password: string, hash: string) => bcrypt.compare(password, hash)

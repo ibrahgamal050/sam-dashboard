@@ -65,7 +65,9 @@ interface Page {
 }
 
 export function PageEditorComponent() {
-  const { pageId, subdomain } = useParams()
+  const _params = useParams() as { pageId?: string; subdomain?: string; slug?: string }
+  const subdomain = _params.subdomain ?? _params.slug ?? ""
+  const pageId = _params.pageId ?? ""
   const [page, setPage] = useState<Page | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

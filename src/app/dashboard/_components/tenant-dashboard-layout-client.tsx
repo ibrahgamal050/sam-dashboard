@@ -101,7 +101,11 @@ export default function TenantDashboardLayoutClient({
     const runCheck = async () => {
       if (!resolvedSubdomain) return
       try {
-        const res = await fetch(`/api/auth/authorize?subdomain=${encodeURIComponent(resolvedSubdomain)}`, {
+        const authorizeQuery =
+          routeKind === "brand"
+            ? `brandSlug=${encodeURIComponent(resolvedSubdomain)}`
+            : `subdomain=${encodeURIComponent(resolvedSubdomain)}`
+        const res = await fetch(`/api/auth/authorize?${authorizeQuery}`, {
           cache: "no-store",
         })
         if (!active) return
@@ -121,11 +125,11 @@ export default function TenantDashboardLayoutClient({
         }
 
         setAuthStatus("unauthorized")
-        setAuthMessage(data?.error || "غير مصرح لك بالدخول إلى هذه الصفحة.")
+        setAuthMessage(data?.error || "У вас нет доступа к этой странице.")
       } catch {
         if (!active) return
         setAuthStatus("unauthorized")
-        setAuthMessage("تعذر التحقق من الصلاحيات حالياً.")
+        setAuthMessage("Не удалось проверить права доступа.")
       }
     }
 
@@ -133,20 +137,20 @@ export default function TenantDashboardLayoutClient({
     return () => {
       active = false
     }
-  }, [pathname, redirectStatus, resolvedSubdomain, router, searchParamsString])
+  }, [pathname, redirectStatus, resolvedSubdomain, routeKind, router, searchParamsString])
 
   const unauthorizedView = useMemo(() => {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#f3f7ff] px-6 text-center">
         <div className="max-w-md rounded-3xl bg-white p-8 shadow-[0_18px_40px_rgba(0,0,0,0.08)]">
-          <h2 className="text-xl font-bold text-gray-900">غير مصرح</h2>
-          <p className="mt-2 text-sm text-gray-600">{authMessage || "ليس لديك صلاحية مالك لهذا الفرع."}</p>
+          <h2 className="text-xl font-bold text-gray-900">Нет доступа</h2>
+          <p className="mt-2 text-sm text-gray-600">{authMessage || "У вас нет прав владельца для этого филиала."}</p>
           <button
             type="button"
             onClick={() => router.push("/auth/login")}
             className="mt-5 w-full rounded-2xl bg-[#46b6ff] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#3aa9ef]"
           >
-            تسجيل الدخول بحساب آخر
+            Войти под другим аккаунтом
           </button>
         </div>
       </div>
@@ -166,7 +170,7 @@ export default function TenantDashboardLayoutClient({
   }
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-left text-foreground" dir="ltr">
       <Sidebar subdomain={resolvedSubdomain || ""} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       {sidebarOpen && (
         <div
@@ -175,7 +179,7 @@ export default function TenantDashboardLayoutClient({
         />
       )}
 
-      <div className="flex min-h-dvh flex-col lg:mr-72 lg:pr-0">
+      <div className="flex min-h-dvh flex-col lg:ml-72 lg:pl-0">
         <Header subdomain={resolvedSubdomain || ""} onOpenSidebar={toggleSidebar} />
         <main className="flex-1 overflow-y-auto bg-[#f3f7ff] px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto w-full max-w-6xl">{children}</div>

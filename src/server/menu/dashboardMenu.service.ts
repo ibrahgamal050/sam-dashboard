@@ -4,14 +4,15 @@ import Brand from "@/models/Brand"
 import BrandMenuCategory from "@/models/BrandMenuCategory"
 import BrandMenuItem from "@/models/BrandMenuItem"
 import Restaurant from "@/models/Restaurant"
+import Menu from "@/models/RestaurantMenu"
 import RestaurantMenuItem, { type IRestaurantMenuItem } from "@/models/RestaurantMenuItem"
 import { MENU_TYPES, type MenuType } from "@/lib/menu-types"
 
 type MenuContext = {
   restaurant: any
-  brand: any
+  brand: any | null
   restaurantId: string
-  brandId: string
+  brandId: string | null
 }
 
 type MenuContextResult =
@@ -83,14 +84,9 @@ export async function resolveDashboardMenuContext(
     return { ok: false, status: 404, message: "Restaurant not found." }
   }
 
-  if (!restaurant.brandId) {
-    return { ok: false, status: 404, message: "Brand not found." }
-  }
-
-  const brand = await Brand.findById(restaurant.brandId).lean<BrandContextLean | null>()
-  if (!brand) {
-    return { ok: false, status: 404, message: "Brand not found." }
-  }
+  const brand = restaurant.brandId
+    ? await Brand.findById(restaurant.brandId).lean<BrandContextLean | null>()
+    : null
 
   return {
     ok: true,
@@ -98,7 +94,7 @@ export async function resolveDashboardMenuContext(
       restaurant,
       brand,
       restaurantId: String(restaurant._id),
-      brandId: String(brand._id),
+      brandId: brand ? String(brand._id) : null,
     },
   }
 }
@@ -110,6 +106,18 @@ export async function getDashboardMenu(
 ) {
   const { brand, brandId, restaurant, restaurantId } = context
   const includeHidden = Boolean(options?.includeHidden)
+
+  if (!brand || !brandId) {
+    const legacyMenu = await Menu.findOne({ restaurantId: restaurant._id }).lean<any | null>()
+    return {
+      _id: legacyMenu?._id || restaurant._id,
+      restaurantId,
+      name: legacyMenu?.name || "Menu",
+      currency: { ar: "ج.م", en: "EGP" },
+      categories: legacyMenu?.categories || [],
+      menuImages: legacyMenu?.menuImages || [],
+    }
+  }
 
   const overrideFilter: Record<string, any> = {
     restaurantId: restaurant._id,
@@ -280,6 +288,9 @@ export async function updateDashboardMenuItemOverrides(
   input: UpdateItemOverridesInput,
 ) {
   const { restaurant, brand } = context
+  if (!brand) {
+    return { ok: false as const, status: 400, message: "This restaurant uses the legacy menu format." }
+  }
   const { itemId, overrides = {}, globalHidden = false, resetMenuTypes = [], base } = input
 
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
@@ -432,6 +443,15 @@ export async function saveDashboardMenuOrder(
 ) {
   const { brand, restaurant } = context
 
+  if (!brand) {
+    await Menu.updateOne(
+      { restaurantId: restaurant._id },
+      { $set: { categories } },
+      { upsert: false },
+    )
+    return
+  }
+
   const categoryUpdates = categories
     .map((category: any, index: number) => ({
       category,
@@ -481,6 +501,10 @@ export async function saveDashboardMenuOrder(
 
 export async function importBrandMenuItems(context: MenuContext, menuType: MenuType) {
   const { brand, restaurant } = context
+
+  if (!brand) {
+    return { ok: true, imported: 0 }
+  }
 
   const items = await BrandMenuItem.find({ brandId: brand._id, isActive: true }).lean<BrandMenuItemLean[]>()
   if (!items.length) {

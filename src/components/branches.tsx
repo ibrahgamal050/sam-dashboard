@@ -41,7 +41,8 @@ interface BranchesData {
 }
 
 export default function Branches() {
-  const { subdomain } = useParams() as { subdomain: string }
+  const params = useParams() as { subdomain?: string; slug?: string }
+  const subdomain = params.subdomain ?? params.slug ?? ""
   const [branchesData, setBranchesData] = useState<BranchesData | null>(null)
   const [editingBranch, setEditingBranch] = useState<Branch | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)

@@ -17,46 +17,46 @@ import { Input } from "@/components/ui/input"
 
 const SUMMARY_METRICS = [
   {
-    label: "إجمالي الإيرادات",
-    value: "362,450 ج.م",
-    change: "+12.4% مقارنة بالشهر الماضي",
+    label: "Общая выручка",
+    value: "362,450 ₽",
+    change: "+12.4% по сравнению с прошлым месяцем",
     icon: DollarSign,
   },
   {
-    label: "الطلبات",
+    label: "Заказы",
     value: "1,284",
-    change: "+8.1% مقارنة بالشهر الماضي",
+    change: "+8.1% по сравнению с прошлым месяцем",
     icon: RefreshCw,
   },
   {
-    label: "عملاء نشطون",
+    label: "Активные клиенты",
     value: "742",
-    change: "+5.6% مقارنة بالشهر الماضي",
+    change: "+5.6% по сравнению с прошлым месяцем",
     icon: Users,
   },
   {
-    label: "متوسط الفاتورة",
-    value: "282.5 ج.م",
-    change: "+3.2% مقارنة بالشهر الماضي",
+    label: "Средний чек",
+    value: "282.5 ₽",
+    change: "+3.2% по сравнению с прошлым месяцем",
     icon: CalendarRange,
   },
 ]
 
 const TOP_ITEMS = [
-  { id: "IT-041", name: "مشويات مشكلة", orders: 182, revenue: "42,360 ج.م" },
-  { id: "IT-023", name: "شاورما دجاج", orders: 156, revenue: "28,704 ج.م" },
-  { id: "IT-015", name: "بايلا سي فود", orders: 96, revenue: "31,680 ج.م" },
-  { id: "IT-067", name: "راب فلافل", orders: 221, revenue: "19,890 ج.م" },
+  { id: "IT-041", name: "Ассорти гриль", orders: 182, revenue: "42,360 ₽" },
+  { id: "IT-023", name: "Шаурма с курицей", orders: 156, revenue: "28,704 ₽" },
+  { id: "IT-015", name: "Паэлья с морепродуктами", orders: 96, revenue: "31,680 ₽" },
+  { id: "IT-067", name: "Рэп с фалафелем", orders: 221, revenue: "19,890 ₽" },
 ]
 
 const BRANCH_PERFORMANCE = [
-  { branch: "المعادي", orders: 542, revenue: "126,900 ج.م", growth: "+9%" },
-  { branch: "مدينة نصر", orders: 318, revenue: "83,240 ج.م", growth: "+5%" },
-  { branch: "6 أكتوبر", orders: 198, revenue: "46,880 ج.م", growth: "+4%" },
+  { branch: "Маади", orders: 542, revenue: "126,900 ₽", growth: "+9%" },
+  { branch: "Мединет Наср", orders: 318, revenue: "83,240 ₽", growth: "+5%" },
+  { branch: "6 Октября", orders: 198, revenue: "46,880 ₽", growth: "+4%" },
 ]
 
 export default function AnalyticsDashboard() {
-  const [range, setRange] = useState("آخر 30 يوم")
+  const [range, setRange] = useState("Последние 30 дней")
 
   const activeMetrics = useMemo(() => SUMMARY_METRICS, [])
 
@@ -135,7 +135,7 @@ export default function AnalyticsDashboard() {
                   <span className="text-xs text-emerald-500">{branch.growth}</span>
                 </div>
                 <div className="mt-2 flex items-center justify-between text-sm text-slate-600">
-                  <span>{branch.orders} طلب</span>
+                  <span>{branch.orders} заказов</span>
                   <span className="font-medium text-slate-900">{branch.revenue}</span>
                 </div>
               </div>
